@@ -1,0 +1,3 @@
+<template>
+  <svg t="1727881388632" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9387" width="20" height="20"><path d="M800 64H224c-17.6 0-32 14.4-32 32v832c0 17.6 14.4 32 32 32h576c17.6 0 32-14.4 32-32V96c0-17.6-14.4-32-32-32z m-416 768h-64v-64h64v64z m0-160h-64v-64h64v64z m0-160h-64v-64h64v64z m160 320h-64v-64h64v64z m0-160h-64v-64h64v64z m0-160h-64v-64h64v64z m160 320h-64v-64h64v64z m0-160h-64v-64h64v64z m0-160h-64v-64h64v64z m0-192H320V192h384v128z" p-id="9388" fill="#333"></path></svg>
+</template>
