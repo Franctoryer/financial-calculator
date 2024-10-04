@@ -11,7 +11,9 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@handsontable/vue3": "^14.6.0",
     "@types/vue": "^2.0.0",
+    "financejs": "^4.1.0",
     "financial-calculator": "file:",
     "pinia": "^2.2.4",
     "vue": "^3.4.29",
