@@ -1,11 +1,13 @@
 <template>
   <div class="temp">
-    这里是使用手册
+    这里是货币汇率转化计算器
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+
 </script>
 
-<style scoped>
+<style>
+
 </style>

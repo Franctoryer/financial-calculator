@@ -1,10 +1,10 @@
 <template>
   <header class="header">
-    <div class="header-title">
+    <router-link to="/home" class="header-title" @click="handleRedict">
       <TitleIcon class="title-icon"/> 金融计算器
-    </div>
+    </router-link>
     <div class="tabs">
-      <router-link to="/home" class="tab">
+      <router-link to="/home" class="tab" @click="handleRedict">
         <HomeIcon class="tab-icon"/> 首页
       </router-link>
       <router-link to="/calc" class="tab">
@@ -13,7 +13,7 @@
       <router-link to="/manual" class="tab">
         <ManualIcon class="tab-icon"/> 使用手册
       </router-link>
-      <a href="https://github.com" class="tab" target="_blank">
+      <a :href="PROJ_URL" class="tab" target="_blank">
         <GithubIcon class="tab-icon"/> Star
       </a>
     </div>
@@ -26,6 +26,19 @@
   import CalcIcon from '@/assets/icons/head-tabs-icons/CalcIcon.vue';
   import ManualIcon from '@/assets/icons/head-tabs-icons/ManualIcon.vue';
   import GithubIcon from '@/assets/icons/head-tabs-icons/GithubIcon.vue';
+  import { PROJ_URL } from '@/constants/globalConfig';
+  import { MESSAGE_CONFIG } from '@/constants/messageConfig';
+  import { ALREADY_AT_HOME } from "@/constants/message";
+
+  /**
+   * 若重复点击首页链接，提示不要重复点击
+   * @param event 点击事件
+   */
+  const handleRedict = (event: MouseEvent): void => {
+    if (window.location.pathname === '/home') {
+      window.$message.warning(ALREADY_AT_HOME, MESSAGE_CONFIG)
+    }
+  }
 </script>
 
 <style scoped>
@@ -49,6 +62,7 @@
   color: #333;
   display: flex;
   justify-content: center;
+  text-decoration: none;
 }
 
 .tabs {
@@ -64,11 +78,14 @@
   color: black;
   text-decoration: none;
   padding: 0 15px;
-  display: block;
+  display: flex;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: medium;
+  justify-content: center;
+  align-items: center;
 }
 
 .tab:hover {

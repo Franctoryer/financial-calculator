@@ -8,16 +8,15 @@
 </template>
 
 <script setup lang="ts">
-  import GlobalConfig from './components/GlobalConfig.vue';
+  import GlobalConfig from '@/components/GlobalConfig.vue';
   import Header from '@/components/Header.vue';
   import { RouterView } from 'vue-router';
 </script>
 
-<style scoped>
-  .side-menu {
-    margin-top: 70px;
-  }
+<style>
+  @import '../public/main.css';
   .view {
-    margin-top: 100px;
+    margin-top: 80px;
   }
+
 </style>

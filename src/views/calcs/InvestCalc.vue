@@ -1,11 +1,13 @@
 <template>
   <div class="temp">
-    这里是使用手册
+    这里是投资贷款计算器
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+
 </script>
 
-<style scoped>
+<style>
+
 </style>

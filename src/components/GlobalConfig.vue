@@ -1,7 +1,7 @@
 <template>
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
     <n-message-provider>
-      <MessageApi/>
+      <MessageApi class="message"/>
       <slot></slot>
     </n-message-provider>
   </n-config-provider>
@@ -12,3 +12,10 @@
   import { NMessageProvider} from "naive-ui";
   import MessageApi from '@/components/MessageApi.vue';
 </script>
+
+<style>
+  .message {
+    z-index: 9999;
+    position: fixed;
+  }
+</style>

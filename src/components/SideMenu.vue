@@ -1,42 +1,27 @@
 <template>
   <div class="slide-com">
-    <n-button 
-      @click="collapsed = !collapsed" 
-      strong 
-      ghost 
-      type="tertiary" 
-      class="btn"> {{ buttonText }}
-    </n-button>
-    <n-layout-sider
-      bordered
-      collapse-mode="width"
-      :collapsed-width="64"
-      :width="240"
-      :collapsed="collapsed"
-      show-trigger
-      @collapse="collapsed = true"
-      @expand="collapsed = false"
-    >
       <n-menu
         :options="menuOptions"
-        :indent="12"
-        :collapsed="collapsed"
+        :indent="15"
         :collapsed-width="64"
         :collapsed-icon-size="30"
       />
-    </n-layout-sider>
   </div>
 </template>
 
 <script setup lang="ts">
   import type { MenuOption } from 'naive-ui';
-  import { NMenu, NIcon, NLayoutSider, NButton } from 'naive-ui';
-  import { h, ref, computed } from 'vue';
+  import { NMenu, NIcon } from 'naive-ui';
+  import { h } from 'vue';
+  import { RouterLink } from 'vue-router';
   import type { Component } from 'vue';
   // 一些图标
-  import CashFlowIcon from '../assets/icons/side-menu/CashFlowIcon.vue';
-  import BaseCalculator from '../assets/icons/side-menu/BaseCalculator.vue';
-  import LoadAndInvestIcon from '../assets/icons/side-menu/LoadAndInvestIcon.vue';
+  import CashFlowIcon from '@/assets/icons/side-menu-icons/CashFlowIcon.vue';
+  import BaseCalculator from '@/assets/icons/side-menu-icons/BaseCalculator.vue';
+  import LoadAndInvestIcon from '@/assets/icons/side-menu-icons/LoadAndInvestIcon.vue';
+  import DepositIcon from "@/assets/icons/side-menu-icons/DepositIcon.vue";
+  import CurrencyIcon from "@/assets/icons/side-menu-icons/CurrencyIcon.vue"
+  import TaxIcon from "@/assets/icons/side-menu-icons/TaxIcon.vue"
 
   /**
    * 将SVG图标组件转化为VNode对象
@@ -46,38 +31,56 @@
     return () => h(NIcon, null, { default: () => h(icon) })
   }
 
-  const collapsed = ref(true);
-  const buttonText = computed(() => {
-    return collapsed.value ? '展开' : '折叠';
-  })
   const menuOptions: MenuOption[] = [
     {
-      label: '基础',
+      label: () => h(RouterLink, { to: { name: 'base'}}, { default: () => '基础'}),
+      key: 'Base',
       icon: renderIcon(BaseCalculator)
     },
     {
-      label: '贷款/投资',
-      children: [
-        {
-          label: '贷款'
-        },
-        {
-          label: '投资'
-        }
-      ],
+      label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
+      key: 'LoadAndInvest',
       icon: renderIcon(LoadAndInvestIcon)
     },
     {
-      label: '现金流',
+      label: '现金流计算器',
+      key: 'CashFlow',
       children: [
         {
-          label: '净现值'
+          label: () => h(RouterLink, { to: { name: 'circled-cashflow'}}, { default: () => '周期性现金流'}),
+          key: 'Circled-CashFlow'
         },
         {
-          label: '内部收益率'
+          label: () => h(RouterLink, { to: { name: 'customed-cashflow'}}, { default: () => '自定义现金流'}),
+          key: 'Customed-CashFlow'
         }
       ],
       icon: renderIcon(CashFlowIcon)
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'deposit'}}, { default: () => '储蓄计算器'}),
+      key: 'Deposit',
+      icon: renderIcon(DepositIcon)
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'currency'}}, { default: () => '货币汇率转化计算器'}),
+      key: 'Currency',
+      icon: renderIcon(CurrencyIcon)
+    },
+    {
+      label: '税务计算器',
+      key: 'Tax',
+      children: [
+        {
+          label: () => h(RouterLink, { to: { name: 'personal-tax'}}, { default: () => '个人所得税'}),
+          key: 'Personal-Tax'
+        },
+        {
+          label: () => h(RouterLink, { to: { name: 'fiveone-tax'}}, { default: () => '五险一金'}),
+          key: 'Five-One-Tax'
+        }
+      ],
+      icon: renderIcon(TaxIcon)
     }
   ];
 </script>
