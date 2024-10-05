@@ -10,7 +10,7 @@
     <n-data-table :columns="columns" :data="displayData" striped :pagination="{ pageSize: 5 }"/>
     <!-- <pre>{{ JSON.stringify(cashFlowData, null, 2) }}</pre> -->
     <div class="result">
-    净现值：{{ npv }}
+    净现值：{{ npv }} {{ getCurrencySymbol(currencyType) }}
     </div>
   </div>
 </template>
@@ -25,8 +25,10 @@
   import { useSettingStore } from "@/stores/settingStore";
   import { storeToRefs } from "pinia";
   import { Finance } from 'financejs';
+  const { interestMethod, precision, currencyType, timeUnit } = storeToRefs(useSettingStore());
+  import { getCurrencySymbol } from '@/utils/getCurrencyFlag';
   const { timeUnitText } = storeToRefs(useSettingStore());
-
+ 
   const interest = ref(0.1);
   // 原始数据，和表格输入绑定的数据
   const rawData: Ref<CCFRowDataRaw[]> = ref([
@@ -68,7 +70,6 @@
       //     format: formatCurrency,
       //      parse: parseCurrency,
             step: 1000,
-            min: -Infinity,
             onUpdateValue(v) {
               rawData.value[index].cash = v !== null && v !== undefined ? v : 0;
             }
