@@ -65,9 +65,10 @@
         render(row, index) {
           return h(NInputNumber, {
             value: row.cash,
-            format: formatCurrency,
-            parse: parseCurrency,
+      //     format: formatCurrency,
+      //      parse: parseCurrency,
             step: 1000,
+            min: -Infinity,
             onUpdateValue(v) {
               rawData.value[index].cash = v !== null && v !== undefined ? v : 0;
             }
