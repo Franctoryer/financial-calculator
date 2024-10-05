@@ -2,8 +2,8 @@
   <div class="main">
     <n-space vertical class="interest">
       贴现率：
-      <n-slider v-model:value="interest" :step="0.05" :max="1"/>
-      <n-input-number v-model:value="interest" size="small" />
+      <n-slider v-model:value="interest" :step="0.05" :max="1" :min="0"/>
+      <n-input-number v-model:value="interest" size="small" :step="0.05" :max="1" :min="0"/>
     </n-space>
     <n-button @click="addRow" color="#6e9bc5"> 增加行 </n-button>
     <n-button @click="deleteRow" color="#ba5b49">删除行</n-button>
@@ -27,7 +27,7 @@
   import { Finance } from 'financejs';
   const { timeUnitText } = storeToRefs(useSettingStore());
 
-  const interest = ref(0.2);
+  const interest = ref(0.1);
   // 原始数据，和表格输入绑定的数据
   const rawData: Ref<CCFRowDataRaw[]> = ref([
     {
@@ -69,7 +69,7 @@
             parse: parseCurrency,
             step: 1000,
             onUpdateValue(v) {
-              rawData.value[index].cash = v || 0
+              rawData.value[index].cash = v !== null && v !== undefined ? v : 0;
             }
           })
         }
@@ -110,7 +110,7 @@
     } else if (cashFlowData.value.length === 1) {
       return cashFlowData.value[0];
     } else {
-      return finance.NPV(interest.value, cashFlowData.value[0], ...cashFlowData.value.slice(1))
+      return finance.NPV(interest.value*100, cashFlowData.value[0], ...cashFlowData.value.slice(1))
     }
   });
 </script>

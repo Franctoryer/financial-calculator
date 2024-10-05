@@ -1,20 +1,20 @@
 <template>
   <header class="header">
-    <router-link to="/home" class="header-title" @click="handleRedict">
+    <router-link to="/home" class="header-title" @click="handleRedirect1">
       <TitleIcon class="title-icon"/> 金融计算器
     </router-link>
     <div class="tabs">
-      <router-link to="/home" class="tab" @click="handleRedict">
+      <router-link to="/home" class="tab" @click="handleRedirect1">
         <HomeIcon class="tab-icon"/> 首页
       </router-link>
-      <router-link to="/calc" class="tab">
+      <router-link to="/calc" class="tab" @click="handleRedirect2">
         <CalcIcon class="tab-icon"/> 计算器
       </router-link>
-      <router-link to="/manual" class="tab">
+      <router-link to="/manual" class="tab" @click="handleRedirect3">
         <ManualIcon class="tab-icon"/> 使用手册
       </router-link>
       <a :href="PROJ_URL" class="tab" target="_blank">
-        <GithubIcon class="tab-icon"/> Star
+        <GithubIcon class="tab-icon"/> Github
       </a>
     </div>
   </header>
@@ -29,14 +29,27 @@
   import { PROJ_URL } from '@/constants/globalConfig';
   import { MESSAGE_CONFIG } from '@/constants/messageConfig';
   import { ALREADY_AT_HOME } from "@/constants/message";
+  import { ALREADY_AT_CALCULATOR } from "@/constants/message";
+  import { ALREADY_AT_MANUAL } from "@/constants/message";
 
   /**
-   * 若重复点击首页链接，提示不要重复点击
+   * 若重复点击首页各链接，显示提示
    * @param event 点击事件
    */
-  const handleRedict = (event: MouseEvent): void => {
+
+  const handleRedirect1 = (event: MouseEvent): void => {
     if (window.location.pathname === '/home') {
-      window.$message.warning(ALREADY_AT_HOME, MESSAGE_CONFIG)
+      window.$message.info(ALREADY_AT_HOME, MESSAGE_CONFIG)
+    }
+  }
+  const handleRedirect2 = (event: MouseEvent): void => {
+    if (window.location.pathname === '/calc') {
+      window.$message.info(ALREADY_AT_CALCULATOR, MESSAGE_CONFIG)
+    }
+  }
+  const handleRedirect3 = (event: MouseEvent): void => {
+    if (window.location.pathname === '/manual') {
+      window.$message.info(ALREADY_AT_MANUAL, MESSAGE_CONFIG)
     }
   }
 </script>
