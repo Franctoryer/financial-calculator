@@ -7,10 +7,12 @@ export const useSettingStore = defineStore('settingStore', {
     interestMethod: 'compound',
     precision: 4,
     currencyType: 'CNY',
-    timeUnit: 'year'
+    timeUnit: 'year',
+    isDisplayInfo: true
   }),
   getters: {
     currencySymbol: (state) => getCurrencySymbol(state.currencyType),
-    timeUnitText: (state) => getTimeUnitText(state.timeUnit)
+    timeUnitText: (state) => getTimeUnitText(state.timeUnit),
+    isCompound: (state) => state.interestMethod === 'compound'
   }
 });

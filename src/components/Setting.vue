@@ -1,22 +1,6 @@
 <template>
   <div>
     <n-space :size="30" vertical class="setting-container">
-      <n-alert title="默认设置" type="info">
-        <ul>
-          <li>
-            计息方式默认为<b>复利</b>
-          </li>
-          <li>
-            精度默认保留<b>4位小数</b>
-          </li>
-          <li>
-            货币类型默认为<b>人民币</b>
-          </li>
-          <li>
-            时间单位默认为<b>年</b>
-          </li>
-        </ul>
-      </n-alert>
       <!-- 计息方式 -->
       <n-space vertical :size="5">
         <div class="option-title">计息方式：</div>
@@ -62,20 +46,23 @@
           <n-radio-button value="day"> 日 </n-radio-button>
         </n-radio-group>
       </n-space>
-      <!-- 精度 -->
+      <n-space vertical :size="5">
+        是否显示提示信息：
+        <n-switch :round="false" v-model:value="isDisplayInfo"/>
+      </n-space>
     </n-space>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NAlert } from 'naive-ui';
+  import { NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NAlert } from 'naive-ui';
   import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
   import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
   import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
   import { useSettingStore } from '@/stores/settingStore';
   import { storeToRefs } from 'pinia';
 
-  const { interestMethod, precision, currencyType, timeUnit } = storeToRefs(useSettingStore());
+  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo } = storeToRefs(useSettingStore());
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
   {

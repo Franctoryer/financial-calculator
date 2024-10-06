@@ -7,7 +7,7 @@ export function getCurrencySymbol(currency: string): string {
     CHF: 'Fr',
     CAD: 'C$',
     AUD: 'A$',
-    CNY: '￥',
+    CNY: '¥',
     INR: '₹',
     RUB: '₽',
     BRL: 'R$',

@@ -11,5 +11,9 @@ export default defineConfig({
     alias: {
       '@': path.join(__dirname, './src/')
     }
-  }
+  },
+  base: './',
+  build: {
+    minify: false
+  },
 })

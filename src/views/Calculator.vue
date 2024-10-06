@@ -1,5 +1,4 @@
 <template>
-  <div class="calc">
     <n-space vertical>
     <n-layout has-sider>
       <n-layout-sider
@@ -40,14 +39,13 @@
         </n-split>
       </n-layout>
     </n-layout>
-  </n-space>
-  </div>
+    </n-space>
 </template>
 
 <script setup lang="ts">
   import SideMenu from '@/components/SideMenu.vue';
   import SettingIcon from '@/assets/icons/side-menu-icons/SettingIcon.vue';
-  import { NSplit, NSpace, NLayout, NLayoutSider, NButton, NDrawer, NDrawerContent } from "naive-ui";
+  import { NSplit, NSpace, NLayout, NLayoutSider, NButton, NDrawer, NDrawerContent, NBackTop } from "naive-ui";
   import { ref, computed } from "vue";
   import { SPLIT_MIN, SPLIT_MAX } from "@/constants/globalConfig";
   import { RouterView } from "vue-router";
