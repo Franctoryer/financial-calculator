@@ -8,5 +8,5 @@ export const parseCurrency =  (input: string) => {
 export const formatCurrency = (value: number | null) => {
   if (value === null)
     return ''
-  return `${value.toLocaleString('en-US')} ¥ `
+  return `${value.toLocaleString('en-US')}`
 }
