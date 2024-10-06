@@ -15,6 +15,7 @@ const router = createRouter({
 		{
 			name: 'calc',
 			path:'/calc',
+			redirect: '/calc/base',
 			component: () => import('@/views/Calculator.vue'),
 			children: [
 				{

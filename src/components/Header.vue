@@ -13,7 +13,7 @@
       <router-link to="/manual" class="tab" @click="handleRedirect3">
         <ManualIcon class="tab-icon"/> 使用手册
       </router-link>
-      <a :href="PROJ_URL" class="tab" target="_blank">
+      <a :href="PROJ_URL" class="tab" target="_blank" id="github">
         <GithubIcon class="tab-icon"/> Github
       </a>
       <div class="tab" @click="active = !active">
@@ -94,7 +94,7 @@
 .tabs {
   display: flex;
   justify-content: center; /* Center tabs */
-  margin-left: 200px;
+  margin-left: 300px;
   align-items: center;
   height: 60px; /* Adjust the height as needed */
 }
@@ -127,5 +127,9 @@
 }
 .title-icon {
   margin-right: 5px;
+}
+
+#github {
+  margin-left: 180px;
 }
 </style>
