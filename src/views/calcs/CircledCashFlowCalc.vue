@@ -30,11 +30,13 @@
       <n-button @click="addRow()" color="#6e9bc5"> 添加行 </n-button>
       <n-button @click="deleteRow()" color="#c67915">删除最后一行</n-button>
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
+      <n-button color="#3271ae" @click="computeResult">计算</n-button>
     </div>
     <n-data-table 
       bordered
       :columns="columns" 
       :data="displayData" 
+      :single-line="false"
       striped 
       :pagination="{ pageSize: 10 }"
       :max-height="250"
@@ -51,7 +53,6 @@
       :on-clickoutside="onClickoutside"
       @select="handleSelect"
     />
-    <n-button color="#3271ae" @click="computeResult">计算</n-button>
     <!-- <pre>{{ JSON.stringify(rawData, null, 2) }}</pre> -->
     <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <hr>
@@ -126,27 +127,14 @@
         title: '时间',
         key: 'order',
         className: 'time',
-        align: 'center'
+        align: 'center',
+        width: '20%'
       },
       {
-        // 这个没有图标
-        // title: '现金流入/支出',
-        // key: 'cash',
-        // render(row, index) {
-        //   return h(NInputNumber, {
-        //     value: row.cash,
-        //     format: formatCurrency,
-        //     parse: parseCurrency,
-        //     step: 100,
-        //     size: 'small',
-        //     onUpdateValue(v) {
-        //       rawData.value[index].cash = v || 0
-        //     }
-        //   })
-        // }
         // 这个有取相反数的图标
         title: '现金流入/支出',
         key: 'cash',
+        width: '50%',
         render(row, index) {
           return h('div', {
             style: {
@@ -177,7 +165,8 @@
               onUpdateValue(v) {
                 rawData.value[index].cash = v || 0;
               }
-            })
+            }),
+            h('span', { style: 'padding-left: 4px'}, `${currencySymbol.value}`),
           ]);
         }
       },
@@ -474,7 +463,7 @@
   .button-group {
     display: flex;
     flex-direction: row;
-    width: 50%;
+    width: 60%;
     justify-content: space-between;
     margin-bottom: 10px;
   }
@@ -509,4 +498,6 @@
   #cashFlowChart {
     margin-top: 20px;
   }
+
+  
 </style>
