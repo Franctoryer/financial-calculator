@@ -10,7 +10,7 @@
         show-trigger
         @collapse="collapsed = true"
         @expand="collapsed = false">
-        <SideMenu/>
+        <CalcSideMenu/>
         <div class="calc-setting-container">
           <n-button class="btn" @click="collapsed = !collapsed"> {{ btnTxt }} </n-button>
         </div>
@@ -36,8 +36,8 @@
 </template>
 
 <script setup lang="ts">
-  import SideMenu from '@/components/SideMenu.vue';
-  import { NSplit, NSpace, NLayout, NLayoutSider, NButton, NDrawer, NDrawerContent, NBackTop } from "naive-ui";
+  import CalcSideMenu from '@/components/CalcSideMenu.vue';
+  import { NSplit, NSpace, NLayout, NLayoutSider, NButton } from "naive-ui";
   import { ref, computed } from "vue";
   import { SPLIT_MIN, SPLIT_MAX } from "@/constants/globalConfig";
   import { RouterView } from "vue-router";

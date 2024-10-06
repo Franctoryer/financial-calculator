@@ -430,6 +430,10 @@
         xAxis: {
           data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
         },
+        yAxis: {
+          type: 'value',
+          name: `金额（${currencySymbol.value}）`
+        },
         series: [
           {
             data: cashFlowData.value,

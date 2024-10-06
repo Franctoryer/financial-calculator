@@ -1,7 +1,12 @@
 <template>
   <div class="app">
     <GlobalConfig>
+      <!-- 滚轮 -->
       <n-scrollbar style="max-height: 100vh;" content-style="overflow: hidden;">
+        <!-- 跳转到顶部 -->
+        <n-back-top :bottom="100" :visibility-height="300">
+         <n-icon :Component="ArrowExportUp20Regular"></n-icon>
+        </n-back-top>
         <Header/>
         <RouterView class="views"/>
       </n-scrollbar>
@@ -13,7 +18,8 @@
   import GlobalConfig from '@/components/GlobalConfig.vue';
   import Header from '@/components/Header.vue';
   import { RouterView } from 'vue-router';
-  import { NScrollbar } from "naive-ui";
+  import { NScrollbar, NBackTop, NIcon } from "naive-ui";
+  import { ArrowExportUp20Regular } from "@vicons/fluent";
 </script>
 
 <style>
