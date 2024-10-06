@@ -285,24 +285,24 @@
     computeIRR();
   }
   // 计算净现值
-  const npv = ref(0);
+  const npv = ref<number | string>(0);
   const comuputeNPV = () => {
     if (cashFlowData.value.length === 0) {
       npv.value = 0;
     } else if (cashFlowData.value.length === 1) {
       npv.value =  cashFlowData.value[0];
     } else {
-      let result: number;
+      let result: string;
       if (!isCompound.value) {
-        result = Number(simpleInterestNPV(interest.value, cashFlowData.value).toFixed(precision.value));
+        result = simpleInterestNPV(interest.value, cashFlowData.value).toFixed(precision.value);
       } else {
-        result = isContinueCompound.value ? Number(continuousCompoundingNPV(interest.value, cashFlowData.value).toFixed(precision.value)) : Number(NPV(interest.value, cashFlowData.value).toFixed(precision.value)); 
+        result = isContinueCompound.value ? continuousCompoundingNPV(interest.value, cashFlowData.value).toFixed(precision.value) : NPV(interest.value, cashFlowData.value).toFixed(precision.value); 
       }
       npv.value = result; 
     }
   }
   // 计算IRR
-  const irr = ref(0);
+  const irr = ref<number | string>(0);
   const computeIRR = () => {
     if (cashFlowData.value.length === 0) {
       irr.value = Number.NaN;
@@ -312,7 +312,13 @@
       irr.value = Number.NaN;
       return;
     }
-    irr.value = Number(IRR(cashFlowData.value).toFixed(precision.value));
+    let result: number | string;
+    if (!isCompound.value) {
+      result = IRR(simpleInterestNPV, cashFlowData.value).toFixed(precision.value);
+    } else {
+      result = isContinueCompound.value ? IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value) : IRR(NPV, cashFlowData.value).toFixed(precision.value); 
+    }
+    irr.value = result;
   }
 
   const isValidToIRR = () => {

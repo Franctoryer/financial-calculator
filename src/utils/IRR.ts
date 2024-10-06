@@ -1,7 +1,5 @@
-import { NPV } from './NPV';
-
 // IRR 函数，通过二分法迭代计算
-export function IRR(cashflows: number[], guess: number = 0.5): number {
+export function IRR(NPV: Function, cashflows: number[], guess: number = 0.5): number {
   let lowerRate = 0;
   let upperRate = 1;
   let irr = guess;
