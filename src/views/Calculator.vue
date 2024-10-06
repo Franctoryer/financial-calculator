@@ -70,12 +70,12 @@
 }
 
 
-  .calc-setting-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 60px;
-    height: 50px;
-  }
+.calc-setting-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 60px;
+  height: 50px;
+}
 </style>

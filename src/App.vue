@@ -5,7 +5,9 @@
       <n-scrollbar style="max-height: 100vh;" content-style="overflow: hidden;">
         <!-- 跳转到顶部 -->
         <n-back-top :bottom="100" :visibility-height="300">
-         <n-icon :Component="ArrowExportUp20Regular"></n-icon>
+         <n-icon size="25">
+            <ArrowExportUp24Regular/>
+          </n-icon>
         </n-back-top>
         <Header/>
         <RouterView class="views"/>
@@ -19,7 +21,7 @@
   import Header from '@/components/Header.vue';
   import { RouterView } from 'vue-router';
   import { NScrollbar, NBackTop, NIcon } from "naive-ui";
-  import { ArrowExportUp20Regular } from "@vicons/fluent";
+  import { ArrowExportUp24Regular } from "@vicons/fluent";
 </script>
 
 <style>
