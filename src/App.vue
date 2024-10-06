@@ -1,8 +1,10 @@
 <template>
   <div class="app">
     <GlobalConfig>
-      <Header/>
-      <RouterView class="views"/>
+      <n-scrollbar style="max-height: 100vh;" content-style="overflow: hidden;">
+        <Header/>
+        <RouterView class="views"/>
+      </n-scrollbar>
     </GlobalConfig>
   </div>
 </template>
@@ -11,7 +13,7 @@
   import GlobalConfig from '@/components/GlobalConfig.vue';
   import Header from '@/components/Header.vue';
   import { RouterView } from 'vue-router';
-  import { NBackTop } from "naive-ui";
+  import { NScrollbar } from "naive-ui";
 </script>
 
 <style>
@@ -19,5 +21,8 @@
   .views {
     margin-top: 80px;
   }
-
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
 </style>
