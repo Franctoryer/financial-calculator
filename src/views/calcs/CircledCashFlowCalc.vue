@@ -82,6 +82,7 @@
   import type { Ref, ComputedRef } from 'vue';
   import type { CCFRowDataRaw, CCFRowData } from '@/types/CCFData';
   import { useSettingStore } from "@/stores/settingStore";
+  import { useInputStore } from "@/stores/inputStore"
   import { storeToRefs } from "pinia";
   import { NPV, continuousCompoundingNPV, simpleInterestNPV } from "@/utils/NPV";
   import { IRR } from "@/utils/IRR";
@@ -92,18 +93,13 @@
   import { watchEffect, watch } from 'vue';
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
-  const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
 
+  const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   const isContinueCompound = ref(false);
   const interest = ref(0.2);
   // 原始数据，和表格输入绑定的数据
-  const rawData: Ref<CCFRowDataRaw[]> = ref([
-    {
-      order: 1,
-      cash: 1000,
-      freq: 1
-    }
-  ])
+  const { CCFRawData: rawData } = storeToRefs(useInputStore());
+
   // 表格上展示的数据
   const displayData = computed(() => {
     let sumTime = 0;
