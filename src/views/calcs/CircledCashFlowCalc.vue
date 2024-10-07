@@ -80,9 +80,10 @@
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption, NumberAnimationInst } from 'naive-ui'
   import type { Ref, ComputedRef } from 'vue';
-  import type { CCFRowDataRaw, CCFRowData } from '@/types/CCFData';
+  import type { CCFRowData } from '@/types/CCFData';
   import { useSettingStore } from "@/stores/settingStore";
   import { useInputStore } from "@/stores/inputStore"
+  import { useResultStore } from "@/stores/resultStore";
   import { storeToRefs } from "pinia";
   import { NPV, continuousCompoundingNPV, simpleInterestNPV } from "@/utils/NPV";
   import { IRR } from "@/utils/IRR";
@@ -280,8 +281,9 @@
     comuputeNPV();
     computeIRR();
   }
+  // 导入净现值和内部收益率
+  const { npv, irr } = storeToRefs(useResultStore());
   // 计算净现值
-  const npv = ref<number | string>(0);
   const comuputeNPV = () => {
     if (cashFlowData.value.length === 0) {
       npv.value = 0;
@@ -298,7 +300,6 @@
     }
   }
   // 计算IRR
-  const irr = ref<number | string>(0);
   const computeIRR = () => {
     if (cashFlowData.value.length === 0) {
       irr.value = Number.NaN;
