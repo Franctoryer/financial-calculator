@@ -95,38 +95,53 @@ const deleteLast = () => {
   else {formula.value = formula.value.slice(0, -1);}
 };
 
-// 计算结果
 const calculate = () => {
-  if (formula.value === ''){
-        result.value = '0';
-      }else{
-  try {
-    let expression = formula.value;
+  if (formula.value === '') {
+    result.value = '0';
+  } else {
+    try {
+      let expression = formula.value;
 
-    // 替换符号为 JavaScript 可识别的表达式
-    expression = expression
-      .replace(/\u00D7/g, '*')
-      .replace(/\u00F7/g, '/')
-      .replace(/%/g, '/100')
-    
-      if (expression.includes('/0')) {
-      result.value = ZERO_DIVISION_ERROR; // 自定义错误消息
-      return;
-    }
-      // 整数、小数输出精确
-    if (Number.isInteger(evaluate(expression))) {
-        result.value = evaluate(expression).toString(); // 结果为整数，直接输出
-      } else {
-        result.value = evaluate(expression).toFixed(precision.value).toString();; // 结果为小数，使用精度
+      // 替换符号为 JavaScript 可识别的表达式
+      expression = expression
+        .replace(/\u00D7/g, '*')
+        .replace(/\u00F7/g, '/')
+        .replace(/%/g, '/100');
+
+      // 正则表达式匹配 tan 函数，并提取其参数
+      const tanRegex = /tan\((.*?)\)/g;
+      let match;
+      while ((match = tanRegex.exec(expression)) !== null) {
+        const tanArgument = match[1]; // 获取 tan 函数中的参数
+        const evaluatedArgument = evaluate(tanArgument); // 计算参数的值
+        
+        const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
+        // 检查参数是否接近 π/2 的倍数
+        if (Math.abs((evaluatedArgument - Math.PI / 2) % Math.PI) < tolerance) {
+          result.value = 'Error';
+          return; // 返回错误，不继续计算
+        }
       }
-  
-   
-    lastResult.value =  result.value ;  // 仅更新结果
-  } catch (error) {
-    result.value = 'Error';
+
+      // 使用 mathjs 计算表达式的结果
+      const evaluatedResult = evaluate(expression);
+      
+      // 整数、小数输出精确
+      if (Number.isInteger(evaluatedResult)) {
+        result.value = evaluatedResult.toString(); // 结果为整数，直接输出
+      } else {
+        result.value = evaluatedResult.toFixed(precision.value).toString(); // 结果为小数，使用精度
+      }
+
+      lastResult.value = result.value; // 仅更新结果
+    } catch (error) {
+      result.value = 'Error';
+    }
   }
-}
 };
+
+
+
 
 // 计算阶乘
 const calculateFactorial = () => {
