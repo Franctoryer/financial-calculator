@@ -14,5 +14,6 @@ export const useSettingStore = defineStore('settingStore', {
     currencySymbol: (state) => getCurrencySymbol(state.currencyType),
     timeUnitText: (state) => getTimeUnitText(state.timeUnit),
     isCompound: (state) => state.interestMethod === 'compound'
-  }
+  },
+  persist: true
 });
