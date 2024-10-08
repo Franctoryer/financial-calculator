@@ -1,12 +1,28 @@
 <template>
   <div>
     <n-space :size="30" vertical class="setting-container">
+      <n-button @click="settingStore.storeDefault" type="info" secondary round>
+        <template #icon>
+          <n-icon>
+            <SquareHintArrowBack16Regular/>
+          </n-icon>
+        </template>
+        恢复默认设置
+      </n-button>
       <!-- 计息方式 -->
       <n-space vertical :size="5">
         <div class="option-title">计息方式：</div>
         <n-radio-group v-model:value="interestMethod">
           <n-radio-button value="single"> 单利 </n-radio-button>
           <n-radio-button value="compound"> 复利 </n-radio-button>
+        </n-radio-group>
+      </n-space>
+      <!-- 时间点模式 -->
+      <n-space vertical :size="5">
+        <div class="option-title">时间点模式：</div>
+        <n-radio-group v-model:value="timeMode">
+          <n-radio-button value="BGN"> 期初 </n-radio-button>
+          <n-radio-button value="END"> 期末 </n-radio-button>
         </n-radio-group>
       </n-space>
       <!-- 精度 -->
@@ -55,14 +71,16 @@
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NAlert } from 'naive-ui';
+  import { NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NButton } from 'naive-ui';
   import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
   import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
   import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
+  import SquareHintArrowBack16Regular from '@vicons/fluent/SquareHintArrowBack16Regular';
   import { useSettingStore } from '@/stores/settingStore';
   import { storeToRefs } from 'pinia';
 
-  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo } = storeToRefs(useSettingStore());
+  const settingStore = useSettingStore();
+  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
   {

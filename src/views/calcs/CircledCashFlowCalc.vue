@@ -78,8 +78,8 @@
   import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NNumberAnimation } from 'naive-ui';
   import { ref, h, computed, nextTick } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
-  import type { DataTableColumns, DropdownOption, NumberAnimationInst } from 'naive-ui'
-  import type { Ref, ComputedRef } from 'vue';
+  import type { DataTableColumns, DropdownOption } from 'naive-ui'
+  import type { ComputedRef } from 'vue';
   import type { CCFRowData } from '@/types/CCFData';
   import { useSettingStore } from "@/stores/settingStore";
   import { useInputStore } from "@/stores/inputStore"
@@ -87,11 +87,11 @@
   import { storeToRefs } from "pinia";
   import { NPV, continuousCompoundingNPV, simpleInterestNPV } from "@/utils/NPV";
   import { IRR } from "@/utils/IRR";
-  import { UNKNOWN_OPTION, NO_DELETING } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
-  import { watchEffect, watch } from 'vue';
+  import { watchEffect } from 'vue';
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
 
@@ -313,6 +313,7 @@
       return;
     }
     if (!isValidToIRR()) {
+      window.$message.error(IRR_REQUIREMENT_ERROR, MESSAGE_CONFIG)
       irr.value = Number.NaN;
       return;
     }

@@ -23,6 +23,10 @@ html, body {
 
 a {
   text-decoration: none;
-  color: rgb(66, 53, 217);
+  color: rgb(46, 115, 218);
+}
+
+a:hover {
+  color: rgb(236, 164, 31);
 }
 
