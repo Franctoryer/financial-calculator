@@ -27,7 +27,7 @@
             <RouterView></RouterView>
           </template>
           <template #2>
-            <div class="temp">历史记录</div>
+            <History/>
           </template>
         </n-split>
       </n-layout>
@@ -41,6 +41,7 @@
   import { ref, computed } from "vue";
   import { SPLIT_MIN, SPLIT_MAX } from "@/constants/globalConfig";
   import { RouterView } from "vue-router";
+  import History from "@/views/History.vue";
 
   const collapsed = ref(false);
   const btnTxt = computed((): string => collapsed.value ? "展开" : "折叠");

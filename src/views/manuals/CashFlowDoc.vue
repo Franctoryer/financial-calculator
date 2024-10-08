@@ -148,7 +148,3 @@ NPV = \\sum_{t=0}^{T} \\frac{C_t}{(1 + IRR)^t} = 0
 `;
 
 </script>
-
-<style>
-
-</style>

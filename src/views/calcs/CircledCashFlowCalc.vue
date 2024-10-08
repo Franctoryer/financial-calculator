@@ -82,8 +82,8 @@
   import type { ComputedRef } from 'vue';
   import type { CCFRowData } from '@/types/CCFData';
   import { useSettingStore } from "@/stores/settingStore";
-  import { useInputStore } from "@/stores/inputStore"
-  import { useResultStore } from "@/stores/resultStore";
+  import { useCircledCFInputStore } from "@/stores/input/CircledCFInputStore"
+  import { useCircledCFResultStore } from "@/stores/result/CircledCFResultStore";
   import { storeToRefs } from "pinia";
   import { NPV, continuousCompoundingNPV, simpleInterestNPV } from "@/utils/NPV";
   import { IRR } from "@/utils/IRR";
@@ -94,15 +94,14 @@
   import { watchEffect } from 'vue';
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
+  import { useRoute } from 'vue-router';
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
-  const isContinueCompound = ref(false);
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  const interest = ref(0.2);
   // 原始数据，和表格输入绑定的数据
-  const { CCFRawData: rawData } = storeToRefs(useInputStore());
+  const { CCFRawData: rawData, interest, isContinueCompound } = storeToRefs(useCircledCFInputStore());
   // 表格上展示的数据
   const displayData = computed(() => {
     let sumTime = 0;
@@ -289,7 +288,7 @@
     computeIRR();
   }
   // 导入净现值和内部收益率
-  const { npv, irr } = storeToRefs(useResultStore());
+  const { npv, irr } = storeToRefs(useCircledCFResultStore());
   // 计算净现值
   const comuputeNPV = () => {
     if (cashFlowData.value.length === 0) {
@@ -453,6 +452,19 @@
           }
         ],
       });
+    }
+  });
+
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 处理跳转传参路由
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const route = useRoute();
+  onMounted(() => {
+    if (route.query.inputData) {
+      let data = JSON.parse(route.query.inputData as string)
+      interest.value = data.interest;
+      isContinueCompound.value = data.isContinueCompound;
+      rawData.value = data.rawData;
     }
   });
 </script>

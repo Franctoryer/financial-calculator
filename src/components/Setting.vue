@@ -1,14 +1,6 @@
 <template>
   <div>
     <n-space :size="30" vertical class="setting-container">
-      <n-button @click="settingStore.storeDefault" type="info" secondary round>
-        <template #icon>
-          <n-icon>
-            <SquareHintArrowBack16Regular/>
-          </n-icon>
-        </template>
-        恢复默认设置
-      </n-button>
       <!-- 计息方式 -->
       <n-space vertical :size="5">
         <div class="option-title">计息方式：</div>
@@ -19,7 +11,7 @@
       </n-space>
       <!-- 时间点模式 -->
       <n-space vertical :size="5">
-        <div class="option-title">时间点模式：</div>
+        <div class="option-title">时间点模式（BGN/END）：</div>
         <n-radio-group v-model:value="timeMode">
           <n-radio-button value="BGN"> 期初 </n-radio-button>
           <n-radio-button value="END"> 期末 </n-radio-button>
@@ -66,6 +58,15 @@
         是否显示提示信息：
         <n-switch :round="false" v-model:value="isDisplayInfo"/>
       </n-space>
+      <!-- 恢复默认设置按钮 -->
+      <n-button @click="settingStore.storeDefault" type="default" secondary>
+        <template #icon>
+          <n-icon>
+            <SquareHintArrowBack16Regular/>
+          </n-icon>
+        </template>
+        恢复默认设置
+      </n-button>
     </n-space>
   </div>
 </template>

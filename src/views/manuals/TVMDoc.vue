@@ -1,10 +1,10 @@
 <template>
-  <div class="">
+  <div>
     <Doc :markdownContent="content"/>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import Doc from "@/views/manuals/Doc.vue";
 
   const content = 
@@ -65,7 +65,3 @@
   理解和运用货币时间价值的概念对于个人财务管理、企业财务决策和投资规划至关重要。通过折现未来的现金流，可以做出更明智的金融选择。
   `
 </script>
-
-<style>
-
-</style>

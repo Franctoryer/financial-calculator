@@ -39,7 +39,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style>
 @import 'katex/dist/katex.min.css';
 .markdown-container {
   display: flex;
@@ -50,6 +50,13 @@ onMounted(() => {
   padding-left: 100px;
   padding-right: 100px;
 }
+.markdown-container a {
+  text-decoration: none;
+  color: rgb(46, 115, 218) !important;
+}
 
+.markdown-container a:hover {
+  color: rgb(236, 164, 31) !important;
+}
 </style>
 

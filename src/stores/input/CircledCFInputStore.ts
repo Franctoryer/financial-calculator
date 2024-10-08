@@ -1,15 +1,18 @@
 import { defineStore } from 'pinia';
 import type { CCFRowDataRaw } from "@/types/CCFData";
 
-export const useInputStore = defineStore('inputStore', {
+// 周期性现金流的计算输入状态变量
+export const useCircledCFInputStore = defineStore('CircledCFInputStore', {
   state: () => ({
+    interest: 0.2,
+    isContinueCompound: false,
     CCFRawData: [
       {
         order: 1,
         cash: 1000,
         freq: 1
       }
-    ] as CCFRowDataRaw[]
+    ] as CCFRowDataRaw[],
   }),
   persist: {
     storage: sessionStorage,
