@@ -17,4 +17,12 @@ html, body {
   margin: auto;
 }
 
+.katex-html {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(66, 53, 217);
+}
 

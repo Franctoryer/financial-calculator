@@ -19,11 +19,11 @@
 
   const menuOptions: MenuOption[] = [
     {
-      label: () => h(RouterLink, { to: { name: 'base'}}, { default: () => '现金流计算器'}),
-      key: 'CashFlow',
+      label: () => h(RouterLink, { to: { name: 'TVMDoc'}}, { default: () => '货币时间价值'}),
+      key: 'TVM',
     },
     {
-      label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
+      label: () => h(RouterLink, { to: { name: 'cashFlowDoc'}}, { default: () => '现金流'}),
       key: 'LoadAndInvest',
     }
   ];

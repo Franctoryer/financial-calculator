@@ -97,10 +97,12 @@
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   const isContinueCompound = ref(false);
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 表格相关数据和方法
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   const interest = ref(0.2);
   // 原始数据，和表格输入绑定的数据
   const { CCFRawData: rawData } = storeToRefs(useInputStore());
-
   // 表格上展示的数据
   const displayData = computed(() => {
     let sumTime = 0;
@@ -268,7 +270,7 @@
     let len = rawData.value.length;
     rawData.value.splice(index || len - 1, 1);  // 删除对应索引的行数据
   }
-
+  // 删除所有数据
   const deleteAll = () => {
     if (rawData.value.length === 0) {
       window.$message.warning(NO_DELETING, MESSAGE_CONFIG)
@@ -276,7 +278,12 @@
     }
     rawData.value = [];
   }
-  // 更换结果
+
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 结果相关的数据和方法(NPV和IRR)
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 按计算按钮，刷新结果
   const computeResult = () => {
     comuputeNPV();
     computeIRR();
@@ -317,7 +324,7 @@
     }
     irr.value = result;
   }
-
+  // 判断输入的现金流是否能计算IRR(至少一正一负)
   const isValidToIRR = () => {
     let positive = 0;
     let negative = 0;
@@ -328,6 +335,11 @@
 
     return positive > 0 && negative > 0;
   }
+
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 现金流可视化（现金流量图）
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 画现金流量图
   const cashFlowChart = ref(null);
   onMounted(() => {
