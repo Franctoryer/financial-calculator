@@ -1,14 +1,15 @@
 <template>
   <div class="main">
     <div class="save-time"><b>{{ saveTime }}</b></div>
-    <div class="calc-name"><b>{{ calcName }}</b></div>
+    <n-tag :bordered="false" type="info" size="small" class="calc-name"> {{ calcName }} </n-tag>
     <div class="input-data">{{ inputData }}</div>
     <div class="result-data">{{ resultData }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps(['saveTime', 'calcName', 'inputData', 'resultData'])
+  import { NTag } from "naive-ui";
+  defineProps(['saveTime', 'calcName', 'inputData', 'resultData'])
 </script>
 
 <style scoped>
@@ -30,15 +31,14 @@ defineProps(['saveTime', 'calcName', 'inputData', 'resultData'])
 .save-time {
   font-size: medium;
 }
-.calc-name {
-  color: #ba5140;
-}
 
 .input-data {
   font-size: smaller;
+  color: #858688
 }
 
 .result-data {
   font-size: smaller;
+  color: #858688
 }
 </style>

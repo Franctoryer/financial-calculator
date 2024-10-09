@@ -6,12 +6,9 @@ export const useHistoryStore = defineStore('historyStore', {
   state: () => ({
     historyData: [] as HistoryData[]
   }),
-  getters: {
-    reservedHistoryData: (state) => state.historyData.reverse()
-  },
   actions: {
     addHistory(history: HistoryData) {
-      this.historyData.push(history);
+      this.historyData.unshift(history);
     },
     deleteAllHistory() {
       this.historyData = [];
