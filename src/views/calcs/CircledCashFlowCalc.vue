@@ -65,8 +65,8 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ npv }} {{ currencySymbol }}</td>
-          <td>{{ irr }}</td>
+          <td>{{ npvView.number }} {{ currencySymbol }}</td>
+          <td>{{ irrView.number }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
   import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NNumberAnimation } from 'naive-ui';
-  import { ref, h, computed, nextTick } from 'vue';
+  import { ref, h, computed, nextTick, reactive } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { ComputedRef } from 'vue';
@@ -95,7 +95,8 @@
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';
-  import { useHistoryStore } from "@/stores/historyStore"
+  import { useHistoryStore } from "@/stores/historyStore";
+  import gsap from "gsap";
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -359,6 +360,34 @@
     }
     historyStore.addHistory(history);
   }
+
+  // 添加数字滚动特效
+  const npvView = reactive({
+    number: 0
+  });
+  const irrView = reactive({
+    number: 0
+  });
+  watch(npv, (n) => {
+    gsap.to(npvView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        npvView.number = Number(npvView.number.toFixed(precision.value));
+      }
+    });
+  });
+  watch(irr, (n) => {
+    gsap.to(irrView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        irrView.number = Number(irrView.number.toFixed(precision.value));
+      }
+    });
+  })
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 现金流可视化（现金流量图）
