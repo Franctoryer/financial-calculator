@@ -1,6 +1,6 @@
 <template>
   <div class="temp">
-    这里是主页
+    <img src="@/assets/pictures/xinxiange.gif"/>
   </div>
 </template>
 
