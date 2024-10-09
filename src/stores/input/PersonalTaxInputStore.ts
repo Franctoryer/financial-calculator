@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const usePersonalTaxInputStore = defineStore('PersonalTaxInputStore', {
     state: () => ({
-        months: 0,
+        months: 1,
         income: 3000,
         fiveonetax: 0,
         sidecosts: 0,

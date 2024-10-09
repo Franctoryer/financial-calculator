@@ -4,7 +4,7 @@
       <!-- 月份 -->
       <n-space vertical :size="5">
         <div class="option-title">月份（实际工作月数）：</div>
-        <n-slider v-model:value="months" :step="1" :max="12">
+        <n-slider v-model:value="months" :step="1" :min="1" :max="12">
           <template #thumb v-if="months < 5">
             <n-icon-wrapper :size="15" :border-radius="10">
               <n-icon :size="15" :component="AnimalTurtle24Regular"/>
@@ -31,7 +31,7 @@
           <n-input-number v-model:value="income" size="small" :step="1000" :validator="incomeValidator"/>
         </div>
         <div>累计税前工资：
-          <n-input-number v-model:value="income" size="small" :step="1000" :validator="incomeValidator"/>
+          <n-input-number v-model:value="all_income" size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
         </div>
       </n-space>
     </div>
@@ -43,7 +43,7 @@
           <n-input-number v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>
         </div>
         <div>累计五险一金：
-          <n-input-number v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>
+          <n-input-number v-model:value="all_fiveonetax" size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
         </div>
         </n-space>
         </div>
@@ -54,8 +54,8 @@
         <div>专项附加扣除：
           <n-input-number v-model:value="sidecosts" size="small" :step="1000" :validator="sidecostsValidator"/>
         </div>
-        <div>专项附加扣除：
-          <n-input-number v-model:value="sidecosts" size="small" :step="1000" :validator="sidecostsValidator"/>
+        <div>累计专项附加扣除：
+          <n-input-number v-model:value="all_sidecosts" size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
         </div>
       </n-space>
       </div>
@@ -66,8 +66,8 @@
         <div>其他扣除：
           <n-input-number v-model:value="othercosts" size="small" :step="1000" :validator="othercostsValidator"/>
         </div>
-        <div>其他扣除：
-          <n-input-number v-model:value="othercosts" size="small" :step="1000" :validator="othercostsValidator"/>
+        <div>累计其他扣除：
+          <n-input-number v-model:value="all_othercosts" size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
         </div>
       </n-space>
     </div>
@@ -90,11 +90,12 @@
   import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
+  import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const { months, income, fiveonetax, sidecosts, othercosts } = storeToRefs(usePersonalTaxInputStore());
- 
+  const { all_income, all_fiveonetax, all_sidecosts, all_othercosts } = storeToRefs(usePersonalTaxResultStore());
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
   const incomeValidator = (x: number) => x >= 0; 
   const fiveonetaxValidator = (x:number) => x >=0;
@@ -105,6 +106,10 @@
 
   }
   const computeResult = () => {
+   all_income.value = months.value*income.value;
+   all_fiveonetax.value = months.value*fiveonetax.value;
+   all_sidecosts.value = months.value*sidecosts.value;
+   all_othercosts.value = months.value*othercosts.value;
    
   }
 
