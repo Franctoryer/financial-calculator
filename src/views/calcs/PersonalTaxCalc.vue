@@ -89,15 +89,12 @@
   import { ref } from 'vue';
   import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
+  import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
-  const months = ref(0);
-  const income = ref(3000);
-  const fiveonetax = ref(0);
-  const sidecosts = ref(0);
-  const othercosts = ref(0);
-
+  const { months, income, fiveonetax, sidecosts, othercosts } = storeToRefs(usePersonalTaxInputStore());
+ 
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
   const incomeValidator = (x: number) => x >= 0; 
   const fiveonetaxValidator = (x:number) => x >=0;
