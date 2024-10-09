@@ -12,6 +12,9 @@ export const useHistoryStore = defineStore('historyStore', {
     },
     deleteAllHistory() {
       this.historyData = [];
+    },
+    deleteOneHistory(idx: number) {
+      this.historyData.splice(idx, 1);
     }
   },
   persist: true
