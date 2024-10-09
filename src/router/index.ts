@@ -63,18 +63,23 @@ const router = createRouter({
 		{
 			name: 'manual',
 			path: '/manual',
-			redirect: '/manual/TVM',
+			redirect: '/manual/BaseCalc',
 			component: () => import('@/views/Manual.vue'),
 			children: [
 				{
-					name: 'TVMDoc',
-					path: 'TVM',
-					component: () => import('@/views/manuals/TVMDoc.vue')
+					name: 'BaseCalcManual',
+					path: 'BaseCalc',
+					component: () => import('@/views/manuals/BaseCalcManual.vue')
 				},
 				{
 					name: 'cashFlowDoc',
 					path: 'cashflow',
-					component: () => import('@/views/manuals/CashFlowDoc.vue')
+					component: () => import('@/views/manuals/cashFlowDoc.vue')
+				},
+				{
+					name: 'TVMDoc',
+					path: 'TVM',
+					component: () => import('@/views/manuals/TVMDoc.vue')
 				}
 			]
 		}
