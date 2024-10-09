@@ -26,6 +26,7 @@
   padding: 5px;
   background-color: rgb(250, 250, 250);
   cursor: pointer;
+  width: 100%;
 }
 
 .save-time {

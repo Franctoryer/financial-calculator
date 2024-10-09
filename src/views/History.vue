@@ -5,21 +5,37 @@
         <History16Regular/>
       </n-icon>
       <div class="title">历史记录</div>
-    </div> 
-    <n-button @click="historyStore.deleteAllHistory" class="delete-all-btn" type="error" secondary>删除所有记录</n-button>
+    </div>
+    <div class="delete-container">
+      <n-icon @click="isDeleting = !isDeleting" :size="25" class="delete-icon">
+        <Delete20Filled/>
+      </n-icon>
+      <n-button 
+        v-if="isDeleting"
+        @click="historyStore.deleteAllHistory" 
+        class="delete-all-btn" 
+        type="error" 
+        secondary>
+        删除所有记录
+      </n-button>
+    </div>
     <div class="history-container">
       <div class="total-num">总共 {{ historyData.length }} 条记录：</div>
       <n-scrollbar style="max-height: 100vh">
         <n-empty description="没有任何记录" v-if="historyData.length === 0" class="nothing"></n-empty>
-        <HistoryElement 
-          v-for="data in historyData"
-          :key="data.key"
-          :saveTime="formatTimestamp(data.saveTime)"
-          :calcName="getCalcByPathName(data.name)"
-          :inputData="objectToString(data.inputData)"
-          :resultData="objectToString(data.resultData)"
-          @click="restoreCalculation(data)"
-        />
+        <div v-for="(data, index) in historyData" class="history-element">
+          <n-icon v-if="isDeleting" :size="25" @click="historyStore.deleteOneHistory(index)" class="delete-one">
+            <DismissCircle28Regular/>
+          </n-icon>
+          <HistoryElement 
+            :key="data.key"
+            :saveTime="formatTimestamp(data.saveTime)"
+            :calcName="getCalcByPathName(data.name)"
+            :inputData="objectToString(data.inputData)"
+            :resultData="objectToString(data.resultData)"
+            @click="restoreCalculation(data)"
+          />
+        </div>
       </n-scrollbar>
       <n-divider dashed/>
     </div>
@@ -29,6 +45,8 @@
 <script setup lang="ts">
   import HistoryElement from "@/components/HistoryElement.vue";
   import History16Regular from "@vicons/fluent/History16Regular";
+  import DismissCircle28Regular from "@vicons/fluent/DismissCircle28Regular";
+  import Delete20Filled from "@vicons/fluent/Delete20Filled";
   import { NIcon, NButton, NScrollbar, NEmpty, NDivider } from "naive-ui";
   import { useRouter } from "vue-router";
   import { useHistoryStore } from "@/stores/historyStore";
@@ -37,9 +55,11 @@
   import { getCalcByPathName } from "@/utils/getCalcByPathName";
   import { objectToString } from "@/utils/objectToString";
   import { formatTimestamp } from "@/utils/formatTimeStamp"
+  import { ref } from "vue";
 
   const historyStore = useHistoryStore();
   const { historyData } = storeToRefs(historyStore);
+  const isDeleting = ref(false);
 
   const router = useRouter();
   const restoreCalculation = (item: HistoryData) => {
@@ -53,7 +73,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .title-container {
   display: flex;
   flex-direction: row;
@@ -84,4 +104,35 @@
   font-size: medium;
   font-weight: bold;
 }
+
+.history-element {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.delete-icon {
+  cursor: pointer;
+}
+.delete-icon:hover {
+  color: #c12c1f;
+}
+
+.delete-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  height: 30px
+}
+
+.delete-one {
+  color: rgb(159, 159, 159);
+  margin-left: 10px;
+  cursor: pointer;
+}
+.delete-one:hover {
+  color: #c35c5d;
+}
+
 </style>
