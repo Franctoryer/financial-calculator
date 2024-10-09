@@ -19,12 +19,16 @@
 
   const menuOptions: MenuOption[] = [
     {
-      label: () => h(RouterLink, { to: { name: 'TVMDoc'}}, { default: () => '货币时间价值'}),
-      key: 'TVM',
+      label: () => h(RouterLink, { to: { name: 'BaseCalcManual'}}, { default: () => '科学计算器'}),
+      key: 'BaseCalc',
     },
     {
       label: () => h(RouterLink, { to: { name: 'cashFlowDoc'}}, { default: () => '现金流'}),
       key: 'LoadAndInvest',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'TVMDoc'}}, { default: () => '货币时间价值'}),
+      key: 'TVM',
     }
   ];
 </script>
