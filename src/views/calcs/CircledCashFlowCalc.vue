@@ -91,10 +91,11 @@
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
-  import { watchEffect } from 'vue';
+  import { watchEffect, watch } from 'vue';
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';
+  import { useHistoryStore } from "@/stores/historyStore"
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -282,10 +283,11 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 结果相关的数据和方法(NPV和IRR)
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  // 按计算按钮，刷新结果
+  // 按计算按钮，刷新结果，将数据保存到历史记录
   const computeResult = () => {
     comuputeNPV();
     computeIRR();
+    addHistory();
   }
   // 导入净现值和内部收益率
   const { npv, irr } = storeToRefs(useCircledCFResultStore());
@@ -335,7 +337,28 @@
 
     return positive > 0 && negative > 0;
   }
+  // 将计算结果和计算输入存入历史记录
+  const historyStore = useHistoryStore();
+  const { historyData } = storeToRefs(historyStore);
+  import type { HistoryData } from "@/types/HistoryData";
 
+  const addHistory = () => {
+    let history: HistoryData = {
+      key: historyData.value.length,
+      saveTime: Date.now(),
+      name: 'circled-cashflow',
+      inputData: {
+        interest: interest.value,
+        isContinueCompound: isContinueCompound.value,
+        rawData: rawData.value
+      },
+      resultData: {
+        npv: npv.value,
+        irr: irr.value
+      }
+    }
+    historyStore.addHistory(history);
+  }
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 现金流可视化（现金流量图）
@@ -460,13 +483,24 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   const route = useRoute();
   onMounted(() => {
-    if (route.query.inputData) {
-      let data = JSON.parse(route.query.inputData as string)
-      interest.value = data.interest;
-      isContinueCompound.value = data.isContinueCompound;
-      rawData.value = data.rawData;
-    }
+    handleHistoryRoute();
   });
+  // 在当前页面回滚历史数据
+  watch(route, () => {
+    handleHistoryRoute();
+  })
+  // 回滚历史数据
+  const handleHistoryRoute = () => {
+    if (route.query.inputData) {
+      let inputData = JSON.parse(route.query.inputData as string)
+      let resultData = JSON.parse(route.query.resultData as string)
+      interest.value = inputData.interest;
+      isContinueCompound.value = inputData.isContinueCompound;
+      rawData.value = inputData.rawData;
+      npv.value = resultData.npv;
+      irr.value = resultData.irr;
+    }
+  }
 </script>
 
 <style scoped>

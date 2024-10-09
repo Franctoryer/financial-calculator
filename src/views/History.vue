@@ -6,43 +6,43 @@
       </n-icon>
       <div class="title">历史记录</div>
     </div> 
+    <n-button @click="historyStore.deleteAllHistory" class="delete-all-btn">删除所有记录</n-button>
+    <div class="history-container">
       <HistoryElement 
-      :saveTime="saveTime"
-      :calcName="calcName"
-      :inputData="inputData"
-      :outputData="outputData"
-      @click="restoreCalculation"
-    />
+      v-for="data in reservedHistoryData"
+      :key="data.key"
+      :saveTime="formatTimestamp(data.saveTime)"
+      :calcName="getCalcByPathName(data.name)"
+      :inputData="objectToString(data.inputData)"
+      :resultData="objectToString(data.resultData)"
+      @click="restoreCalculation(data)"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import HistoryElement from "@/components/HistoryElement.vue";
   import History16Regular from "@vicons/fluent/History16Regular";
-  import { NIcon } from "naive-ui";
+  import { NIcon, NButton } from "naive-ui";
   import { useRouter } from "vue-router";
+  import { useHistoryStore } from "@/stores/historyStore";
+  import { storeToRefs } from "pinia";
+  import type { HistoryData } from "@/types/HistoryData";
+  import { getCalcByPathName } from "@/utils/getCalcByPathName";
+  import { objectToString } from "@/utils/objectToString";
+  import { formatTimestamp } from "@/utils/formatTimeStamp"
 
-  let saveTime = '1分钟前';
-  let calcName = '周期性现金流';
-  let inputData = '贴现率:12%; 分期复利';
-  let outputData = 'NPV:321; IRR:32%';
-  let input = {
-    interest: 0.12,
-    isContinueCompound: true,
-    rawData: [
-      {
-        order: 1,
-        cash: 1213,
-        freq: 2
-      }
-    ]
-  }
+  const historyStore = useHistoryStore();
+  const { reservedHistoryData } = storeToRefs(historyStore);
+
   const router = useRouter();
-  const restoreCalculation = () => {
+  const restoreCalculation = (item: HistoryData) => {
     router.push({
-      name: 'circled-cashflow',
+      name: item.name,
       query: {
-        inputData: JSON.stringify(input)
+        inputData: JSON.stringify(item.inputData),
+        resultData: JSON.stringify(item.resultData)
       }
     });
   }
@@ -62,4 +62,10 @@
 .title {
   margin-left: 3px;
 }
+
+.history-container {
+  display: flex;
+  flex-direction: column;
+}
+
 </style>

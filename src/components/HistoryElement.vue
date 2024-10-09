@@ -3,12 +3,12 @@
     <div class="save-time"><b>{{ saveTime }}</b></div>
     <div class="calc-name"><b>{{ calcName }}</b></div>
     <div class="input-data">{{ inputData }}</div>
-    <div class="output-data">{{ outputData }}</div>
+    <div class="result-data">{{ resultData }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps(['saveTime', 'calcName', 'inputData', 'outputData'])
+defineProps(['saveTime', 'calcName', 'inputData', 'resultData'])
 </script>
 
 <style scoped>
@@ -19,6 +19,7 @@ defineProps(['saveTime', 'calcName', 'inputData', 'outputData'])
   border-radius: 1cap;
   margin-left: 10px;
   margin-right: 10px;
+  margin: 5px 10px 5px 10px;
   justify-items: center;
   align-items: center;
   padding: 5px;
@@ -37,7 +38,7 @@ defineProps(['saveTime', 'calcName', 'inputData', 'outputData'])
   font-size: smaller;
 }
 
-.output-data {
+.result-data {
   font-size: smaller;
 }
 </style>
