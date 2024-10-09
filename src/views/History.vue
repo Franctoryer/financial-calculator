@@ -8,7 +8,7 @@
     </div> 
     <n-button @click="historyStore.deleteAllHistory" class="delete-all-btn" type="error" secondary>删除所有记录</n-button>
     <div class="history-container">
-      <n-divider dashed/>
+      <div class="total-num">总共 {{ historyData.length }} 条记录：</div>
       <n-scrollbar style="max-height: 100vh">
         <n-empty description="没有任何记录" v-if="historyData.length === 0" class="nothing"></n-empty>
         <HistoryElement 
@@ -77,4 +77,11 @@
   margin-left: 10px;
 }
 
+.total-num {
+  margin-left: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: medium;
+  font-weight: bold;
+}
 </style>
