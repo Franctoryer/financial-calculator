@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
   import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NNumberAnimation } from 'naive-ui';
-  import { ref, h, computed, nextTick, reactive } from 'vue';
+  import { ref, h, computed, nextTick, reactive, toRaw } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { ComputedRef } from 'vue';
@@ -92,7 +92,7 @@
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
   import { watchEffect, watch } from 'vue';
-  import { AddSubtractCircle24Filled } from '@vicons/fluent';
+  import { AddSubtractCircle24Filled, NumberSymbolDismiss24Regular } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';
   import { useHistoryStore } from "@/stores/historyStore";
@@ -299,11 +299,11 @@
     } else if (cashFlowData.value.length === 1) {
       npv.value =  cashFlowData.value[0];
     } else {
-      let result: string;
+      let result: number;
       if (!isCompound.value) {
-        result = simpleInterestNPV(interest.value, cashFlowData.value).toFixed(precision.value);
+        result = Number(simpleInterestNPV(interest.value, cashFlowData.value).toFixed(precision.value));
       } else {
-        result = isContinueCompound.value ? continuousCompoundingNPV(interest.value, cashFlowData.value).toFixed(precision.value) : NPV(interest.value, cashFlowData.value).toFixed(precision.value); 
+        result = isContinueCompound.value ? Number(continuousCompoundingNPV(interest.value, cashFlowData.value).toFixed(precision.value)) : Number(NPV(interest.value, cashFlowData.value).toFixed(precision.value)); 
       }
       npv.value = result; 
     }
@@ -319,11 +319,11 @@
       irr.value = Number.NaN;
       return;
     }
-    let result: number | string;
+    let result: number;
     if (!isCompound.value) {
-      result = IRR(simpleInterestNPV, cashFlowData.value).toFixed(precision.value);
+      result = Number(IRR(simpleInterestNPV, cashFlowData.value).toFixed(precision.value));
     } else {
-      result = isContinueCompound.value ? IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value) : IRR(NPV, cashFlowData.value).toFixed(precision.value); 
+      result = isContinueCompound.value ? Number(IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value)) : Number(IRR(NPV, cashFlowData.value).toFixed(precision.value)); 
     }
     irr.value = result;
   }
@@ -345,28 +345,27 @@
 
   const addHistory = () => {
     let history: HistoryData = {
-      key: historyData.value.length,
       saveTime: Date.now(),
       name: 'circled-cashflow',
       inputData: {
         interest: interest.value,
         isContinueCompound: isContinueCompound.value,
-        rawData: rawData.value
+        rawData: JSON.parse(JSON.stringify(rawData.value))  // 引用对象要深拷贝而不是浅拷贝
       },
       resultData: {
         npv: npv.value,
         irr: irr.value
       }
-    }
+    } 
     historyStore.addHistory(history);
   }
 
   // 添加数字滚动特效
   const npvView = reactive({
-    number: 0
+    number: Number(npv.value)
   });
   const irrView = reactive({
-    number: 0
+    number: Number(irr.value)
   });
   watch(npv, (n) => {
     gsap.to(npvView, { 
@@ -378,10 +377,16 @@
       }
     });
   });
-  watch(irr, (n) => {
+  watch(irr, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    console.log(newVal, oldVal);
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      irrView.number = newVal;
+      return;
+    }
     gsap.to(irrView, { 
       duration: 0.5, 
-      number: Number(n),
+      number: newVal,
       onUpdate: () => {
         // 在动画过程中格式化数字
         irrView.number = Number(irrView.number.toFixed(precision.value));
@@ -394,8 +399,9 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 画现金流量图
   const cashFlowChart = ref(null);
+  let myChart: any;
   onMounted(() => {
-    const myChart = echarts.init(cashFlowChart.value);
+    myChart = echarts.init(cashFlowChart.value);
     const chartOption = {
       title: {
         text: '现金流量图'
@@ -486,7 +492,6 @@
   watchEffect(() => {
     // 更新 ECharts 图表
     if (cashFlowChart.value) {
-      const myChart = echarts.init(cashFlowChart.value);
       myChart.setOption({
         xAxis: {
           data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
@@ -520,14 +525,14 @@
   })
   // 回滚历史数据
   const handleHistoryRoute = () => {
-    if (route.query.inputData) {
+    if (route.query.inputData && route.query.resultData) {
       let inputData = JSON.parse(route.query.inputData as string)
       let resultData = JSON.parse(route.query.resultData as string)
       interest.value = inputData.interest;
       isContinueCompound.value = inputData.isContinueCompound;
       rawData.value = inputData.rawData;
       npv.value = resultData.npv;
-      irr.value = resultData.irr;
+      irr.value = resultData.irr === null ? NaN : resultData.irr; // NaN会被解析成 null
     }
   }
 </script>

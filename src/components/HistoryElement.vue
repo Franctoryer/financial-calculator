@@ -29,6 +29,10 @@
   width: 100%;
 }
 
+.main:hover {
+  background-color: rgb(231, 231, 231);
+}
+
 .save-time {
   font-size: medium;
 }

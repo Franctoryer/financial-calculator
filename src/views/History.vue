@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="title-container">
-      <n-icon :size="25">
+      <n-icon :size="25" @click="refreshPage" style="cursor: pointer;">
         <History16Regular/>
       </n-icon>
       <div class="title">历史记录</div>
@@ -28,7 +28,7 @@
             <DismissCircle28Regular/>
           </n-icon>
           <HistoryElement 
-            :key="data.key"
+            :key="data.saveTime"
             :saveTime="formatTimestamp(data.saveTime)"
             :calcName="getCalcByPathName(data.name)"
             :inputData="objectToString(data.inputData)"
@@ -70,6 +70,14 @@
         resultData: JSON.stringify(item.resultData)
       }
     });
+  }
+
+  const refreshPage = () => {
+    const currentUrl = window.location.href;
+    // 获取当前URL的路径部分
+    const baseUrl = currentUrl.split('?')[0];
+    // 刷新页面，使用路径部分作为新的URL
+    window.location.href = baseUrl;
   }
 </script>
 
@@ -134,5 +142,4 @@
 .delete-one:hover {
   color: #c35c5d;
 }
-
 </style>
