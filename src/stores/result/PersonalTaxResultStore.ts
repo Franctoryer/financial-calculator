@@ -9,6 +9,7 @@ export const usePersonalTaxResultStore = defineStore('PersonalTaxResultStore', {
         all_tax_threshold: 5000,
         taxable_income: 0,
         taxRate: 0,
+        display_taxRate: 0,
         quickDeduction: 0,
         lastweek_taxable_income: 0,
         lastweek_taxRate: 0,

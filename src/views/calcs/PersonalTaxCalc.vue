@@ -105,7 +105,7 @@
         <div>
         <n-space :wrap="false">
         <div>税率：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="taxRate" size="small" :step="1000" :show-button="false"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="display_taxRate" size="small" :step="1000" :show-button="false"/>%</n-space>
         </div>
         <div>累计已缴税额：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="lastweek_tax"  size="small" :step="1000" :show-button="false" />元</n-space>
@@ -146,7 +146,7 @@
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const { PTInputData, months, income, fiveonetax, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold, 
-          taxable_income, taxRate, quickDeduction, lastweek_taxable_income,
+          taxable_income, taxRate, display_taxRate, quickDeduction, lastweek_taxable_income,
           lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
           current_tax, taxed_income} = storeToRefs(usePersonalTaxResultStore());
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
@@ -166,7 +166,7 @@
     income.value = 3000;tax_threshold.value =5000;
     computeAllInput();
     all_income.value = 0;all_fiveonetax.value = 0;all_sidecosts.value = 0;all_othercosts.value = 0;all_tax_threshold.value = 0;
-    taxRate.value = 0.03;
+      taxRate.value = 0.03;display_taxRate.value = 100*taxRate.value;
     taxable_income.value = 0;quickDeduction.value = 0;tax.value = 0;lastweek_tax.value = 0;current_tax.value = 0;taxed_income.value = 0;
   }
 
@@ -177,6 +177,7 @@
       computeLastWeekTax();
       computeTaxedIncome();
       toPresicion();
+      display_taxRate.value = 100*taxRate.value;
   }
 
   const computeAllInput = () => {
@@ -253,6 +254,7 @@
      computeAllInput();
    });
 
+  
   
 
 </script>
