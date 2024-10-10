@@ -42,7 +42,10 @@
       <!-- 货币类型 -->
       <n-space vertical :size="5">
         <div class="option-title">货币类型：</div>
-        <n-select v-model:value="currencyType" :options="currencyOptions" />
+        <n-select 
+          v-model:value="currencyType" 
+          :options="currencyOptions" 
+        />
       </n-space>
       <!-- 时间单位 -->
       <n-space vertical :size="5">
@@ -72,87 +75,97 @@
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NButton } from 'naive-ui';
+  import { NTooltip, NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NButton } from 'naive-ui';
   import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
   import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
   import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
   import SquareHintArrowBack16Regular from '@vicons/fluent/SquareHintArrowBack16Regular';
   import { useSettingStore } from '@/stores/settingStore';
   import { storeToRefs } from 'pinia';
+  import { h } from 'vue';
+  import type { VNode } from 'vue';
+  import type { SelectOption } from 'naive-ui';
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
-  {
-    label: '美元',
-    value: 'USD'
-  },
-  {
-    label: '欧元',
-    value: 'EUR'
-  },
-  {
-    label: '英镑',
-    value: 'GBP'
-  },
-  {
-    label: '日元',
-    value: 'JPY'
-  },
-  {
-    label: '瑞士法郎',
-    value: 'CHF'
-  },
-  {
-    label: '加元',
-    value: 'CAD'
-  },
-  {
-    label: '澳元',
-    value: 'AUD'
-  },
-  {
-    label: '人民币',
-    value: 'CNY'
-  },
-  {
-    label: '印度卢比',
-    value: 'INR'
-  },
-  {
-    label: '俄罗斯卢布',
-    value: 'RUB'
-  },
-  {
-    label: '巴西雷亚尔',
-    value: 'BRL'
-  },
-  {
-    label: '南非兰特',
-    value: 'ZAR'
-  },
-  {
-    label: '墨西哥比索',
-    value: 'MXN'
-  },
-  {
-    label: '新加坡元',
-    value: 'SGD'
-  },
-  {
-    label: '港元',
-    value: 'HKD'
-  },
-  {
-    label: '新西兰元',
-    value: 'NZD'
-  },
-  {
-    label: '韩元',
-    value: 'KRW'
-  }
-];
+    {
+      label: '美元',
+      value: 'USD'
+    },
+    {
+      label: '欧元',
+      value: 'EUR'
+    },
+    {
+      label: '英镑',
+      value: 'GBP'
+    },
+    {
+      label: '日元',
+      value: 'JPY'
+    },
+    {
+      label: '瑞士法郎',
+      value: 'CHF'
+    },
+    {
+      label: '加元',
+      value: 'CAD'
+    },
+    {
+      label: '澳元',
+      value: 'AUD'
+    },
+    {
+      label: '人民币',
+      value: 'CNY'
+    },
+    {
+      label: '印度卢比',
+      value: 'INR'
+    },
+    {
+      label: '俄罗斯卢布',
+      value: 'RUB'
+    },
+    {
+      label: '巴西雷亚尔',
+      value: 'BRL'
+    },
+    {
+      label: '南非兰特',
+      value: 'ZAR'
+    },
+    {
+      label: '墨西哥比索',
+      value: 'MXN'
+    },
+    {
+      label: '新加坡元',
+      value: 'SGD'
+    },
+    {
+      label: '港元',
+      value: 'HKD'
+    },
+    {
+      label: '新西兰元',
+      value: 'NZD'
+    },
+    {
+      label: '韩元',
+      value: 'KRW'
+    }
+  ];
+  
+  // TODO: 给每个选项加icon
+  const renderOption = ({ node, option }: { node: VNode, option: SelectOption }) =>
+    h(NTooltip, null, {
+      trigger: () => node,
+      default: () => `Rubber Soul -${option.label}`
+    })
 
 </script>
 

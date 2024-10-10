@@ -496,7 +496,7 @@
     });
     // @ts-ignore
     resizeOb.observe(cashFlowChart.value);
-    })
+  })
   // 监听 cashFlowData 的变化
   watchEffect(() => {
     // 更新 ECharts 图表

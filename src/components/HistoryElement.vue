@@ -39,11 +39,19 @@
 
 .input-data {
   font-size: smaller;
-  color: #858688
+  color: #858688;
+  white-space: nowrap; /* 保持文本在一行内 */
+  overflow: hidden; /* 隐藏溢出的内容 */
+  text-overflow: ellipsis; /* 用省略号表示溢出的内容 */
+  width: 90%;
 }
 
 .result-data {
   font-size: smaller;
-  color: #858688
+  color: #858688;
+  white-space: nowrap; /* 保持文本在一行内 */
+  overflow: hidden; /* 隐藏溢出的内容 */
+  text-overflow: ellipsis; /* 用省略号表示溢出的内容 */
+  width: 90%;
 }
 </style>
