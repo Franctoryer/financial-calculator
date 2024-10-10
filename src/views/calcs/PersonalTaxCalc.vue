@@ -3,7 +3,7 @@
     <n-space :size="5" vertical class="PersonalTaxCalc-container">
       <!-- 月份 -->
       <n-space vertical :size="5">
-        <div>月份（实际工作月数）：</div>
+        <div>月份：</div>
         <n-slider v-model:value="months" :step="1" :min="1" :max="12">
           <template #thumb v-if="months < 5">
             <n-icon-wrapper :size="15" :border-radius="10">
