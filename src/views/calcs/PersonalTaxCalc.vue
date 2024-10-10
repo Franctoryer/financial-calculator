@@ -28,10 +28,10 @@
       <div>
         <n-space :wrap="false">
         <div>单月税前工资：
-          <n-input-number class="input-container" v-model:value="income"  size="small" :step="1000" :validator="incomeValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :validator="incomeValidator"/>元</n-space>
         </div>
         <div>累计税前工资：
-          <n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
         </div>
         </n-space>
     </div>
@@ -40,10 +40,10 @@
         <div>
         <n-space :wrap="false">
         <div>五险一金：
-          <n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>元</n-space>
         </div>
         <div>累计五险一金：
-          <n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>元</n-space>
         </div>
         </n-space>
         </div>
@@ -52,10 +52,10 @@
         <div>
         <n-space :wrap="false">
         <div>专项附加扣除：
-          <n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :validator="sidecostsValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :validator="sidecostsValidator"/>元</n-space>
         </div>
         <div>累计专项附加扣除：
-          <n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>元</n-space>
         </div>
       </n-space>
       </div>
@@ -64,20 +64,20 @@
         <div>
         <n-space :wrap="false">
         <div>其他扣除：
-          <n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :validator="othercostsValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :validator="othercostsValidator"/>元</n-space>
         </div>
         <div>累计其他扣除：
-          <n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>元</n-space>
         </div>
       </n-space>
 
       <!-- 固定扣除 -->
       <n-space :wrap="false">
         <div>固定减除（个税起征点）:
-          <n-input-number class="result-display1" v-model:value="tax_threshold"  size="small" readonly/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="tax_threshold" size="small" readonly/>元</n-space>
         </div>
         <div>累计减除:
-          <n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>元s</n-space>
         </div>
       </n-space>
 
@@ -94,10 +94,10 @@
       <div>
         <n-space :wrap="false">
         <div>应纳税所得额：
-          <n-input-number class="result-display2" v-model:value="taxable_income" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="taxable_income" size="small" :step="1000" :show-button="false"/>元</n-space>
         </div>
         <div>累计应纳税额：
-          <n-input-number class="result-display2" v-model:value="tax"  size="small" :step="1000" :show-button="false" />
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="tax"  size="small" :step="1000" :show-button="false" />元</n-space>
         </div>
         </n-space>
         </div>
@@ -105,10 +105,10 @@
         <div>
         <n-space :wrap="false">
         <div>税率：
-          <n-input-number class="result-display2" v-model:value="taxRate" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="taxRate" size="small" :step="1000" :show-button="false"/>元</n-space>
         </div>
         <div>累计已缴税额：
-          <n-input-number class="result-display2" v-model:value="lastweek_tax"  size="small" :step="1000" :show-button="false" />
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="lastweek_tax"  size="small" :step="1000" :show-button="false" />元</n-space>
         </div>
         </n-space>
         </div>
@@ -116,14 +116,14 @@
         <div>
         <n-space :wrap="false">
         <div>速算扣除数：
-          <n-input-number class="result-display2" v-model:value="quickDeduction" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="quickDeduction" size="small" :step="1000" :show-button="false"/>元</n-space>
         </div>
-        <div>当月个税（应补税额）：
-          <n-input-number class="result-display4" v-model:value="current_tax"  size="small" :step="1000" :show-button="false" />
+        <div>当月个税：
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="current_tax"  size="small" :step="1000" :show-button="false" />元</n-space>
         </div>
         </n-space>
         </div>税后工资：
-        <n-input-number class="result-display5" v-model:value="taxed_income"  size="small" :step="1000" :show-button="false" />
+        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income"  size="small" :step="1000" :show-button="false" />元</n-space>
     </n-space>
   </div>
 </template>
@@ -157,10 +157,17 @@
 
 
   const deleteAll = () => {
+ /*   if (rawData.value.length === 0) {
+      window.$message.warning(NO_DELETING, MESSAGE_CONFIG)
+      return;
+    }*/
     months.value = 1;
-    fiveonetax.value,sidecosts.value,othercosts.value = 0;
+    fiveonetax.value = 0;sidecosts.value = 0;othercosts.value = 0;
     income.value = 3000;tax_threshold.value =5000;
     computeAllInput();
+    all_income.value = 0;all_fiveonetax.value = 0;all_sidecosts.value = 0;all_othercosts.value = 0;all_tax_threshold.value = 0;
+    taxRate.value = 0.03;
+    taxable_income.value = 0;quickDeduction.value = 0;tax.value = 0;lastweek_tax.value = 0;current_tax.value = 0;taxed_income.value = 0;
   }
 
   const computeResult = () => {
@@ -223,7 +230,7 @@
     }else{
       lastweek_taxRate.value = 0.45,lastweek_quickDeduction.value = 181920
     }
-    lastweek_tax.value = lastweek_taxRate.value*lastweek_taxable_income.value-lastweek_quickDeduction.value
+    lastweek_tax.value = Math.min(lastweek_taxRate.value*lastweek_taxable_income.value-lastweek_quickDeduction.value,tax.value);
   }
 
   const computeTaxedIncome = () => {
@@ -240,13 +247,7 @@
       taxed_income.value=Number(taxed_income.value.toFixed(precision.value))
     }
 
-/*  const isDefaultInput = 
-   all_income.value === months.value*income.value &&
-   all_fiveonetax.value === months.value*fiveonetax.value &&
-   all_sidecosts.value === months.value*sidecosts.value &&
-   all_othercosts.value === months.value*othercosts.value &&
-   all_tax_threshold.value === months.value*tax_threshold.value;
-*/
+
 
    watch(() => months.value, () => {
      computeAllInput();
@@ -287,6 +288,11 @@
   .result-display5{
     border: 1px solid rgb(128, 30, 241);
   }
+
+  .custom-n-space {
+  margin-right: 20px;
+}
+
   .button-group {
     margin-left: 0%;
     display: flex;
