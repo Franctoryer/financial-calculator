@@ -53,27 +53,44 @@
       :on-clickoutside="onClickoutside"
       @select="handleSelect"
     />
+    <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
+    <hr>
+    <n-table>
+      <thead>
+        <tr>
+          <th>净现值</th>
+          <th>内部收益率</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 {{ currencySymbol }}</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+    </n-table>
+    <div ref="cashFlowChart" id="cashFlowChart" style="width: 100%; height: 400px;"></div>
   </div>
- 
 </template>
 
 <script setup lang="ts">
-  import { NInputNumber, NSpace, NSlider, NSwitch, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown } from 'naive-ui';
+  import { NInputNumber, NSpace, NSlider, NSwitch, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown, NTable } from 'naive-ui';
   import { useSettingStore } from "@/stores/settingStore";
   import { useCustomedCFInputStore } from "@/stores/input/CustomedCFInputStore";
   import { storeToRefs } from "pinia";
-  import { ref, h, nextTick } from "vue";
+  import { ref, h, nextTick, onMounted, watchEffect, computed } from "vue";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { CustomedCFData } from "@/types/CustomedCFData";
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import { UNKNOWN_OPTION, NO_DELETING } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
+  import * as echarts from "echarts";
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@
   // @@@@设置信息、是否连续复利、利率输入；表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  const { isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
+  const { isCompound, isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
   const {interest, isContinueCompound, rawData} = storeToRefs(useCustomedCFInputStore())
   // 创建表格的每一字段的内容（日期、现金流）
   const createColumns = (): DataTableColumns<CustomedCFData> => [
@@ -229,6 +246,128 @@
   // @@@@@@@@结果相关的变量和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 现金流可视化（现金流量图）
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  
+ // 创建一个计算属性，用于转换日期格式
+  const dates = computed(() => {
+    return rawData.value.map(item => {
+      const dateObj = new Date(item.date);
+      return dateObj.toISOString().split('T')[0];
+    });
+  });
+  
+  // 创建另一个计算属性，用于提取现金流数据
+  const cashFlowData = computed(() => {
+    return rawData.value.map(item => item.cash);
+  });
+  // 画现金流量图
+  const cashFlowChart = ref(null);
+  let myChart: any;
+  onMounted(() => {
+    myChart = echarts.init(cashFlowChart.value);
+    const chartOption = {
+      title: {
+        text: '现金流量图'
+      },
+      xAxis: {
+        type: 'category',
+        data: dates.value,
+        name: '时间'
+      },
+      yAxis: {
+        type: 'value',
+        name: `金额（${currencySymbol.value}）`
+      },
+      toolbox: {
+        show: true,
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          magicType: { 
+            type: ['line', 'bar'],
+            option: {
+              line: {
+                smooth: true,
+                symbol: 'none',
+              }
+            }
+          },
+          saveAsImage: {},
+          
+        },
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        }
+      },
+      legend: {
+        show: true,
+        top: '5%',
+        left: 'center',
+        itemWidth: 20,
+        itemHeight: 20,
+        data: [
+          {name: '支出', itemStyle: { color: '#ba5140'}},
+          {name: '流入', itemStyle: { color: '#4f6f46'}}
+        ],
+        selectedMode: false
+      },
+      series: [
+        {
+          name: '支出',
+          data: cashFlowData.value,
+          type: 'bar',
+          itemStyle: {
+            color: (params: any) => {
+              return params.value < 0 ? '#ba5140' : '#4f6f46';
+            }
+          }
+        },
+        {
+          name: '流入',
+          data: cashFlowData.value,
+          type: 'bar',
+          itemStyle: {
+            color: (params: any) => {
+              return params.value < 0 ? '#ba5140' : '#4f6f46';
+            }
+          },
+          barGap: '-100%', // 设置柱形图重叠
+          xAxisIndex: 0 // 确保两个系列使用同一个x轴
+        },
+      ]
+    };
+  myChart.setOption(chartOption, true)
+  })
+  // 监听 cashFlowData 的变化
+  watchEffect(() => {
+    // 更新 ECharts 图表
+    if (cashFlowChart.value) {
+      myChart.setOption({
+        xAxis: {
+          data: dates.value,
+        },
+        yAxis: {
+          type: 'value',
+          name: `金额（${currencySymbol.value}）`
+        },
+        series: [
+          {
+            data: cashFlowData.value,
+          },
+          {
+            data: []
+          }
+        ],
+      });
+    }
+  });
 </script>
 
 <style scoped>
@@ -262,5 +401,22 @@
   }
   .info-message {
     margin-top: 10px;
+  }
+
+  th {
+    text-align: center;
+    font-weight: 600;
+  }
+
+  td {
+    text-align: center;
+    width: 50%;
+  }
+  .irr-warning {
+    margin-top: 5px;
+  }
+
+  #cashFlowChart {
+    margin-top: 20px;
   }
 </style>

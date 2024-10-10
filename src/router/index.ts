@@ -21,42 +21,66 @@ const router = createRouter({
 				{
 					name: 'base',
 					path: 'base',
-					component: () => import('@/views/calcs/BaseCalc.vue')
+					component: () => import('@/views/calcs/BaseCalc.vue'),
+					meta: {
+						activeMenu: 'base'
+					}
 				},
 				{
 					name: 'invest',
 					path: 'invest',
-					component: () => import('@/views/calcs/InvestCalc.vue')
+					component: () => import('@/views/calcs/InvestCalc.vue'),
+					meta: {
+						activeMenu: 'invest'
+					}
 				},
 				{
 					name: 'circled-cashflow',
 					path: 'circled-cashflow',
-					component: () => import('@/views/calcs/CircledCashFlowCalc.vue')
+					component: () => import('@/views/calcs/CircledCashFlowCalc.vue'),
+					meta: {
+						activeMenu: 'circled-cashFlow'
+					}
 				},
 				{
 					name: 'customed-cashflow',
 					path: 'customed-cashflow',
-					component: () => import('@/views/calcs/CustomedCashFlowCalc.vue')
+					component: () => import('@/views/calcs/CustomedCashFlowCalc.vue'),
+					meta: {
+						activeMenu: 'customed-cashflow'
+					}
 				},
 				{
 					name: 'deposit',
 					path: 'deposit',
-					component: () => import('@/views/calcs/DepositCalc.vue')
+					component: () => import('@/views/calcs/DepositCalc.vue'),
+					meta: {
+						activeMenu: 'deposit'
+					}
 				},
 				{
 					name: 'currency',
 					path: 'currency',
-					component: () => import('@/views/calcs/CurrencyCalc.vue')
+					component: () => import('@/views/calcs/CurrencyCalc.vue'),
+					meta: {
+						activeMenu: 'currency'
+					}
 				},
 				{
 					name: 'personal-tax',
 					path: 'personal-tax',
-					component: () => import('@/views/calcs/PersonalTaxCalc.vue')
+					component: () => import('@/views/calcs/PersonalTaxCalc.vue'),
+					meta: {
+						activeMenu: 'personal-tax'
+					}
 				},
 				{
 					name: 'fiveone-tax',
 					path: 'fiveone-tax',
-					component: () => import('@/views/calcs/FiveOneTaxCalc.vue')
+					component: () => import('@/views/calcs/FiveOneTaxCalc.vue'),
+					meta: {
+						activeMenu: 'fiveone-tax'
+					}
 				},
 			]
 		},

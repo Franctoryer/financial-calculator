@@ -1,6 +1,7 @@
 <template>
   <div class="slide-com">
       <n-menu
+        v-model:value="activeMenu"
         :options="menuOptions"
         :indent="15"
         :collapsed-width="64"
@@ -12,7 +13,7 @@
 <script setup lang="ts">
   import type { MenuOption } from 'naive-ui';
   import { NMenu, NIcon } from 'naive-ui';
-  import { h } from 'vue';
+  import { h, ref, watch } from 'vue';
   import { RouterLink } from 'vue-router';
   import type { Component } from 'vue';
   // 一些图标
@@ -22,6 +23,8 @@
   import DepositIcon from "@/assets/icons/side-menu-icons/DepositIcon.vue";
   import CurrencyIcon from "@/assets/icons/side-menu-icons/CurrencyIcon.vue"
   import TaxIcon from "@/assets/icons/side-menu-icons/TaxIcon.vue"
+  import { useRoute } from "vue-router";
+  import { getActiveMenu } from "@/utils/getActiveMenu";
 
   /**
    * 将SVG图标组件转化为VNode对象
@@ -34,12 +37,12 @@
   const menuOptions: MenuOption[] = [
     {
       label: () => h(RouterLink, { to: { name: 'base'}}, { default: () => '科学计算器'}),
-      key: 'Base',
+      key: 'base',
       icon: renderIcon(BaseCalculator)
     },
     {
       label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
-      key: 'LoadAndInvest',
+      key: 'invest',
       icon: renderIcon(LoadAndInvestIcon)
     },
     {
@@ -48,23 +51,23 @@
       children: [
         {
           label: () => h(RouterLink, { to: { name: 'circled-cashflow'}}, { default: () => '周期性现金流'}),
-          key: 'Circled-CashFlow'
+          key: 'circled-cashFlow'
         },
         {
           label: () => h(RouterLink, { to: { name: 'customed-cashflow'}}, { default: () => '自定义现金流'}),
-          key: 'Customed-CashFlow'
+          key: 'customed-cashflow'
         }
       ],
       icon: renderIcon(CashFlowIcon)
     },
     {
       label: () => h(RouterLink, { to: { name: 'deposit'}}, { default: () => '储蓄计算器'}),
-      key: 'Deposit',
+      key: 'deposit',
       icon: renderIcon(DepositIcon)
     },
     {
       label: () => h(RouterLink, { to: { name: 'currency'}}, { default: () => '货币汇率转化计算器'}),
-      key: 'Currency',
+      key: 'currency',
       icon: renderIcon(CurrencyIcon)
     },
     {
@@ -73,16 +76,28 @@
       children: [
         {
           label: () => h(RouterLink, { to: { name: 'personal-tax'}}, { default: () => '个人所得税'}),
-          key: 'Personal-Tax'
+          key: 'personal-tax'
         },
         {
           label: () => h(RouterLink, { to: { name: 'fiveone-tax'}}, { default: () => '五险一金'}),
-          key: 'Five-One-Tax'
+          key: 'fiveone-tax'
         }
       ],
       icon: renderIcon(TaxIcon)
     }
   ];
+  const route = useRoute();
+  
+  // 使用 route.meta.activeMenu 作为默认值
+  const activeMenu = ref(getActiveMenu(route.meta.activeMenu || null));
+
+  // 监听路由变化，动态设置 activeMenu
+  watch(
+    () => route.meta.activeMenu,
+    (newActiveMenu) => {
+      activeMenu.value = getActiveMenu(newActiveMenu);
+    }
+  );
 </script>
 
 <style>
