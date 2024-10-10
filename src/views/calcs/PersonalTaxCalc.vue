@@ -94,7 +94,7 @@
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
-  const { months, income, fiveonetax, sidecosts, othercosts } = storeToRefs(usePersonalTaxInputStore());
+  const { PTInputData, months, income, fiveonetax, sidecosts, othercosts } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts } = storeToRefs(usePersonalTaxResultStore());
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
   const incomeValidator = (x: number) => x >= 0; 
@@ -103,7 +103,9 @@
   const othercostsValidator = (x:number) => x >=0;
 
   const deleteAll = () => {
-
+    months.value,fiveonetax.value,sidecosts.value,othercosts.value = 0;
+    income.value = 3000;
+    computeResult();
   }
   const computeResult = () => {
    all_income.value = months.value*income.value;
