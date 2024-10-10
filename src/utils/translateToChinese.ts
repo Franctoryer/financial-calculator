@@ -8,7 +8,6 @@ export const translateToChinese = (obj: any): string => {
     '"isContinueCompound": false': '分期复利',
     '"isContinueCompound": true': '连续复利',
     '"rawData"': '现金流',
-    '"order"': '序号',
     '"cash":': '现金:',
     '"freq":': '频数:',
     '"npv":': '净现值:',
@@ -22,6 +21,8 @@ export const translateToChinese = (obj: any): string => {
     // @ts-ignore
     chineseTxT = chineseTxT.replace(new RegExp(item, 'g'), dictionary[item])
   }
+
+  chineseTxT = chineseTxT.replace(/"order":\d,/g, '')
   if (chineseTxT.length > maxLength) {
     chineseTxT = chineseTxT.slice(0, maxLength) + ' ⍫';
   }
