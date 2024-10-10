@@ -21,17 +21,17 @@
             </n-icon-wrapper>
           </template>
         </n-slider>
-        <n-input-number v-model:value="months" size="small" :validator="monthsValidator"/>
+        <n-input-number class="input-container" v-model:value="months" size="small" :validator="monthsValidator"/>
       </n-space>
 
       <!-- 单月税前工资 -->
-      <div class="input-container">
+      <div>
         <n-space :wrap="false">
         <div>单月税前工资：
-          <n-input-number v-model:value="income"  size="small" :step="1000" :validator="incomeValidator"/>
+          <n-input-number class="input-container" v-model:value="income"  size="small" :step="1000" :validator="incomeValidator"/>
         </div>
         <div>累计税前工资：
-          <n-input-number v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
+          <n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
         </div>
         </n-space>
     </div>
@@ -40,10 +40,10 @@
         <div>
         <n-space :wrap="false">
         <div>五险一金：
-          <n-input-number v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>
+          <n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>
         </div>
         <div>累计五险一金：
-          <n-input-number v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
+          <n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
         </div>
         </n-space>
         </div>
@@ -52,10 +52,10 @@
         <div>
         <n-space :wrap="false">
         <div>专项附加扣除：
-          <n-input-number v-model:value="sidecosts"  size="small" :step="1000" :validator="sidecostsValidator"/>
+          <n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :validator="sidecostsValidator"/>
         </div>
         <div>累计专项附加扣除：
-          <n-input-number v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
+          <n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
         </div>
       </n-space>
       </div>
@@ -64,20 +64,20 @@
         <div>
         <n-space :wrap="false">
         <div>其他扣除：
-          <n-input-number v-model:value="othercosts"  size="small" :step="1000" :validator="othercostsValidator"/>
+          <n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :validator="othercostsValidator"/>
         </div>
         <div>累计其他扣除：
-          <n-input-number v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
+          <n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
         </div>
       </n-space>
 
       <!-- 固定扣除 -->
       <n-space :wrap="false">
         <div>固定减除（个税起征点）:
-          <n-input-number v-model:value="tax_threshold"  size="small" readonly/>
+          <n-input-number class="result-display1" v-model:value="tax_threshold"  size="small" readonly/>
         </div>
         <div>累计减除:
-          <n-input-number v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>
+          <n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>
         </div>
       </n-space>
 
@@ -88,7 +88,44 @@
     </div>
     </n-space>
   </div>
-  
+
+  <div>
+    <n-space :size="5" vertical class="PersonalTaxCalc-container">
+      <div>
+        <n-space :wrap="false">
+        <div>应纳税所得额：
+          <n-input-number class="result-display2" v-model:value="taxable_income" size="small" :step="1000" :show-button="false"/>
+        </div>
+        <div>累计应纳税额：
+          <n-input-number class="result-display2" v-model:value="tax"  size="small" :step="1000" :show-button="false" />
+        </div>
+        </n-space>
+        </div>
+
+        <div>
+        <n-space :wrap="false">
+        <div>税率：
+          <n-input-number class="result-display2" v-model:value="taxRate" size="small" :step="1000" :show-button="false"/>
+        </div>
+        <div>累计已缴税额：
+          <n-input-number class="result-display2" v-model:value="lastweek_tax"  size="small" :step="1000" :show-button="false" />
+        </div>
+        </n-space>
+        </div>
+
+        <div>
+        <n-space :wrap="false">
+        <div>速算扣除数：
+          <n-input-number class="result-display2" v-model:value="quickDeduction" size="small" :step="1000" :show-button="false"/>
+        </div>
+        <div>当月个税（应补税额）：
+          <n-input-number class="result-display4" v-model:value="current_tax"  size="small" :step="1000" :show-button="false" />
+        </div>
+        </n-space>
+        </div>税后工资：
+        <n-input-number class="result-display5" v-model:value="taxed_income"  size="small" :step="1000" :show-button="false" />
+    </n-space>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -110,13 +147,14 @@
   const { PTInputData, months, income, fiveonetax, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold, 
           taxable_income, taxRate, quickDeduction, lastweek_taxable_income,
-        lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
-        current_tax, taxed_income} = storeToRefs(usePersonalTaxResultStore());
+          lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
+          current_tax, taxed_income} = storeToRefs(usePersonalTaxResultStore());
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
   const incomeValidator = (x: number) => x >= 0; 
   const fiveonetaxValidator = (x:number) => x >=0;
   const sidecostsValidator = (x:number) => x >=0;
   const othercostsValidator = (x:number) => x >=0;
+
 
   const deleteAll = () => {
     months.value = 1;
@@ -124,10 +162,14 @@
     income.value = 3000;tax_threshold.value =5000;
     computeAllInput();
   }
+
   const computeResult = () => {
+      computeTaxableIncome();
+      computeLastWeekTaxableIncome();
       computeTax();
       computeLastWeekTax();
       computeTaxedIncome();
+      toPresicion();
   }
 
   const computeAllInput = () => {
@@ -136,6 +178,14 @@
    all_sidecosts.value = months.value*sidecosts.value;
    all_othercosts.value = months.value*othercosts.value;
    all_tax_threshold.value = months.value*tax_threshold.value;
+  }
+ 
+  const computeTaxableIncome = () => {
+   taxable_income.value = Math.max(0,all_income.value - all_fiveonetax.value - all_sidecosts.value - all_othercosts.value -all_tax_threshold.value)
+  }
+
+  const computeLastWeekTaxableIncome = () => {
+    lastweek_taxable_income.value = Math.max(0,taxable_income.value - income.value + fiveonetax.value + sidecosts.value + othercosts.value + tax_threshold.value)
   }
 
   const computeTax = () => {
@@ -179,7 +229,16 @@
   const computeTaxedIncome = () => {
      current_tax.value = tax.value - lastweek_tax.value;
      taxed_income.value = income.value - fiveonetax.value - current_tax.value;
-  }
+    }
+
+    const toPresicion = () => {
+      taxable_income.value=Number(taxable_income.value.toFixed(precision.value));
+      quickDeduction.value=Number(quickDeduction.value.toFixed(precision.value));
+      tax.value=Number(tax.value.toFixed(precision.value));
+      lastweek_tax.value=Number(lastweek_tax.value.toFixed(precision.value));
+      current_tax.value=Number(current_tax.value.toFixed(precision.value))
+      taxed_income.value=Number(taxed_income.value.toFixed(precision.value))
+    }
 
 /*  const isDefaultInput = 
    all_income.value === months.value*income.value &&
@@ -207,16 +266,26 @@
   }
 
   .input-container {
-  width: 100%;  
-  border-radius: 8px;
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
+  border: 1px solid rgb(83, 186, 86);
 }
-  .result-display{
+  .result-display1{
+    border: 1px solid rgb(4, 6, 7);
+  }
 
+  .result-display2{
+    border: 1px solid rgb(89, 142, 223);
+  }
+
+  .result-display3{
+    border: 1px solid rgb(218, 206, 131);
+  }
+
+  .result-display4{
+    border: 1px solid rgb(170, 64, 32);
+  }
+
+  .result-display5{
+    border: 1px solid rgb(128, 30, 241);
   }
   .button-group {
     margin-left: 0%;
