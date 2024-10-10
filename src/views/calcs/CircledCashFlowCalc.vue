@@ -413,7 +413,7 @@
       },
       yAxis: {
         type: 'value',
-        name: '金额（￥）'
+        name: `金额（${currencySymbol.value}）`
       },
       toolbox: {
         show: true,
@@ -486,8 +486,17 @@
         },
       ]
     };
-  myChart.setOption(chartOption, true)
-  })
+    myChart.setOption(chartOption, true);
+    const resizeOb = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // 通过 ECharts 提供的方法获取实例并调用 resize 方法
+        // @ts-ignore
+        echarts.getInstanceByDom(entry.target).resize();
+      }
+    });
+    // @ts-ignore
+    resizeOb.observe(cashFlowChart.value);
+    })
   // 监听 cashFlowData 的变化
   watchEffect(() => {
     // 更新 ECharts 图表
