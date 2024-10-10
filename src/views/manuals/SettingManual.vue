@@ -10,6 +10,8 @@
   const content = 
   `
   # 全局设置
+  [[TOC]]
+  
   `
 </script>
 

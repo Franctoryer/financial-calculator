@@ -92,7 +92,7 @@
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
   import { watchEffect, watch } from 'vue';
-  import { AddSubtractCircle24Filled, NumberSymbolDismiss24Regular } from '@vicons/fluent';
+  import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';
   import { useHistoryStore } from "@/stores/historyStore";
