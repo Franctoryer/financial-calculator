@@ -70,6 +70,15 @@
           <n-input-number v-model:value="all_othercosts" size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
         </div>
       </n-space>
+
+      <n-space>
+        <div>固定减除（个税起征点）:
+          <n-input-number v-model:value="tax_threshold" size="small" readonly/>
+        </div>
+        <div>累计减除:
+          <n-input-number v-model:value="all_tax_threshold" size="small" :show-button="false" readonly/>
+        </div>
+      </n-space>
     </div>
     </n-space>
   </div>
@@ -94,17 +103,18 @@
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
-  const { PTInputData, months, income, fiveonetax, sidecosts, othercosts } = storeToRefs(usePersonalTaxInputStore());
-  const { all_income, all_fiveonetax, all_sidecosts, all_othercosts } = storeToRefs(usePersonalTaxResultStore());
+  const { PTInputData, months, income, fiveonetax, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
+  const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold } = storeToRefs(usePersonalTaxResultStore());
   const monthsValidator = (x: number) => x >= 0 && x <= 12; 
   const incomeValidator = (x: number) => x >= 0; 
   const fiveonetaxValidator = (x:number) => x >=0;
   const sidecostsValidator = (x:number) => x >=0;
   const othercostsValidator = (x:number) => x >=0;
 
+  
   const deleteAll = () => {
     months.value,fiveonetax.value,sidecosts.value,othercosts.value = 0;
-    income.value = 3000;
+    income.value = 3000;tax_threshold.value =5000;
     computeResult();
   }
   const computeResult = () => {
@@ -112,7 +122,7 @@
    all_fiveonetax.value = months.value*fiveonetax.value;
    all_sidecosts.value = months.value*sidecosts.value;
    all_othercosts.value = months.value*othercosts.value;
-   
+   all_tax_threshold.value = months.value*tax_threshold.value;
   }
 
 </script>
