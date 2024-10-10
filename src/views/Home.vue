@@ -1,6 +1,6 @@
 <template>
   <div class="temp">
-    <img src="@/assets/pictures/keaidinie.jpg"/>
+    <img src="@/assets/pictures/xinxiange.gif"/>
   </div>
 </template>
 
