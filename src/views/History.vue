@@ -29,14 +29,26 @@
           <n-icon v-if="isDeleting" :size="25" @click="historyStore.deleteOneHistory(index)" class="delete-one">
             <DismissCircle28Regular/>
           </n-icon>
-          <HistoryElement 
-            :key="data.saveTime"
-            :saveTime="formatTimestamp(data.saveTime)"
-            :calcName="getCalcByPathName(data.name)"
-            :inputData="objectToString(data.inputData)"
-            :resultData="objectToString(data.resultData)"
-            @click="restoreCalculation(data)"
-          />
+          <n-tooltip 
+            trigger="hover" 
+            placement="left-start" 
+            :width="500" 
+          >
+            <template #trigger>
+              <HistoryElement 
+                :key="data.saveTime"
+                :saveTime="formatTimestamp(data.saveTime)"
+                :calcName="getCalcByPathName(data.name)"
+                :inputData="translateToChinese(data.inputData)"
+                :resultData="translateToChinese(data.resultData)"
+                @click="restoreCalculation(data)"
+              />
+            </template>
+            <ul class="history-element-list">
+              <li><b>输入：</b>{{ translateToChinese(data.inputData) }}</li>
+              <li><b>输出：</b>{{ translateToChinese(data.resultData) }}</li>
+            </ul>
+          </n-tooltip>
         </div>
       </n-scrollbar>
       <n-divider dashed/>
@@ -49,13 +61,14 @@
   import History16Regular from "@vicons/fluent/History16Regular";
   import DismissCircle28Regular from "@vicons/fluent/DismissCircle28Regular";
   import Delete20Filled from "@vicons/fluent/Delete20Filled";
-  import { NIcon, NButton, NScrollbar, NEmpty, NDivider } from "naive-ui";
+  import { NIcon, NButton, NScrollbar, NEmpty, NDivider, NTooltip } from "naive-ui";
   import { useRouter } from "vue-router";
   import { useHistoryStore } from "@/stores/historyStore";
   import { storeToRefs } from "pinia";
   import type { HistoryData } from "@/types/HistoryData";
   import { getCalcByPathName } from "@/utils/getCalcByPathName";
   import { objectToString } from "@/utils/objectToString";
+  import { translateToChinese } from "@/utils/translateToChinese";
   import { formatTimestamp } from "@/utils/formatTimeStamp"
   import { ref } from "vue";
 
@@ -171,5 +184,11 @@
 }
 .delete-one:hover {
   color: #c35c5d;
+}
+
+.history-element-list {
+  width: max-content;
+  max-width: 100%;
+  list-style-type: circle;
 }
 </style>
