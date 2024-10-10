@@ -29,7 +29,11 @@
           <n-icon v-if="isDeleting" :size="25" @click="historyStore.deleteOneHistory(index)" class="delete-one">
             <DismissCircle28Regular/>
           </n-icon>
-          <n-tooltip trigger="hover" >
+          <n-tooltip 
+            trigger="hover" 
+            placement="left-start" 
+            :width="500" 
+          >
             <template #trigger>
               <HistoryElement 
                 :key="data.saveTime"

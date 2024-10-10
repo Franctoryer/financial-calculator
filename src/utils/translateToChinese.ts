@@ -1,7 +1,7 @@
 import { objectToString } from "@/utils/objectToString";
 
 export const translateToChinese = (obj: any): string => {
-  let maxLength = 80;
+  let maxLength = 200;
   let chineseTxT =  objectToString(obj);
   const dictionary = {
     '"interest"': '利率',
@@ -12,7 +12,7 @@ export const translateToChinese = (obj: any): string => {
     '"cash":': '现金:',
     '"freq":': '频数:',
     '"npv":': '净现值:',
-    '"irr': '内部收益率',
+    '"irr"': '内部收益率',
     'null': 'NaN',
     '{': '(',
     '}': ')'
