@@ -63,12 +63,12 @@ const router = createRouter({
 		{
 			name: 'manual',
 			path: '/manual',
-			redirect: '/manual/BaseCalc',
+			redirect: '/manual/base-calc',
 			component: () => import('@/views/Manual.vue'),
 			children: [
 				{
 					name: 'BaseCalcManual',
-					path: 'BaseCalc',
+					path: 'base-calc',
 					component: () => import('@/views/manuals/BaseCalcManual.vue')
 				},
 				{
@@ -78,8 +78,18 @@ const router = createRouter({
 				},
 				{
 					name: 'TVMDoc',
-					path: 'TVM',
+					path: 'tvm',
 					component: () => import('@/views/manuals/TVMDoc.vue')
+				},
+				{
+					name: 'setting-manual',
+					path: 'setting-manual',
+					component: () => import('@/views/manuals/SettingManual.vue')
+				},
+				{
+					name: 'interest-method',
+					path: 'interest-method',
+					component: () => import('@/views/manuals/InterestMethodManual.vue')
 				}
 			]
 		}

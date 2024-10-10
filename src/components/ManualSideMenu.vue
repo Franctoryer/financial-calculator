@@ -24,11 +24,19 @@
     },
     {
       label: () => h(RouterLink, { to: { name: 'cashFlowDoc'}}, { default: () => '现金流'}),
-      key: 'LoadAndInvest',
+      key: 'CashFlow',
     },
     {
       label: () => h(RouterLink, { to: { name: 'TVMDoc'}}, { default: () => '货币时间价值'}),
       key: 'TVM',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'setting-manual'}}, { default: () => '全局设置'}),
+      key: 'Setting',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'interest-method'}}, { default: () => '计息方式介绍'}),
+      key: 'interest-method',
     }
   ];
 </script>

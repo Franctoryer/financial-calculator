@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-  import Doc from "@/views/manuals/Doc.vue";
+  import Doc from "@/components/Doc.vue";
   const content = `
   # 现金流概念
   [[TOC]]

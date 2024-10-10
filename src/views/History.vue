@@ -10,14 +10,16 @@
       <n-icon @click="isDeleting = !isDeleting" :size="25" class="delete-icon">
         <Delete20Filled/>
       </n-icon>
-      <n-button 
-        v-if="isDeleting"
-        @click="historyStore.deleteAllHistory" 
-        class="delete-all-btn" 
-        type="error" 
-        secondary>
-        删除所有记录
-      </n-button>
+      <transition name="fade">
+        <n-button 
+          v-if="isDeleting"
+          @click="historyStore.deleteAllHistory" 
+          class="delete-all-btn" 
+          type="error" 
+          secondary>
+          删除所有记录
+        </n-button>
+      </transition>
     </div>
     <div class="history-container">
       <div class="total-num">总共 {{ historyData.length }} 条记录：</div>
@@ -103,6 +105,34 @@
 
 .delete-all-btn {
   margin-left: 10px;
+}
+ /*设置动画*/
+ .fade-enter {
+  transform: translateX(-60%);
+  opacity: 0;
+}
+
+.fade-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.fade-enter-active {
+  transition: all 0.3s ease;
+}
+
+.fade-leave {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.fade-leave-to {
+  transform: translateX(-60%);
+  opacity: 0;
+}
+
+.fade-leave-active {
+  transition: all 0.3s ease;
 }
 
 .total-num {
