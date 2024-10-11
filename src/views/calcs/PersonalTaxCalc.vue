@@ -145,11 +145,13 @@
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
   import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
+  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/stores/compute/computeFiveOneTax";
+
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
-  const { PTInputData, months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
+  const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold, 
           taxable_income, taxRate, display_taxRate, quickDeduction, lastweek_taxable_income,
           lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
@@ -253,6 +255,12 @@
       taxed_income.value=Number(taxed_income.value.toFixed(precision.value))
     }
 
+    watch(() => income.value, () => {
+    computeSocialInsuranceBase();
+    computeAccumulationFundBase();
+    computeFiveOneTax();
+    computeAllInput();
+  });
 
 
    watch(() => months.value, () => {

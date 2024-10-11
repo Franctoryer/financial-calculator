@@ -20,8 +20,8 @@
       </div>
 
       <div class="button-group">
-        <n-button color="#ba5b49" >全部清除</n-button>
-        <n-button color="green" >计算结果</n-button>
+        <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
+        <n-button color="green" @click="computeFiveOneTax">计算结果</n-button>
       </div>
       </n-space>
     </div>
@@ -88,7 +88,11 @@
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
   import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
+  import { sum } from 'mathjs';
+  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/stores/compute/computeFiveOneTax";
 
+  const settingStore = useSettingStore();
+  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const { income } = storeToRefs(usePersonalTaxInputStore());
   const {SocialInsuranceBase,
         AccumulationFundBase,
@@ -103,6 +107,31 @@
   const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
 
 
+  const deleteAll = () => {
+ /*   if (rawData.value.length === 0) {
+      window.$message.warning(NO_DELETING, MESSAGE_CONFIG)
+      return;
+    }*/
+        income.value = 3000;
+        SocialInsuranceBase.value = 3000;
+        AccumulationFundBase.value = 3000;
+        OldAgeInsuranceRate.value = 8;
+        OldAgeInsurance.value = 0;
+        MedicalInsuranceRate.value = 2;
+        MedicalInsurance.value = 0;
+        UnemploymentInsuranceRate.value = 0.5;
+        UnemploymentInsurance.value = 0;
+        AccumulationFundRate.value = 7;
+        AccumulationFund.value = 0;
+        fiveonetax.value = 0;
+  }
+
+
+
+  watch(() => income.value, () => {
+    computeSocialInsuranceBase();
+    computeAccumulationFundBase();
+  });
 </script>
 
 <style>
