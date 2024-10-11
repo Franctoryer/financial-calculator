@@ -60,21 +60,24 @@
       <div ref="cashFlowChart" id="cashFlowChart"></div>
     </div>
     <hr>
-    <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <n-table>
       <thead>
         <tr>
           <th>净现值</th>
           <th>内部收益率</th>
+          <th>盈利指数</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>{{ npvView.number }} {{ currencySymbol }}</td>
           <td>{{ irrView.number }}</td>
+          <td>{{ piView.number }}</td>
         </tr>
       </tbody>
     </n-table>
+    <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
+    <div ref="senChart" id="senChart"></div>
   </div>
 </template>
 
@@ -289,40 +292,39 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 结果相关的数据和方法(NPV和IRR)
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 导入净现值和内部收益率
+  const { npv, irr, pi } = storeToRefs(useCircledCFResultStore());
   // 按计算按钮，刷新结果，将数据保存到历史记录
   const computeResult = () => {
-    comuputeNPV();
-    computeIRR();
+    npv.value = comuputeNPV(interest.value);
+    irr.value = computeIRR();
+    pi.value = computePI();
     addHistory();
   }
-  // 导入净现值和内部收益率
-  const { npv, irr } = storeToRefs(useCircledCFResultStore());
   // 计算净现值
-  const comuputeNPV = () => {
+  const comuputeNPV = (interest: number) => {
     if (cashFlowData.value.length === 0) {
-      npv.value = 0;
+      return 0;
     } else if (cashFlowData.value.length === 1) {
-      npv.value =  cashFlowData.value[0];
+      return cashFlowData.value[0];
     } else {
       let result: number;
       if (!isCompound.value) {
-        result = Number(simpleInterestNPV(interest.value, cashFlowData.value).toFixed(precision.value));
+        result = Number(simpleInterestNPV(interest, cashFlowData.value).toFixed(precision.value));
       } else {
-        result = isContinueCompound.value ? Number(continuousCompoundingNPV(interest.value, cashFlowData.value).toFixed(precision.value)) : Number(NPV(interest.value, cashFlowData.value).toFixed(precision.value)); 
+        result = isContinueCompound.value ? Number(continuousCompoundingNPV(interest, cashFlowData.value).toFixed(precision.value)) : Number(NPV(interest, cashFlowData.value).toFixed(precision.value)); 
       }
-      npv.value = result; 
+      return result; 
     }
   }
   // 计算IRR
   const computeIRR = () => {
     if (cashFlowData.value.length === 0) {
-      irr.value = Number.NaN;
-      return;
+      return NaN;
     }
     if (!isValidToIRR()) {
       window.$message.error(IRR_REQUIREMENT_ERROR, MESSAGE_CONFIG)
-      irr.value = Number.NaN;
-      return;
+      return NaN;
     }
     let result: number;
     if (!isCompound.value) {
@@ -330,7 +332,16 @@
     } else {
       result = isContinueCompound.value ? Number(IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value)) : Number(IRR(NPV, cashFlowData.value).toFixed(precision.value)); 
     }
-    irr.value = result;
+    return result;
+  }
+  // 计算PI
+  const computePI = () => {
+    // 如果期初投资是正数，盈利指标没有意义
+    if (cashFlowData.value.length === 0 || cashFlowData.value[0] >= 0) {
+      return NaN;
+    }
+    let result = npv.value / (-cashFlowData.value[0]);
+    return  Number(result.toFixed(precision.value));
   }
   // 判断输入的现金流是否能计算IRR(至少一正一负)
   const isValidToIRR = () => {
@@ -348,6 +359,7 @@
   const { historyData } = storeToRefs(historyStore);
   import type { HistoryData } from "@/types/HistoryData";
 
+  // 添加历史记录
   const addHistory = () => {
     let history: HistoryData = {
       saveTime: Date.now(),
@@ -359,7 +371,8 @@
       },
       resultData: {
         npv: npv.value,
-        irr: irr.value
+        irr: irr.value,
+        pi: pi.value
       }
     } 
     historyStore.addHistory(history);
@@ -371,6 +384,9 @@
   });
   const irrView = reactive({
     number: Number(irr.value)
+  });
+  const piView = reactive({
+    number: Number(pi.value)
   });
   watch(npv, (n) => {
     gsap.to(npvView, { 
@@ -384,7 +400,6 @@
   });
   watch(irr, (newVal, oldVal) => {
     // 如果旧值或者新值是NAN，没有动画
-    console.log(newVal, oldVal);
     if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
       irrView.number = newVal;
       return;
@@ -397,6 +412,37 @@
         irrView.number = Number(irrView.number.toFixed(precision.value));
       }
     });
+  })
+  watch(pi, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      piView.number = newVal;
+      return;
+    }
+    gsap.to(piView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        piView.number = Number(piView.number.toFixed(precision.value));
+      }
+    });
+  })
+  
+  // @@@@@@@@@@@@@@@@@@@@@@@@@
+  // 灵敏度分析（NPV和PI）
+  // @@@@@@@@@@@@@@@@@@@@@@@@@
+  const senArr = computed(() => {
+    let result1 = [];
+    let result2 = [];
+    let initialValue = cashFlowData.value.length > 0 && cashFlowData.value[0] < 0 ? -cashFlowData.value[0] : NaN;
+    // 计算贴现率每增长0.1，净现值的变化
+    for (let i = 0; i <= 1; i += 0.1) {
+      let npv = comuputeNPV(i);
+      result1.push(npv);
+      result2.push(Number((npv / initialValue).toFixed(precision.value)));
+    }
+    return { result1, result2 };
   })
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -527,6 +573,136 @@
     }
   });
 
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 灵敏度分析可视化
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const senChart = ref(null);
+  let myChart2: any;
+  let senChartXData: number[] = [];
+  for (let i = 0; i <= 1; i += 0.1) {
+    senChartXData.push(Number(i.toFixed(1)));
+  }
+  onMounted(() => {
+    myChart2 = echarts.init(senChart.value);
+    const chartOption = {
+      title: {
+        text: '灵敏度分析',
+        left: 'center'
+      },
+      grid: [
+        {
+          left: 60,
+          right: 50,
+          height: '35%'
+        },
+        {
+          left: 60,
+          right: 50,
+          top: '55%',
+          height: '35%'
+        }
+      ],
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          animation: false
+        }
+      },
+      legend: {
+        data: ['净现值', '盈利指数'],
+        left: 10
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      axisPointer: {
+        link: [
+          {
+            xAxisIndex: 'all'
+          }
+        ]
+      },
+      xAxis: [
+        {
+          type: 'category',
+          name: '贴现率',
+          boundaryGap: false,
+          axisLine: { onZero: true },
+          data: senChartXData
+        },
+        {
+          type: 'category',
+          gridIndex: 1,
+          boundaryGap: false,
+          axisLine: { onZero: true },
+          data: senChartXData,
+          position: 'top',
+          axisLabel: {
+            show: false // 不显示 X 轴标签
+          }
+        }
+      ],
+      yAxis: [
+        {
+          name: '净现值',
+          type: 'value',
+        },
+        {
+          gridIndex: 1,
+          name: '盈利指标',
+          type: 'value',
+          inverse: true,
+        }
+      ],
+      series: [
+        {
+          name: '净现值',
+          type: 'line',
+          symbolSize: 8,
+          data: senArr.value.result1
+        },
+        {
+          name: '盈利指数',
+          type: 'line',
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          symbolSize: 8,
+          data: senArr.value.result2
+        }
+      ]
+    }
+    myChart2.setOption(chartOption);
+    const resizeOb = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // 通过 ECharts 提供的方法获取实例并调用 resize 方法
+        // @ts-ignore
+        echarts.getInstanceByDom(entry.target).resize();
+      }
+    });
+    // @ts-ignore
+    resizeOb.observe(senChart.value);
+  })
+  // 监听senArr的变化 
+  watchEffect(() => {
+    if (senChart.value) {
+      myChart2.setOption({
+        series: [
+          {
+            data: senArr.value.result1
+          },
+          {
+            data: senArr.value.result2
+          }
+        ]
+      })
+    }
+  })
   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 处理跳转传参路由
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -548,6 +724,7 @@
       rawData.value = inputData.rawData;
       npv.value = resultData.npv;
       irr.value = resultData.irr === null ? NaN : resultData.irr; // NaN会被解析成 null
+      pi.value = resultData.pi === null ? NaN : resultData.pi; // NaN会被解析成 null
     }
   }
 </script>
@@ -603,7 +780,7 @@
 
   td {
     text-align: center;
-    width: 50%;
+    width: 33%;
   }
 
   .irr-warning {
@@ -625,6 +802,14 @@
     flex-direction: row;
     justify-content: space-between;
     height: 350px;
+  }
+
+  #senChart {
+    width: 90%;
+    height: 400px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
 </style>
