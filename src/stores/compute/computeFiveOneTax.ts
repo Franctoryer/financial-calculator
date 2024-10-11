@@ -37,10 +37,10 @@ export const computeFiveOneTax = () => {
 
 
 export const computeSocialInsuranceBase = () => {
-    SocialInsuranceBase.value = income.value
+    SocialInsuranceBase.value = Math.min(Math.max(income.value,4927),28017)
   }
 export const computeAccumulationFundBase = () => {
-    AccumulationFundBase.value = income.value
+    AccumulationFundBase.value = Math.min(Math.max(income.value,2480),28017)
   }
 
   const computeInsurance = () => {
@@ -62,4 +62,6 @@ export const computeAccumulationFundBase = () => {
     MedicalInsurance.value=Number(MedicalInsurance.value.toFixed(precision.value));
     UnemploymentInsurance.value=Number(UnemploymentInsurance.value.toFixed(precision.value));
     AccumulationFund.value=Number(AccumulationFund.value.toFixed(precision.value));
+    fiveonetax.value=Number(fiveonetax.value.toFixed(precision.value));
+
     }

@@ -193,6 +193,7 @@
    all_sidecosts.value = months.value*sidecosts.value;
    all_othercosts.value = months.value*othercosts.value;
    all_tax_threshold.value = months.value*tax_threshold.value;
+   all_fiveonetax.value=Number(all_fiveonetax.value.toFixed(precision.value));
   }
  
   const computeTaxableIncome = () => {
@@ -251,8 +252,8 @@
       quickDeduction.value=Number(quickDeduction.value.toFixed(precision.value));
       tax.value=Number(tax.value.toFixed(precision.value));
       lastweek_tax.value=Number(lastweek_tax.value.toFixed(precision.value));
-      current_tax.value=Number(current_tax.value.toFixed(precision.value))
-      taxed_income.value=Number(taxed_income.value.toFixed(precision.value))
+      current_tax.value=Number(current_tax.value.toFixed(precision.value));
+      taxed_income.value=Number(taxed_income.value.toFixed(precision.value));
     }
 
     watch(() => income.value, () => {
@@ -266,7 +267,6 @@
    watch(() => months.value, () => {
      computeAllInput();
    });
-
   
   
 
