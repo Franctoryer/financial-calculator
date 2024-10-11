@@ -82,7 +82,7 @@
 
 <script setup lang="ts">
   import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NNumberAnimation } from 'naive-ui';
-  import { ref, h, computed, nextTick, reactive, toRaw } from 'vue';
+  import { ref, h, computed, nextTick, reactive } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { ComputedRef } from 'vue';
@@ -516,7 +516,7 @@
             }
           },
           label: {
-            show: () => cashFlowData.value.length <= 15,
+            show: cashFlowData.value.length <= 15,
             formatter: '{b}'
           },
         },
@@ -591,12 +591,12 @@
       grid: [
         {
           left: 60,
-          right: 50,
+          right: 70,
           height: '35%'
         },
         {
           left: 60,
-          right: 50,
+          right: 70,
           top: '55%',
           height: '35%'
         }
@@ -787,12 +787,11 @@
   }
 
   .data-table {
-    flex: 50%;
+    flex: 55%;
   }
 
   #cashFlowChart {
-    margin-left: 20px;
-    flex: 30%;
+    flex: 40%;
     height: 100%;
   }
 
@@ -801,6 +800,7 @@
     flex-direction: row;
     justify-content: space-between;
     height: 350px;
+    align-items: center;
   }
 
   #senChart {

@@ -10,66 +10,57 @@
         :step="0.01"
       />
     </n-space>
-    <div class="judge-compound" v-if="isCompound">
-      <n-switch :round="false" v-model:value="isContinueCompound">
-        <template #checked>
-          采用连续复利
-        </template>
-        <template #unchecked>
-          默认分期复利
-        </template>
-      </n-switch>
-      <n-alert type="info" class="info-message" v-if="isDisplayInfo && isContinueCompound">
-        当前为 <b style="color: rgb(191, 15, 15)">连续复利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
-      </n-alert>
-    </div>
-    <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && !isCompound">
-      当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
-    </n-alert>
     <div class="button-group">
       <n-button @click="addRow()" color="#6e9bc5"> 添加行 </n-button>
       <n-button @click="deleteRow()" color="#c67915">删除最后一行</n-button>
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button color="#3271ae" @click="">计算</n-button>
+      <n-button color="#3271ae" @click="computeResult">计算</n-button>
     </div>
-    <n-data-table
-      bordered
-      :columns="columns"
-      :data="rawData"
-      size="small"
-      :single-line="false"
-      striped 
-      :pagination="{ pageSize: 10 }"
-      :max-height="250"
-      :row-props="rowProps"
-    />
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="xRef"
-      :y="yRef"
-      :options="options"
-      :show="showDropdownRef"
-      :on-clickoutside="onClickoutside"
-      @select="handleSelect"
-    />
+    <div class="data-and-chart">
+      <n-data-table
+        bordered
+        :columns="columns"
+        :data="rawData"
+        size="small"
+        :single-line="false"
+        striped 
+        :pagination="{ pageSize: 10 }"
+        :max-height="250"
+        :row-props="rowProps"
+        class="data-table"
+      />
+      <n-dropdown
+        placement="bottom-start"
+        trigger="manual"
+        :x="xRef"
+        :y="yRef"
+        :options="options"
+        :show="showDropdownRef"
+        :on-clickoutside="onClickoutside"
+        @select="handleSelect"
+      />
+    <div ref="cashFlowChart" id="cashFlowChart" ></div>
+    </div>
     <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <hr>
+    {{ rawData }}
+    {{ npv }}
     <n-table>
       <thead>
         <tr>
           <th>净现值</th>
           <th>内部收益率</th>
+          <th>盈利指数</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>0 {{ currencySymbol }}</td>
+          <td>{{ npv }} {{ currencySymbol }}</td>
           <td>0</td>
+          <td></td>
         </tr>
       </tbody>
     </n-table>
-    <div ref="cashFlowChart" id="cashFlowChart" style="width: 100%; height: 400px;"></div>
   </div>
 </template>
 
@@ -77,6 +68,7 @@
   import { NInputNumber, NSpace, NSlider, NSwitch, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown, NTable } from 'naive-ui';
   import { useSettingStore } from "@/stores/settingStore";
   import { useCustomedCFInputStore } from "@/stores/input/CustomedCFInputStore";
+  import { useCustomedCFResultStore } from "@/stores/result/CustomedCFResultStore";
   import { storeToRefs } from "pinia";
   import { ref, h, nextTick, onMounted, watchEffect, computed } from "vue";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
@@ -86,17 +78,20 @@
   import { UNKNOWN_OPTION, NO_DELETING } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
+  import type { TooltipItem } from "@/types/TooltipItem";
+  import { NPV } from "@/utils/customedNPV";
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  // @@@@设置信息、是否连续复利、利率输入；表格相关数据和方法
+  // @@@@设置信息、利率输入；表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  const { isCompound, isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
-  const {interest, isContinueCompound, rawData} = storeToRefs(useCustomedCFInputStore())
+  const { isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
+  const {interest, rawData} = storeToRefs(useCustomedCFInputStore())
   // 创建表格的每一字段的内容（日期、现金流）
   const createColumns = (): DataTableColumns<CustomedCFData> => [
     {
       title: '日期',
       key: 'date',
+      width: '40%',
       render(row, index) {
         return h(NDatePicker, {
           value: row.date, 
@@ -111,7 +106,7 @@
       // 这个有取相反数的图标
       title: '现金流入/支出',
       key: 'cash',
-      width: '50%',
+      width: '60%',
       render(row, index) {
         return h('div', {
           style: {
@@ -139,6 +134,7 @@
             parse: parseCurrency,
             step: 100,
             size: 'small',
+            style: 'width: 60%',
             onUpdateValue(v) {
               rawData.value[index].cash = v || 0;
             }
@@ -246,7 +242,24 @@
   // @@@@@@@@结果相关的变量和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   
-
+  // 导入结果相关变量
+  const customedCFResultStore = useCustomedCFResultStore();
+  const { npv, irr, pi } = storeToRefs(customedCFResultStore)
+  // 计算结果
+  const computeResult = () => {
+    npv.value = computeNPV();
+  }
+  // 计算NPV
+  const computeNPV = () => {
+    if (cashFlowData.value.length === 0) {
+      return 0;
+    }
+    if (cashFlowData.value.length === 1) {
+      return Number(cashFlowData.value[0].toFixed(precision.value));
+    }
+    let result = NPV(interest.value, rawData.value);
+    return Number(result.toFixed(precision.value));
+  }
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 现金流可视化（现金流量图）
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -269,49 +282,52 @@
   onMounted(() => {
     myChart = echarts.init(cashFlowChart.value);
     const chartOption = {
-      title: {
-        text: '现金流量图'
-      },
-      xAxis: {
-        type: 'category',
-        data: dates.value,
-        name: '时间'
+      gird: {
+          right: '10px',
       },
       yAxis: {
+        type: 'category',
+        data: dates.value,
+        axisLine: { show: false },
+        axisLabel: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+      },
+      xAxis: {
         type: 'value',
-        name: `金额（${currencySymbol.value}）`
       },
       toolbox: {
         show: true,
+        itemSize: 12,
         feature: {
           dataZoom: {
             yAxisIndex: 'none'
           },
-          magicType: { 
-            type: ['line', 'bar'],
-            option: {
-              line: {
-                smooth: true,
-                symbol: 'none',
-              }
-            }
-          },
           saveAsImage: {},
-          
+          restore: {}
         },
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
+        },
+        formatter: function (params: any) {
+            // 如果是 'axis' 触发，params 是一个数组，包含每个系列的数据
+            // 如果是 'item' 触发，params 只有一个系列的数据
+            let result = params.map((item: TooltipItem) => {
+                let color = item.value < 0 ? '#ba5140' : '#4f6f46';
+                return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
+            }).join('<br/>');
+          return result;
         }
       },
       legend: {
         show: true,
         top: '5%',
-        left: 'center',
-        itemWidth: 20,
-        itemHeight: 20,
+        left: '5%',
+        itemWidth: 15,
+        itemHeight: 15,
         data: [
           {name: '支出', itemStyle: { color: '#ba5140'}},
           {name: '流入', itemStyle: { color: '#4f6f46'}}
@@ -327,7 +343,11 @@
             color: (params: any) => {
               return params.value < 0 ? '#ba5140' : '#4f6f46';
             }
-          }
+          },
+          label: {
+            show: cashFlowData.value.length <= 15,
+            formatter: '{b}'
+          },
         },
         {
           name: '流入',
@@ -358,17 +378,20 @@
   watchEffect(() => {
     // 更新 ECharts 图表
     if (cashFlowChart.value) {
-      myChart.setOption({
-        xAxis: {
-          data: dates.value,
-        },
+      myChart.setOption({ 
         yAxis: {
+          data: dates.value, 
+        },
+        xAxis: {
           type: 'value',
-          name: `金额（${currencySymbol.value}）`
         },
         series: [
           {
             data: cashFlowData.value,
+            label: {
+              show: cashFlowData.value.length <= 15,
+              formatter: '{b}'
+            },
           },
           {
             data: []
@@ -381,7 +404,7 @@
 
 <style scoped>
   .main {
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
   }
@@ -389,18 +412,6 @@
     margin-bottom: 20px;
     width: 50%;
   }
-
-  .judge-compound {
-    display: flex;
-    flex-direction: column;
-    justify-self: left;
-    align-items: flex-start;
-    justify-content: space-evenly;
-    height: max-content;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-
   .button-group {
     display: flex;
     flex-direction: row;
@@ -419,13 +430,26 @@
 
   td {
     text-align: center;
-    width: 50%;
   }
   .irr-warning {
     margin-top: 5px;
   }
 
   #cashFlowChart {
-    margin-top: 20px;
+    margin-left: 20px;
+    flex: 40%;
+    height: 100%;
+  }
+
+  .data-and-chart {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 350px;
+    align-items: center;
+  }
+
+  .data-table {
+    flex: 50%;
   }
 </style>

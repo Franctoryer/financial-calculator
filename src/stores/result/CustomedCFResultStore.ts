@@ -5,6 +5,7 @@ export const useCustomedCFResultStore = defineStore('CustomedCFResultStore', {
   state: () => ({
     npv: 0 as number,
     irr: 0 as number,
+    pi: 0 as number
   }),
   persist: {
     storage: sessionStorage
