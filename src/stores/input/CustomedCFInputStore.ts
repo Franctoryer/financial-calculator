@@ -5,7 +5,6 @@ import type { CustomedCFData } from "@/types/CustomedCFData";
 export const useCustomedCFInputStore = defineStore('CustomedCFInputStore', {
   state: () => ({
     interest: 0.2,
-    isContinueCompound: false,
     rawData: [{
       date: Date.now(),
       cash: 1000

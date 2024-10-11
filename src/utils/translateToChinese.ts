@@ -15,7 +15,8 @@ export const translateToChinese = (obj: any): string => {
     'null': 'NaN',
     '{': '(',
     '}': ')',
-    '"pi":': '盈利指数:'
+    '"pi":': '盈利指数:',
+    '"date":': '时间戳:'
   }
 
   for (const item in dictionary) {
@@ -23,7 +24,7 @@ export const translateToChinese = (obj: any): string => {
     chineseTxT = chineseTxT.replace(new RegExp(item, 'g'), dictionary[item])
   }
 
-  chineseTxT = chineseTxT.replace(/"order":\d*,/g, '')
+  chineseTxT = chineseTxT.replace(/"order":\d*,/g, '')  // 把序号删了
   if (chineseTxT.length > maxLength) {
     chineseTxT = chineseTxT.slice(0, maxLength) + '……<点击查看详情>';
   }

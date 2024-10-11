@@ -10,49 +10,37 @@
         :step="0.01"
       />
     </n-space>
-    <div class="judge-compound" v-if="isCompound">
-      <n-switch :round="false" v-model:value="isContinueCompound">
-        <template #checked>
-          采用连续复利
-        </template>
-        <template #unchecked>
-          默认分期复利
-        </template>
-      </n-switch>
-      <n-alert type="info" class="info-message" v-if="isDisplayInfo && isContinueCompound">
-        当前为 <b style="color: rgb(191, 15, 15)">连续复利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
-      </n-alert>
-    </div>
-    <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && !isCompound">
-      当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
-    </n-alert>
     <div class="button-group">
       <n-button @click="addRow()" color="#6e9bc5"> 添加行 </n-button>
       <n-button @click="deleteRow()" color="#c67915">删除最后一行</n-button>
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button color="#3271ae" @click="">计算</n-button>
+      <n-button color="#3271ae" @click="computeResult">计算</n-button>
     </div>
-    <n-data-table
-      bordered
-      :columns="columns"
-      :data="rawData"
-      size="small"
-      :single-line="false"
-      striped 
-      :pagination="{ pageSize: 10 }"
-      :max-height="250"
-      :row-props="rowProps"
-    />
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="xRef"
-      :y="yRef"
-      :options="options"
-      :show="showDropdownRef"
-      :on-clickoutside="onClickoutside"
-      @select="handleSelect"
-    />
+    <div class="data-and-chart">
+      <n-data-table
+        bordered
+        :columns="columns"
+        :data="rawData"
+        size="small"
+        :single-line="false"
+        striped 
+        :pagination="{ pageSize: 10 }"
+        :max-height="250"
+        :row-props="rowProps"
+        class="data-table"
+      />
+      <n-dropdown
+        placement="bottom-start"
+        trigger="manual"
+        :x="xRef"
+        :y="yRef"
+        :options="options"
+        :show="showDropdownRef"
+        :on-clickoutside="onClickoutside"
+        @select="handleSelect"
+      />
+    <div ref="cashFlowChart" id="cashFlowChart" ></div>
+    </div>
     <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <hr>
     <n-table>
@@ -60,16 +48,18 @@
         <tr>
           <th>净现值</th>
           <th>内部收益率</th>
+          <th>盈利指数</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>0 {{ currencySymbol }}</td>
-          <td>0</td>
+          <td>{{ npvView.number }} {{ currencySymbol }}</td>
+          <td>{{ irrView.number }}</td>
+          <td>{{ piView.number }}</td>
         </tr>
       </tbody>
     </n-table>
-    <div ref="cashFlowChart" id="cashFlowChart" style="width: 100%; height: 400px;"></div>
+    <div ref="senChart" id="senChart"></div>
   </div>
 </template>
 
@@ -77,26 +67,36 @@
   import { NInputNumber, NSpace, NSlider, NSwitch, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown, NTable } from 'naive-ui';
   import { useSettingStore } from "@/stores/settingStore";
   import { useCustomedCFInputStore } from "@/stores/input/CustomedCFInputStore";
+  import { useCustomedCFResultStore } from "@/stores/result/CustomedCFResultStore";
   import { storeToRefs } from "pinia";
-  import { ref, h, nextTick, onMounted, watchEffect, computed } from "vue";
+  import { ref, h, nextTick, onMounted, watchEffect, computed, watch, reactive } from "vue";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { CustomedCFData } from "@/types/CustomedCFData";
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
-  import { UNKNOWN_OPTION, NO_DELETING } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, IRR_CONVERGENCE_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
+  import type { TooltipItem } from "@/types/TooltipItem";
+  import { NPV } from "@/utils/customedNPV";
+  // @ts-ignore
+  import xirr from 'xirr';
+  import { useHistoryStore } from "@/stores/historyStore"
+  import type { HistoryData } from "@/types/HistoryData";
+  import { useRoute } from "vue-router";
+  import gsap from 'gsap';
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  // @@@@设置信息、是否连续复利、利率输入；表格相关数据和方法
+  // @@@@设置信息、利率输入；表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  const { isCompound, isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
-  const {interest, isContinueCompound, rawData} = storeToRefs(useCustomedCFInputStore())
+  const { isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
+  const {interest, rawData} = storeToRefs(useCustomedCFInputStore())
   // 创建表格的每一字段的内容（日期、现金流）
   const createColumns = (): DataTableColumns<CustomedCFData> => [
     {
       title: '日期',
       key: 'date',
+      width: '40%',
       render(row, index) {
         return h(NDatePicker, {
           value: row.date, 
@@ -111,7 +111,7 @@
       // 这个有取相反数的图标
       title: '现金流入/支出',
       key: 'cash',
-      width: '50%',
+      width: '60%',
       render(row, index) {
         return h('div', {
           style: {
@@ -139,6 +139,7 @@
             parse: parseCurrency,
             step: 100,
             size: 'small',
+            style: 'width: 60%',
             onUpdateValue(v) {
               rawData.value[index].cash = v || 0;
             }
@@ -246,7 +247,178 @@
   // @@@@@@@@结果相关的变量和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   
+  // 导入结果相关变量
+  const customedCFResultStore = useCustomedCFResultStore();
+  const { npv, irr, pi } = storeToRefs(customedCFResultStore)
+  // 计算结果
+  const computeResult = () => {
+    npv.value = computeNPV(interest.value);
+    irr.value = computeIRR();
+    pi.value = computePI();
+    addHistory();
+  }
+  // 计算NPV
+  const computeNPV = (interest: number) => {
+    if (cashFlowData.value.length === 0) {
+      return 0;
+    }
+    if (cashFlowData.value.length === 1) {
+      return Number(cashFlowData.value[0].toFixed(precision.value));
+    }
+    let result = NPV(interest, rawData.value);
+    return Number(result.toFixed(precision.value));
+  }
+  // 计算IRR
+  const computeIRR = () => {
+    if (!isValidToIRR()) {
+      window.$message.error(IRR_REQUIREMENT_ERROR, MESSAGE_CONFIG)
+      return NaN;
+    }
+    let inputData: any[] = [];
+    rawData.value.forEach(data => {
+      inputData.push({ amount: data.cash, when: data.date})
+    })
+    try {
+      let result: number = xirr(inputData)
+      return Number(result.toFixed(precision.value));
+    } catch {
+      window.$message.error(IRR_CONVERGENCE_ERROR, MESSAGE_CONFIG)  // 如果计算不收敛，弹窗提示
+      return NaN;
+    }
+  }
+  // 计算PI
+  const computePI = () => {
+    // 如果期初投资是正数，盈利指标没有意义
+    if (cashFlowData.value.length === 0 || cashFlowData.value[0] >= 0) {
+      return NaN;
+    }
+    let result = npv.value / (-cashFlowData.value[0]);
+    return  Number(result.toFixed(precision.value));
+  }
+  // 判断输入的现金流是否能计算IRR(至少一正一负)
+  const isValidToIRR = () => {
+    let positive = 0;
+    let negative = 0;
+    cashFlowData.value.forEach(val => {
+      if (val > 0)  positive++;
+      if (val < 0)  negative++;
+    })
 
+    return positive > 0 && negative > 0;
+  }
+
+  // 添加数字滚动特效
+  const npvView = reactive({
+    number: Number(npv.value)
+  });
+  const irrView = reactive({
+    number: Number(irr.value)
+  });
+  const piView = reactive({
+    number: Number(pi.value)
+  });
+  watch(npv, (n) => {
+    gsap.to(npvView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        npvView.number = Number(npvView.number.toFixed(precision.value));
+      }
+    });
+  });
+  watch(irr, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      irrView.number = newVal;
+      return;
+    }
+    gsap.to(irrView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        irrView.number = Number(irrView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(pi, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      piView.number = newVal;
+      return;
+    }
+    gsap.to(piView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        piView.number = Number(piView.number.toFixed(precision.value));
+      }
+    });
+  })
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 保存历史记录
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const historyStore = useHistoryStore();
+  // 添加历史记录
+  const addHistory = () => {
+    let history: HistoryData = {
+      saveTime: Date.now(),
+      name: 'customed-cashflow',
+      inputData: {
+        interest: interest.value,
+        rawData: JSON.parse(JSON.stringify(rawData.value))  // 引用对象要深拷贝而不是浅拷贝
+      },
+      resultData: {
+        npv: npv.value,
+        irr: irr.value,
+        pi: pi.value
+      }
+    } 
+    historyStore.addHistory(history);
+  }
+
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 处理跳转传参路由
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const route = useRoute();
+  onMounted(() => {
+    handleHistoryRoute();
+  });
+  // 在当前页面回滚历史数据
+  watch(route, () => {
+    handleHistoryRoute();
+  })
+  // 回滚历史数据
+  const handleHistoryRoute = () => {
+    if (route.query.inputData && route.query.resultData) {
+      let inputData = JSON.parse(route.query.inputData as string)
+      let resultData = JSON.parse(route.query.resultData as string)
+      interest.value = inputData.interest;
+      rawData.value = inputData.rawData;
+      npv.value = resultData.npv;
+      irr.value = resultData.irr === null ? NaN : resultData.irr; // NaN会被解析成 null
+      pi.value = resultData.pi === null ? NaN : resultData.pi; // NaN会被解析成 null
+    }
+  }
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@
+  // 灵敏度分析（NPV和PI）
+  // @@@@@@@@@@@@@@@@@@@@@@@@@
+  const senArr = computed(() => {
+    let result1 = [];
+    let result2 = [];
+    let initialValue = cashFlowData.value.length > 0 && cashFlowData.value[0] < 0 ? -cashFlowData.value[0] : NaN;
+    // 计算贴现率每增长0.1，净现值的变化
+    for (let i = 0; i <= 1; i += 0.1) {
+      let npv = computeNPV(i);
+      result1.push(npv);
+      result2.push(Number((npv / initialValue).toFixed(precision.value)));
+    }
+    return { result1, result2 };
+  })
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 现金流可视化（现金流量图）
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -269,49 +441,52 @@
   onMounted(() => {
     myChart = echarts.init(cashFlowChart.value);
     const chartOption = {
-      title: {
-        text: '现金流量图'
-      },
-      xAxis: {
-        type: 'category',
-        data: dates.value,
-        name: '时间'
+      gird: {
+          right: '10px',
       },
       yAxis: {
+        type: 'category',
+        data: dates.value,
+        axisLine: { show: false },
+        axisLabel: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+      },
+      xAxis: {
         type: 'value',
-        name: `金额（${currencySymbol.value}）`
       },
       toolbox: {
         show: true,
+        itemSize: 12,
         feature: {
           dataZoom: {
             yAxisIndex: 'none'
           },
-          magicType: { 
-            type: ['line', 'bar'],
-            option: {
-              line: {
-                smooth: true,
-                symbol: 'none',
-              }
-            }
-          },
           saveAsImage: {},
-          
+          restore: {}
         },
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow'
+        },
+        formatter: function (params: any) {
+            // 如果是 'axis' 触发，params 是一个数组，包含每个系列的数据
+            // 如果是 'item' 触发，params 只有一个系列的数据
+            let result = params.map((item: TooltipItem) => {
+                let color = item.value < 0 ? '#ba5140' : '#4f6f46';
+                return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
+            }).join('<br/>');
+          return result;
         }
       },
       legend: {
         show: true,
         top: '5%',
-        left: 'center',
-        itemWidth: 20,
-        itemHeight: 20,
+        left: '5%',
+        itemWidth: 15,
+        itemHeight: 15,
         data: [
           {name: '支出', itemStyle: { color: '#ba5140'}},
           {name: '流入', itemStyle: { color: '#4f6f46'}}
@@ -327,7 +502,11 @@
             color: (params: any) => {
               return params.value < 0 ? '#ba5140' : '#4f6f46';
             }
-          }
+          },
+          label: {
+            show: cashFlowData.value.length <= 15,
+            formatter: '{b}'
+          },
         },
         {
           name: '流入',
@@ -358,17 +537,20 @@
   watchEffect(() => {
     // 更新 ECharts 图表
     if (cashFlowChart.value) {
-      myChart.setOption({
-        xAxis: {
-          data: dates.value,
-        },
+      myChart.setOption({ 
         yAxis: {
+          data: dates.value, 
+        },
+        xAxis: {
           type: 'value',
-          name: `金额（${currencySymbol.value}）`
         },
         series: [
           {
             data: cashFlowData.value,
+            label: {
+              show: cashFlowData.value.length <= 15,
+              formatter: '{b}'
+            },
           },
           {
             data: []
@@ -377,11 +559,151 @@
       });
     }
   });
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 灵敏度分析可视化
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const senChart = ref(null);
+  let myChart2: any;
+  let senChartXData: number[] = [];
+  for (let i = 0; i <= 1; i += 0.1) {
+    senChartXData.push(Number(i.toFixed(1)));
+  }
+  onMounted(() => {
+    myChart2 = echarts.init(senChart.value);
+    const chartOption = {
+      title: {
+        text: '灵敏度分析',
+        left: 'center'
+      },
+      grid: [
+        {
+          left: 60,
+          right: 70,
+          height: '35%'
+        },
+        {
+          left: 60,
+          right: 70,
+          top: '55%',
+          height: '35%'
+        }
+      ],
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          animation: false
+        }
+      },
+      legend: {
+        data: ['净现值', '盈利指数'],
+        left: 10
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      axisPointer: {
+        link: [
+          {
+            xAxisIndex: 'all'
+          }
+        ]
+      },
+      xAxis: [
+        {
+          type: 'category',
+          name: '贴现率',
+          boundaryGap: false,
+          axisLine: { onZero: true },
+          data: senChartXData,
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
+        },
+        {
+          type: 'category',
+          gridIndex: 1,
+          boundaryGap: false,
+          axisLine: { onZero: true },
+          data: senChartXData,
+          position: 'top',
+          axisLabel: {
+            show: false // 不显示 X 轴标签
+          },
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
+        }
+      ],
+      yAxis: [
+        {
+          name: '净现值',
+          type: 'value',
+          scale: true
+        },
+        {
+          gridIndex: 1,
+          name: '盈利指标',
+          type: 'value',
+          inverse: true,
+          scale: true
+        }
+      ],
+      series: [
+        {
+          name: '净现值',
+          type: 'line',
+          symbolSize: 8,
+          data: senArr.value.result1
+        },
+        {
+          name: '盈利指数',
+          type: 'line',
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          symbolSize: 8,
+          data: senArr.value.result2
+        }
+      ]
+    }
+    myChart2.setOption(chartOption);
+    const resizeOb = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // 通过 ECharts 提供的方法获取实例并调用 resize 方法
+        // @ts-ignore
+        echarts.getInstanceByDom(entry.target).resize();
+      }
+    });
+    // @ts-ignore
+    resizeOb.observe(senChart.value);
+  })
+  // 监听senArr的变化 
+  watchEffect(() => {
+    if (senChart.value) {
+      myChart2.setOption({
+        series: [
+          {
+            data: senArr.value.result1
+          },
+          {
+            data: senArr.value.result2
+          }
+        ]
+      })
+    }
+  })
+  
 </script>
 
 <style scoped>
   .main {
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
   }
@@ -389,18 +711,6 @@
     margin-bottom: 20px;
     width: 50%;
   }
-
-  .judge-compound {
-    display: flex;
-    flex-direction: column;
-    justify-self: left;
-    align-items: flex-start;
-    justify-content: space-evenly;
-    height: max-content;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-
   .button-group {
     display: flex;
     flex-direction: row;
@@ -419,13 +729,35 @@
 
   td {
     text-align: center;
-    width: 50%;
+    width: 33%;
   }
   .irr-warning {
     margin-top: 5px;
   }
 
   #cashFlowChart {
+    margin-left: 20px;
+    flex: 40%;
+    height: 100%;
+  }
+
+  .data-and-chart {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 350px;
+    align-items: center;
+  }
+
+  .data-table {
+    flex: 50%;
+  }
+
+  #senChart {
+    width: 90%;
+    height: 400px;
     margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>
