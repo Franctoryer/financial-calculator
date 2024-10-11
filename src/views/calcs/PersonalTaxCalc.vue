@@ -1,8 +1,9 @@
 <template>
   <div>
     <n-space :size="5" vertical class="PersonalTaxCalc-container">
-      <!-- 月份 -->
-      <n-space vertical :size="5">
+     
+ <!-- 月份 -->
+ <n-space vertical :size="5">
         <div>月份：</div>
         <n-slider v-model:value="months" :step="1" :min="1" :max="12">
           <template #thumb v-if="months < 5">
@@ -28,7 +29,7 @@
       <div>
         <n-space :wrap="false">
         <div>单月税前工资：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :validator="incomeValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
         </div>
         <div>累计税前工资：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
@@ -40,7 +41,7 @@
         <div>
         <n-space :wrap="false">
         <div>五险一金：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :validator="fiveonetaxValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>元</n-space>
         </div>
         <div>累计五险一金：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>元</n-space>
@@ -52,7 +53,7 @@
         <div>
         <n-space :wrap="false">
         <div>专项附加扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :validator="sidecostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>元</n-space>
         </div>
         <div>累计专项附加扣除：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>元</n-space>
@@ -64,7 +65,7 @@
         <div>
         <n-space :wrap="false">
         <div>其他扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :validator="othercostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>元</n-space>
         </div>
         <div>累计其他扣除：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>元</n-space>
@@ -73,23 +74,25 @@
 
       <!-- 固定扣除 -->
       <n-space :wrap="false">
-        <div>固定减除（个税起征点）:
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="tax_threshold" size="small" readonly/>元</n-space>
+        <div>个税起征点：
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="tax_threshold" size="small" :show-button="false" readonly/>元</n-space>
         </div>
         <div>累计减除:
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>元s</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>元</n-space>
         </div>
       </n-space>
 
     </div>
     <div class="button-group">
-      <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button color="#3271ae" @click="computeResult">计算</n-button>
+      <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
+      <n-button color="#3271ae" @click="computeAllInput">按月份更新输入</n-button>
+      <n-button color="green" @click="computeResult">计算结果</n-button>
     </div>
     </n-space>
   </div>
-
+  <hr>
   <div>
+  
     <n-space :size="5" vertical class="PersonalTaxCalc-container">
       <div>
         <n-space :wrap="false">
@@ -141,10 +144,14 @@
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
+  import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
+  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/stores/compute/computeFiveOneTax";
+
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
-  const { PTInputData, months, income, fiveonetax, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
+  const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
+  const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold, 
           taxable_income, taxRate, display_taxRate, quickDeduction, lastweek_taxable_income,
           lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
@@ -186,6 +193,7 @@
    all_sidecosts.value = months.value*sidecosts.value;
    all_othercosts.value = months.value*othercosts.value;
    all_tax_threshold.value = months.value*tax_threshold.value;
+   all_fiveonetax.value=Number(all_fiveonetax.value.toFixed(precision.value));
   }
  
   const computeTaxableIncome = () => {
@@ -244,16 +252,21 @@
       quickDeduction.value=Number(quickDeduction.value.toFixed(precision.value));
       tax.value=Number(tax.value.toFixed(precision.value));
       lastweek_tax.value=Number(lastweek_tax.value.toFixed(precision.value));
-      current_tax.value=Number(current_tax.value.toFixed(precision.value))
-      taxed_income.value=Number(taxed_income.value.toFixed(precision.value))
+      current_tax.value=Number(current_tax.value.toFixed(precision.value));
+      taxed_income.value=Number(taxed_income.value.toFixed(precision.value));
     }
 
+    watch(() => income.value, () => {
+    computeSocialInsuranceBase();
+    computeAccumulationFundBase();
+    computeFiveOneTax();
+    computeAllInput();
+  });
 
 
    watch(() => months.value, () => {
      computeAllInput();
    });
-
   
   
 
