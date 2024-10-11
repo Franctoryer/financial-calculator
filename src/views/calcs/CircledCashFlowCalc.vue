@@ -32,6 +32,7 @@
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
       <n-button color="#3271ae" @click="computeResult">计算</n-button>
     </div>
+    <hr>
     <div class="data-and-chart">
       <n-data-table 
         bordered

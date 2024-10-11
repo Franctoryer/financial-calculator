@@ -80,10 +80,10 @@ const append = (char: string) => {
 
 // 清空输入框
 const clear = () => {
-  if(formula.value === ''){
+  if(formula.value === '' && result.value === ''){
     handleRedirectAC()
       }
-  else {formula.value = '';}
+  else {formula.value = '';result.value = ''}
   formula.value = '';
 };
 
