@@ -14,7 +14,8 @@ export const translateToChinese = (obj: any): string => {
     '"irr"': '内部收益率',
     'null': 'NaN',
     '{': '(',
-    '}': ')'
+    '}': ')',
+    '"pi":': '盈利指数:'
   }
 
   for (const item in dictionary) {

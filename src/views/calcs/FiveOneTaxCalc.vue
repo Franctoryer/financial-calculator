@@ -21,7 +21,6 @@
 
       <div class="button-group">
         <n-button color="#ba5b49" >全部清除</n-button>
-        <n-button color="#3271ae" >按月份更新输入</n-button>
         <n-button color="green" >计算结果</n-button>
       </div>
       </n-space>
