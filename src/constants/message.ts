@@ -6,3 +6,4 @@ export const UNKNOWN_OPTION: string = '未知选项';
 export const NO_DELETING: string = '数据已删完，我无处可下手啦！';
 export const NO_CLEAR: string = '俺也一样！';
 export const IRR_REQUIREMENT_ERROR: string = '要计算IRR，现金流至少有一正一负';
+export const IRR_CONVERGENCE_ERROR: string = 'IRR计算不收敛';

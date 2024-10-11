@@ -43,8 +43,6 @@
     </div>
     <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <hr>
-    {{ rawData }}
-    {{ npv }}
     <n-table>
       <thead>
         <tr>
@@ -56,8 +54,8 @@
       <tbody>
         <tr>
           <td>{{ npv }} {{ currencySymbol }}</td>
-          <td>0</td>
-          <td></td>
+          <td>{{ irr }}</td>
+          <td>{{ pi }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -75,11 +73,13 @@
   import type { CustomedCFData } from "@/types/CustomedCFData";
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
-  import { UNKNOWN_OPTION, NO_DELETING } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, IRR_CONVERGENCE_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
   import type { TooltipItem } from "@/types/TooltipItem";
   import { NPV } from "@/utils/customedNPV";
+  // @ts-ignore
+  import xirr from 'xirr';
 
   // @@@@@@@@@@@@@@@@@@@@@@@@@
   // @@@@设置信息、利率输入；表格相关数据和方法
@@ -248,6 +248,8 @@
   // 计算结果
   const computeResult = () => {
     npv.value = computeNPV();
+    irr.value = computeIRR();
+    pi.value = computePI();
   }
   // 计算NPV
   const computeNPV = () => {
@@ -259,6 +261,44 @@
     }
     let result = NPV(interest.value, rawData.value);
     return Number(result.toFixed(precision.value));
+  }
+  // 计算IRR
+  const computeIRR = () => {
+    if (!isValidToIRR()) {
+      window.$message.error(IRR_REQUIREMENT_ERROR, MESSAGE_CONFIG)
+      return NaN;
+    }
+    let inputData: any[] = [];
+    rawData.value.forEach(data => {
+      inputData.push({ amount: data.cash, when: data.date})
+    })
+    try {
+      let result: number = xirr(inputData)
+      return Number(result.toFixed(precision.value));
+    } catch {
+      window.$message.error(IRR_CONVERGENCE_ERROR, MESSAGE_CONFIG)  // 如果计算不收敛，弹窗提示
+      return NaN;
+    }
+  }
+  // 计算PI
+  const computePI = () => {
+    // 如果期初投资是正数，盈利指标没有意义
+    if (cashFlowData.value.length === 0 || cashFlowData.value[0] >= 0) {
+      return NaN;
+    }
+    let result = npv.value / (-cashFlowData.value[0]);
+    return  Number(result.toFixed(precision.value));
+  }
+  // 判断输入的现金流是否能计算IRR(至少一正一负)
+  const isValidToIRR = () => {
+    let positive = 0;
+    let negative = 0;
+    cashFlowData.value.forEach(val => {
+      if (val > 0)  positive++;
+      if (val < 0)  negative++;
+    })
+
+    return positive > 0 && negative > 0;
   }
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 现金流可视化（现金流量图）

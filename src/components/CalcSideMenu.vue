@@ -26,6 +26,7 @@
   import { useRoute } from "vue-router";
   import { getActiveMenu } from "@/utils/getActiveMenu";
 
+
   /**
    * 将SVG图标组件转化为VNode对象
    * @param icon SVG图标组件
@@ -54,7 +55,7 @@
           key: 'circled-cashFlow'
         },
         {
-          label: () => h(RouterLink, { to: { name: 'customed-cashflow'}}, { default: () => '自定义现金流'}),
+          label: () => h(RouterLink, { to: { name: 'customed-cashflow'}}, { default: () => '不规则现金流'}),
           key: 'customed-cashflow'
         }
       ],
