@@ -104,6 +104,7 @@
   import { useRoute } from 'vue-router';
   import { useHistoryStore } from "@/stores/historyStore";
   import gsap from "gsap";
+  import type { HistoryData } from "@/types/HistoryData";
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -296,13 +297,13 @@
   const { npv, irr, pi } = storeToRefs(useCircledCFResultStore());
   // 按计算按钮，刷新结果，将数据保存到历史记录
   const computeResult = () => {
-    npv.value = comuputeNPV(interest.value);
+    npv.value = computeNPV(interest.value);
     irr.value = computeIRR();
     pi.value = computePI();
     addHistory();
   }
   // 计算净现值
-  const comuputeNPV = (interest: number) => {
+  const computeNPV = (interest: number) => {
     if (cashFlowData.value.length === 0) {
       return 0;
     } else if (cashFlowData.value.length === 1) {
@@ -356,8 +357,6 @@
   }
   // 将计算结果和计算输入存入历史记录
   const historyStore = useHistoryStore();
-  const { historyData } = storeToRefs(historyStore);
-  import type { HistoryData } from "@/types/HistoryData";
 
   // 添加历史记录
   const addHistory = () => {
@@ -438,7 +437,7 @@
     let initialValue = cashFlowData.value.length > 0 && cashFlowData.value[0] < 0 ? -cashFlowData.value[0] : NaN;
     // 计算贴现率每增长0.1，净现值的变化
     for (let i = 0; i <= 1; i += 0.1) {
-      let npv = comuputeNPV(i);
+      let npv = computeNPV(i);
       result1.push(npv);
       result2.push(Number((npv / initialValue).toFixed(precision.value)));
     }
@@ -633,31 +632,37 @@
           type: 'category',
           name: '贴现率',
           boundaryGap: false,
-          axisLine: { onZero: true },
-          data: senChartXData
+          data: senChartXData,
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
         },
         {
           type: 'category',
           gridIndex: 1,
           boundaryGap: false,
-          axisLine: { onZero: true },
           data: senChartXData,
           position: 'top',
           axisLabel: {
             show: false // 不显示 X 轴标签
-          }
+          },
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
         }
       ],
       yAxis: [
         {
           name: '净现值',
           type: 'value',
+          scale: true,
         },
         {
           gridIndex: 1,
           name: '盈利指标',
           type: 'value',
           inverse: true,
+          scale: true
         }
       ],
       series: [
@@ -692,6 +697,14 @@
   watchEffect(() => {
     if (senChart.value) {
       myChart2.setOption({
+        yAxis: [
+          {
+            scale: true
+          },
+          {
+            scale: true
+          }
+        ],
         series: [
           {
             data: senArr.value.result1
