@@ -32,7 +32,7 @@
           <n-popover 
             trigger="hover" 
             placement="left-start" 
-            :width="500" 
+            style="max-width: 500px; min-width: 300px;"
           >
             <template #trigger>
               <HistoryElement 
@@ -46,14 +46,15 @@
             </template>
             <template #header>
               <div class="history-header">
-                <b>{{ standardTimeStamp(data.saveTime) }}</b>
+                <b class="history-time">{{ standardTimeStamp(data.saveTime) }}</b>
                 <n-tag type="info" size="small"> {{ getCalcByPathName(data.name) }}</n-tag>
               </div>
             </template>
-              <div class="pop-content">
-                <div class="pop-content-input"><b>输入：</b>{{ translateToChinese(data.inputData) }}</div>
-                <div><b>输出：</b>{{ translateToChinese(data.resultData) }}</div>
-              </div>
+            <div class="pop-content">
+              <div class="pop-content-element"><b>输入：</b>{{ translateToChinese(data.inputData) }}</div>
+              <div class="pop-content-element"><b>输出：</b>{{ translateToChinese(data.resultData) }}</div>
+            </div>
+            <div class="pop-footer">{{ index + 1 }}/{{ historyData.length }}</div>
           </n-popover>
         </div>
       </n-scrollbar>
@@ -200,7 +201,15 @@
   width: 95%;
 }
 
-.pop-content-input {
+.pop-content-element {
   margin-bottom: 3px;
+}
+
+.pop-footer {
+  font-size: smaller;
+  margin-left: auto;
+  margin-right: auto;
+  color: grey;
+  text-align: center;
 }
 </style>

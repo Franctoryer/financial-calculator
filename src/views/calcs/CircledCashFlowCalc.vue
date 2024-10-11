@@ -32,30 +32,34 @@
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
       <n-button color="#3271ae" @click="computeResult">计算</n-button>
     </div>
-    <n-data-table 
-      bordered
-      :columns="columns" 
-      :data="displayData" 
-      :single-line="false"
-      striped 
-      :pagination="{ pageSize: 10 }"
-      :max-height="250"
-      size="small"
-      :row-props="rowProps"
-    />
-    <n-dropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="xRef"
-      :y="yRef"
-      :options="options"
-      :show="showDropdownRef"
-      :on-clickoutside="onClickoutside"
-      @select="handleSelect"
-    />
-    <!-- <pre>{{ JSON.stringify(rawData, null, 2) }}</pre> -->
-    <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
+    <div class="data-and-chart">
+      <n-data-table 
+        bordered
+        :columns="columns" 
+        :data="displayData" 
+        :single-line="false"
+        striped 
+        :pagination="{ pageSize: 10 }"
+        size="small"
+        :row-props="rowProps"
+        class="data-table"
+        :max-height="250"
+      />
+      <n-dropdown
+        placement="bottom-start"
+        trigger="manual"
+        :x="xRef"
+        :y="yRef"
+        :options="options"
+        :show="showDropdownRef"
+        :on-clickoutside="onClickoutside"
+        @select="handleSelect"
+      />
+      <!-- <pre>{{ JSON.stringify(rawData, null, 2) }}</pre> -->
+      <div ref="cashFlowChart" id="cashFlowChart"></div>
+    </div>
     <hr>
+    <n-alert type="warning" class="irr-warning" v-if="isDisplayInfo && precision >= 5"> 高精度下内部收益率会不准确</n-alert>
     <n-table>
       <thead>
         <tr>
@@ -70,7 +74,6 @@
         </tr>
       </tbody>
     </n-table>
-    <div ref="cashFlowChart" id="cashFlowChart" style="width: 100%; height: 400px;"></div>
   </div>
 </template>
 
@@ -115,7 +118,7 @@
       } else {
         let oldSumTime = sumTime;
         sumTime += item.freq;
-        result.push({order: `第${oldSumTime} ~ ${sumTime - 1}${timeUnitText.value}`, cash: item.cash, freq: item.freq})
+        result.push({order: `第${oldSumTime}~${sumTime - 1}${timeUnitText.value}`, cash: item.cash, freq: item.freq})
       }
     }
     return result;
@@ -134,7 +137,7 @@
         // 这个有取相反数的图标
         title: '现金流入/支出',
         key: 'cash',
-        width: '50%',
+        width: '55%',
         render(row, index) {
           return h('div', {
             style: {
@@ -162,6 +165,7 @@
               parse: parseCurrency,
               step: 100,
               size: 'small',
+              style: 'width: 60%',
               onUpdateValue(v) {
                 rawData.value[index].cash = v || 0;
               }
@@ -403,35 +407,29 @@
   onMounted(() => {
     myChart = echarts.init(cashFlowChart.value);
     const chartOption = {
-      title: {
-        text: '现金流量图'
-      },
-      xAxis: {
-        type: 'category',
-        data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
-        name: '时间'
+      gird: {
+        right: '10px',
       },
       yAxis: {
-        type: 'value',
-        name: `金额（${currencySymbol.value}）`
+        type: 'category',
+        data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
+        axisLine: { show: false },
+        axisLabel: { show: false },
+        axisTick: { show: false },
+        splitLine: { show: false },
+      },
+      xAxis: {
+        type: 'value'
       },
       toolbox: {
         show: true,
+        itemSize: 12,
         feature: {
           dataZoom: {
             yAxisIndex: 'none'
           },
-          magicType: { 
-            type: ['line', 'bar'],
-            option: {
-              line: {
-                smooth: true,
-                symbol: 'none',
-              }
-            }
-          },
           saveAsImage: {},
-          
+          restore: {},
         },
       },
       tooltip: {
@@ -444,7 +442,7 @@
             // 如果是 'item' 触发，params 只有一个系列的数据
             let result = params.map((item: TooltipItem) => {
                 let color = item.value < 0 ? '#ba5140' : '#4f6f46';
-                return `<b>${item.name}</b>: <b style="color: ${color}">${item.value}</b>`;
+                return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
             }).join('<br/>');
           return result;
         }
@@ -452,9 +450,9 @@
       legend: {
         show: true,
         top: '5%',
-        left: 'center',
-        itemWidth: 20,
-        itemHeight: 20,
+        left: '5%',
+        itemWidth: 15,
+        itemHeight: 15,
         data: [
           {name: '支出', itemStyle: { color: '#ba5140'}},
           {name: '流入', itemStyle: { color: '#4f6f46'}}
@@ -470,7 +468,11 @@
             color: (params: any) => {
               return params.value < 0 ? '#ba5140' : '#4f6f46';
             }
-          }
+          },
+          label: {
+            show: () => cashFlowData.value.length <= 15,
+            formatter: '{b}'
+          },
         },
         {
           name: '流入',
@@ -502,16 +504,19 @@
     // 更新 ECharts 图表
     if (cashFlowChart.value) {
       myChart.setOption({
-        xAxis: {
+        yAxis: {
           data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
         },
-        yAxis: {
+        xAxis: {
           type: 'value',
-          name: `金额（${currencySymbol.value}）`
         },
         series: [
           {
             data: cashFlowData.value,
+            label: {
+              show: cashFlowData.value.length <= 15,
+              formatter: '{b}'
+            }
           },
           {
             data: []
@@ -548,7 +553,7 @@
 
 <style scoped>
   .main {
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
   }
@@ -604,9 +609,21 @@
     margin-top: 5px;
   }
 
-  #cashFlowChart {
-    margin-top: 20px;
+  .data-table {
+    flex: 50%;
   }
 
+  #cashFlowChart {
+    margin-left: 20px;
+    flex: 30%;
+    height: 100%;
+  }
+
+  .data-and-chart {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 350px;
+  }
   
 </style>

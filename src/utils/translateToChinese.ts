@@ -22,9 +22,9 @@ export const translateToChinese = (obj: any): string => {
     chineseTxT = chineseTxT.replace(new RegExp(item, 'g'), dictionary[item])
   }
 
-  chineseTxT = chineseTxT.replace(/"order":\d,/g, '')
+  chineseTxT = chineseTxT.replace(/"order":\d*,/g, '')
   if (chineseTxT.length > maxLength) {
-    chineseTxT = chineseTxT.slice(0, maxLength) + ' ⍫';
+    chineseTxT = chineseTxT.slice(0, maxLength) + '……<点击查看详情>';
   }
   return chineseTxT;
 } 

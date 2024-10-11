@@ -21,7 +21,7 @@
           style="height: 100%" 
           :max="SPLIT_MAX" 
           :min="SPLIT_MIN"
-          :default-size="SPLIT_MAX"
+          :default-size="0.7"
         >
           <template #1>
             <RouterView></RouterView>
