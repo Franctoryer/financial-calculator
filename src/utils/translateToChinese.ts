@@ -20,7 +20,8 @@ export const translateToChinese = (obj: any): string => {
     '"formula":': '',
     '"result":': '',
     'permutations': 'P',
-    'combinations': 'C'
+    'combinations': 'C',
+    '"': ''
   }
 
   for (const item in dictionary) {
