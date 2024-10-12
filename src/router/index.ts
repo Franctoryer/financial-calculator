@@ -98,7 +98,7 @@ const router = createRouter({
 				{
 					name: 'cashFlowDoc',
 					path: 'cashflow',
-					component: () => import('@/views/manuals/cashFlowDoc.vue')
+					component: () => import('@/views/manuals/CashFlowDoc.vue')
 				},
 				{
 					name: 'TVMDoc',

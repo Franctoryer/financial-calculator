@@ -281,26 +281,32 @@
   }
 
   .input-container {
-  border: 1px solid rgb(83, 186, 86);
+  border: 1.5px solid rgb(83, 186, 86);
+  border-radius: 5px;
 }
   .result-display1{
-    border: 1px solid rgb(4, 6, 7);
+    border: 1.5px solid rgb(4, 6, 7);
+    border-radius: 5px;
   }
 
   .result-display2{
-    border: 1px solid rgb(89, 142, 223);
+    border: 1.5px solid rgb(89, 142, 223);
+    border-radius: 5px;
   }
 
   .result-display3{
-    border: 1px solid rgb(218, 206, 131);
+    border: 1.5px solid rgb(218, 206, 131);
+    border-radius: 5px;
   }
 
   .result-display4{
-    border: 1px solid rgb(170, 64, 32);
+    border: 2px solid rgb(170, 64, 32);
+    border-radius: 5px;
   }
 
   .result-display5{
-    border: 1px solid rgb(128, 30, 241);
+    border: 2px solid rgb(128, 30, 241);
+    border-radius: 5px;
   }
 
   .custom-n-space {
