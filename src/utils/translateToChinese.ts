@@ -16,7 +16,12 @@ export const translateToChinese = (obj: any): string => {
     '{': '(',
     '}': ')',
     '"pi":': '盈利指数:',
-    '"date":': '时间戳:'
+    '"date":': '时间戳:',
+    '"formula":': '',
+    '"result":': '',
+    'permutations': 'P',
+    'combinations': 'C',
+    '"': ''
   }
 
   for (const item in dictionary) {
