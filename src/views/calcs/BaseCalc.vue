@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect, computed, onMounted } from 'vue';
+import { ref, watch, watchEffect, computed, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/settingStore";
 import { evaluate } from 'mathjs';
@@ -253,49 +253,96 @@ function addDegreeToTrigFunctions(str: string) {
 // @@@@@@@@@@@@@@@@@@@@@@
 // 键盘输入
 // @@@@@@@@@@@@@@@@@@@@@@
+onMounted(() => {
+  hotkeys('1', () => append('1'));
+  hotkeys('2', () => append('2'));
+  hotkeys('3', () => append('3'));
+  hotkeys('4', () => append('4'));
+  hotkeys('5', () => append('5'));
+  hotkeys('6', () => append('6'));
+  hotkeys('7', () => append('7'));
+  hotkeys('8', () => append('8'));
+  hotkeys('9', () => append('9'));
+  hotkeys('0', () => append('0'));
+  hotkeys('t', () => append('tan('));
+  hotkeys('c', () => append('cos('));
+  hotkeys('s', () => append('sin('));
+  hotkeys('e', () => append('e'));
+  hotkeys('shift+t', () => append('atan('));
+  hotkeys('shify+c', () => append('acos('));
+  hotkeys('shift+s', () => append('asin('));
+  hotkeys('shift+9', () => append('('));
+  hotkeys('shift+0', () => append(')'));
+  hotkeys('enter', calculate);
+  hotkeys('backspace', deleteLast); 
+  hotkeys('shift+1', () => append('!'));
+  hotkeys('shift+6', () => append('^('));
+  hotkeys('[', () => append('permutations('));
+  hotkeys(']', () => append('combinations('));
+  hotkeys(',', () => append(','));
+  hotkeys('.', () => append('.'));
+  hotkeys('shift+=', () => append('+'));
+  hotkeys('-', () => append('-'));
+  hotkeys('shift+8', () => append('*'));
+  hotkeys('/', () => append('/'));
+  hotkeys('shift+backspace', clear);
+  hotkeys('esc', () => isAngle.value = !isAngle.value);
+  hotkeys('shift+\\', () => append('abs('));
+  hotkeys('shift+5', () => append('%'));
+  hotkeys('p+i', () => append('pi'));
+  hotkeys('a', appendLastResult);
+  hotkeys('`', () => isKey.value = !isKey.value);
+  hotkeys('ctrl+enter', () => isFranctional.value = !isFranctional.value);
+  hotkeys('l', () => append('log('));
+  hotkeys('q', () => append('sqrt('));
+  hotkeys('w', () => append('(1/'));
+})
 
-hotkeys('1', () => append('1'));
-hotkeys('2', () => append('2'));
-hotkeys('3', () => append('3'));
-hotkeys('4', () => append('4'));
-hotkeys('5', () => append('5'));
-hotkeys('6', () => append('6'));
-hotkeys('7', () => append('7'));
-hotkeys('8', () => append('8'));
-hotkeys('9', () => append('9'));
-hotkeys('0', () => append('0'));
-hotkeys('t', () => append('tan('));
-hotkeys('c', () => append('cos('));
-hotkeys('s', () => append('sin('));
-hotkeys('e', () => append('e'));
-hotkeys('shift+t', () => append('atan('));
-hotkeys('shify+c', () => append('acos('));
-hotkeys('shift+s', () => append('asin('));
-hotkeys('shift+9', () => append('('));
-hotkeys('shift+0', () => append(')'));
-hotkeys('enter', calculate);
-hotkeys('backspace', deleteLast); 
-hotkeys('shift+1', () => append('!'));
-hotkeys('shift+6', () => append('^('));
-hotkeys('[', () => append('permutations('));
-hotkeys(']', () => append('combinations('));
-hotkeys(',', () => append(','));
-hotkeys('.', () => append('.'));
-hotkeys('shift+=', () => append('+'));
-hotkeys('-', () => append('-'));
-hotkeys('shift+8', () => append('*'));
-hotkeys('/', () => append('/'));
-hotkeys('shift+backspace', clear);
-hotkeys('esc', () => isAngle.value = !isAngle.value);
-hotkeys('shift+\\', () => append('abs('));
-hotkeys('shift+5', () => append('%'));
-hotkeys('p+i', () => append('pi'));
-hotkeys('a', appendLastResult);
-hotkeys('`', () => isKey.value = !isKey.value);
-hotkeys('ctrl+enter', () => isFranctional.value = !isFranctional.value);
-hotkeys('l', () => append('log('));
-hotkeys('q', () => append('sqrt('));
-hotkeys('w', () => append('(1/'));
+// 解绑热键
+onUnmounted(() => {
+  hotkeys.unbind('1');
+  hotkeys.unbind('2');
+  hotkeys.unbind('3');
+  hotkeys.unbind('4');
+  hotkeys.unbind('5');
+  hotkeys.unbind('6');
+  hotkeys.unbind('7');
+  hotkeys.unbind('8');
+  hotkeys.unbind('9');
+  hotkeys.unbind('0');
+  hotkeys.unbind('t');
+  hotkeys.unbind('c');
+  hotkeys.unbind('s');
+  hotkeys.unbind('e');
+  hotkeys.unbind('shift+t');
+  hotkeys.unbind('shift+c');
+  hotkeys.unbind('shift+s');
+  hotkeys.unbind('shift+9');
+  hotkeys.unbind('shift+0');
+  hotkeys.unbind('enter');
+  hotkeys.unbind('backspace');
+  hotkeys.unbind('shift+1');
+  hotkeys.unbind('shift+6');
+  hotkeys.unbind('[');
+  hotkeys.unbind(']');
+  hotkeys.unbind(',');
+  hotkeys.unbind('.');
+  hotkeys.unbind('shift+=');
+  hotkeys.unbind('-');
+  hotkeys.unbind('shift+8');
+  hotkeys.unbind('/');
+  hotkeys.unbind('shift+backspace');
+  hotkeys.unbind('esc');
+  hotkeys.unbind('shift+\\');
+  hotkeys.unbind('shift+5');
+  hotkeys.unbind('p+i');
+  hotkeys.unbind('a');
+  hotkeys.unbind('`');
+  hotkeys.unbind('ctrl+enter');
+  hotkeys.unbind('l');
+  hotkeys.unbind('q');
+  hotkeys.unbind('w');
+});
 
 // 选择器样式
 const railStyle = ({
