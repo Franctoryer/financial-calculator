@@ -1,7 +1,6 @@
 <template>
   <div>
     <n-space :size="5" vertical class="PersonalTaxCalc-container">
-     
  <!-- 月份 -->
  <n-space vertical :size="5">
         <div>月份：</div>
@@ -126,7 +125,7 @@
         </div>
         </n-space>
         </div>税后工资：
-        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income"  size="small" :step="1000" :show-button="false" />元</n-space>
+        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income" size="medium" :step="1000" :show-button="false" />元</n-space>
     </n-space>
   </div>
 </template>
@@ -274,7 +273,7 @@
 
 <style>
   .PersonalTaxCalc-container {
-    width: 60%;
+    width: 75%;
     margin-left: 20px;
     display: flex;
     flex-direction: row;
@@ -282,26 +281,32 @@
   }
 
   .input-container {
-  border: 1px solid rgb(83, 186, 86);
+  border: 1.5px solid rgb(83, 186, 86);
+  border-radius: 5px;
 }
   .result-display1{
-    border: 1px solid rgb(4, 6, 7);
+    border: 1.5px solid rgb(4, 6, 7);
+    border-radius: 5px;
   }
 
   .result-display2{
-    border: 1px solid rgb(89, 142, 223);
+    border: 1.5px solid rgb(89, 142, 223);
+    border-radius: 5px;
   }
 
   .result-display3{
-    border: 1px solid rgb(218, 206, 131);
+    border: 1.5px solid rgb(218, 206, 131);
+    border-radius: 5px;
   }
 
   .result-display4{
-    border: 1px solid rgb(170, 64, 32);
+    border: 2px solid rgb(170, 64, 32);
+    border-radius: 5px;
   }
 
   .result-display5{
-    border: 1px solid rgb(128, 30, 241);
+    border: 2px solid rgb(128, 30, 241);
+    border-radius: 5px;
   }
 
   .custom-n-space {
