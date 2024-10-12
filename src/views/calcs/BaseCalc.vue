@@ -380,7 +380,7 @@ watch(isKey, (newVal) => {
   align-items: flex-end;
   padding: 10px;
   border-radius: 0.5cap;
-  height: 70px;
+  height: 80px;
   justify-self: center;
   margin-bottom: 10px;
 }
