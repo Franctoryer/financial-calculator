@@ -1,7 +1,6 @@
 <template>
   <div>
     <n-space :size="5" vertical class="PersonalTaxCalc-container">
-     
  <!-- 月份 -->
  <n-space vertical :size="5">
         <div>月份：</div>
@@ -126,7 +125,7 @@
         </div>
         </n-space>
         </div>税后工资：
-        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income"  size="small" :step="1000" :show-button="false" />元</n-space>
+        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income" size="medium" :step="1000" :show-button="false" />元</n-space>
     </n-space>
   </div>
 </template>
@@ -274,7 +273,7 @@
 
 <style>
   .PersonalTaxCalc-container {
-    width: 60%;
+    width: 75%;
     margin-left: 20px;
     display: flex;
     flex-direction: row;

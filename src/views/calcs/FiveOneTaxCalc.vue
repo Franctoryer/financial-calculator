@@ -63,7 +63,7 @@
 
         <!-- 总计： -->
         <div>总计：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="small" :step="1000" :show-button="false"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false"/>元</n-space>
        </div>
 
       </n-space>
