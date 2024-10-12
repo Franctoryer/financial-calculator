@@ -13,7 +13,6 @@ export function convert2tex(formula: string): string {
   }
   // 遍历 latexMap 的键，并替换 formula 中的对应字符
   for (const key in latexMap) {
-    console.log(convert2Reg(key));
     const regex = new RegExp(convert2Reg(key), 'g'); // 创建一个全局的正则表达式
     // @ts-ignore
     formula = formula.replace(regex, latexMap[key]); // 替换字符
@@ -76,6 +75,7 @@ function replaceAbsWithPipes(expression: string) {
 
 // 把^(<表达式>) 转成 ^{表达式}
 function replacePower(expression: string) {
+  console.log("@@@@@@@@@@");
   let result = '';
   let stack = [];
   let i = 0;
@@ -95,7 +95,8 @@ function replacePower(expression: string) {
 
       // 如果没有找到匹配的右括号，保留原始 ^(
       if (openBrackets > 0) {
-          result += "~\\^~(" + expression.slice(start, i); // 保留 '^(' 及后面的内容
+          result += "~\\^~(" + replacePower(expression.slice(start, i)); // 保留 '^(' 及后面的内容
+          console.log(result);
       } else {
           let innerExpression = expression.slice(start, i - 1);
           result += `^{${replacePower(innerExpression)}}`;
@@ -111,11 +112,12 @@ function replacePower(expression: string) {
 }
 
 // 优化组合数和排列数的显示
-function replacePermutationsAndCombinations(str) {
+function replacePermutationsAndCombinations(str: string) {
   // 正则表达式匹配 P(x,y) 或 C(x,y)，其中 x 和 y 可以是任意字符
   const regex = /P\(([^)]+),([^)]+)\)|C\(([^)]+),([^)]+)\)/g;
   
   // 替换函数，用于替换匹配到的字符串
+  // @ts-ignore
   const replaceFunc = (match, p1, m1, c1, m2) => {
       // 根据匹配的组来决定是 P 还是 C
       const type = match.startsWith('P') ? 'P' : 'C';
