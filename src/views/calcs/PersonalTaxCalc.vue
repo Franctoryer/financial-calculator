@@ -145,7 +145,7 @@
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
   import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
-  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/stores/compute/computeFiveOneTax";
+  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/utils/computeFiveOneTax";
 
 
   const settingStore = useSettingStore();
