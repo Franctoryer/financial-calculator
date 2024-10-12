@@ -11,25 +11,20 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
-    "@handsontable/vue3": "^14.6.0",
     "@types/vue": "^2.0.0",
     "@vicons/utils": "^0.1.4",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vscode/markdown-it-katex": "^1.1.0",
     "echarts": "^5.5.1",
-    "financejs": "^4.1.0",
-    "financial-calculator": "file:",
     "gsap": "^3.12.5",
+    "katex": "^0.16.11",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-toc-done-right": "^4.2.0",
     "mathjax": "^3.2.2",
     "mathjs": "^13.2.0",
+    "mathlive": "^0.101.0",
     "pinia": "^2.2.4",
-    "primeflex": "^3.3.1",
-    "primeicons": "^5.0.0",
-    "primevue": "^3.15.0",
-    "tvm-financejs": "^0.3.0",
     "vue": "^3.4.29",
     "vue-router": "^4.4.5",
     "xirr": "^1.1.0"
@@ -45,7 +40,6 @@
     "npm-run-all2": "^6.2.0",
     "pinia-plugin-persistedstate": "^4.1.1",
     "typescript": "~5.4.0",
-    "vfonts": "^0.0.3",
     "vite": "^5.4.8",
     "vue-tsc": "^2.0.21"
   }

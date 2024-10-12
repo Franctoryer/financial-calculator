@@ -130,6 +130,6 @@
   margin-right: 5px;
 }
 .others {
-  margin-right: 0;
+  margin-right: 5%;
 }
 </style>
