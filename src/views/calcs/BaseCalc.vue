@@ -3,7 +3,8 @@
     <div class="display">
       <div ref="katexContainer" class="formula-display"></div>
       <!-- 显示计算结果 -->
-      <div class="result-display">= {{ result }}</div>
+      <div class="result-display" v-if="isFranctional"> = {{ convertToFraction(result) }}</div>
+      <div class="result-display" v-else> = {{ result }}</div>
     </div>
     <div class="setting">
       <n-switch :round="false" v-model:value="isAngle" :rail-style="railStyle">
@@ -12,6 +13,14 @@
         </template>
         <template #unchecked>
           弧度制
+        </template>
+      </n-switch>
+      <n-switch :round="false" v-model:value="isFranctional" :rail-style="railStyle" v-if="canBeFractional">
+        <template #checked>
+          分数展示
+        </template>
+        <template #unchecked>
+          小数展示
         </template>
       </n-switch>
       <n-switch :round="false" v-model:value="isKey" :rail-style="railStyle">
@@ -83,7 +92,7 @@ import { MESSAGE_CONFIG } from '@/constants/messageConfig';
 import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
 import katex from "katex"
-import { NSwitch } from 'naive-ui';
+import { NSwitch, NIcon, NIconWrapper } from 'naive-ui';
 import hotkeys from 'hotkeys-js';
 import { useBaseInputStore } from "@/stores/input/BaseInputStore"
 import { useBaseResultStore } from "@/stores/result/BaseResultStore"
@@ -92,6 +101,7 @@ import type { CSSProperties } from 'vue'
 import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router";
+import { canConvertToFraction, convertToFraction } from "@/utils/fraction";
 
 
 // 定义状态变量
@@ -108,6 +118,8 @@ const formulaDisplay = computed(() => {
     return formula.value;
   }
 })
+const isFranctional = ref(false);
+const canBeFractional = computed(() => canConvertToFraction(result.value))
 
 // 添加输入字符到公式
 const appendLastResult = () => {
