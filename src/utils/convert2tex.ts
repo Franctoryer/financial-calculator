@@ -111,11 +111,12 @@ function replacePower(expression: string) {
 }
 
 // 优化组合数和排列数的显示
-function replacePermutationsAndCombinations(str) {
+function replacePermutationsAndCombinations(str: string) {
   // 正则表达式匹配 P(x,y) 或 C(x,y)，其中 x 和 y 可以是任意字符
   const regex = /P\(([^)]+),([^)]+)\)|C\(([^)]+),([^)]+)\)/g;
   
   // 替换函数，用于替换匹配到的字符串
+  // @ts-ignore
   const replaceFunc = (match, p1, m1, c1, m2) => {
       // 根据匹配的组来决定是 P 还是 C
       const type = match.startsWith('P') ? 'P' : 'C';

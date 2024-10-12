@@ -5,23 +5,33 @@
       <!-- 显示计算结果 -->
       <div class="result-display">= {{ result }}</div>
     </div>
-    <n-switch :round="false" v-model:value="isAngle">
-      <template #checked>
-        角度制
-      </template>
-      <template #unchecked>
-        弧度制
-      </template>
-    </n-switch>
+    <div class="setting">
+      <n-switch :round="false" v-model:value="isAngle" :rail-style="railStyle">
+        <template #checked>
+          角度制
+        </template>
+        <template #unchecked>
+          弧度制
+        </template>
+      </n-switch>
+      <n-switch :round="false" v-model:value="isKey" :rail-style="railStyle">
+        <template #checked>
+          键盘输入
+        </template>
+        <template #unchecked>
+          鼠标输入
+        </template>
+      </n-switch>
+    </div>
     <div class="buttons">
-      <MathButton formula="x^2" @click="append('^2')" type="tertiary"/>
-      <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary"/>
-      <MathButton formula="|x|" @click="append('abs(')" type="tertiary"/> 
+      <MathButton formula="x^2" @click="append('^2')" type="tertiary" hot-key="^2"/>
+      <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary" hot-key="^"/>
+      <MathButton formula="|x|" @click="append('abs(')" type="tertiary" hot-key="|"/> 
       <MathButton formula="7" @click="append('7')"/>
       <MathButton formula="8" @click="append('8')" />
       <MathButton formula="9" @click="append('9')" />
-      <MathButton formula="\div" @click="append('/')" type="tertiary"/>
-      <MathButton formula="AC" @click="clear" secondary type="error"/>
+      <MathButton formula="\div" @click="append('/')" type="tertiary" hot-key="/"/>
+      <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + BS"/>
 
       <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary"/>
       <MathButton formula="\log" @click="append('log(')" type="tertiary"/>
@@ -29,42 +39,42 @@
       <MathButton formula="4" @click="append('4')" />
       <MathButton formula="5" @click="append('5')" />
       <MathButton formula="6" @click="append('6')" />
-      <MathButton formula="\times" @click="append('*')" type="tertiary"/>
-      <MathButton formula="DEL" @click="deleteLast" secondary type="warning"/>
+      <MathButton formula="\times" @click="append('*')" type="tertiary" hot-key="*"/>
+      <MathButton formula="DEL" @click="deleteLast" secondary type="warning" hot-key="BS"/>
 
-      <MathButton formula="\sin" @click="append('sin(')" type="tertiary"/>
-      <MathButton formula="\cos" @click="append('cos(')" type="tertiary"/>
-      <MathButton formula="\tan" @click="append('tan(')" type="tertiary"/>
+      <MathButton formula="\sin" @click="append('sin(')" type="tertiary" hot-key="s"/>
+      <MathButton formula="\cos" @click="append('cos(')" type="tertiary" hot-key="c"/>
+      <MathButton formula="\tan" @click="append('tan(')" type="tertiary" hot-key="t"/>
       <MathButton formula="1" @click="append('1')" />
       <MathButton formula="2" @click="append('2')" />
       <MathButton formula="3" @click="append('3')" />
       <MathButton formula="-" @click="append('-')" type="tertiary"/>
-      <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
+      <MathButton formula="Ans" @click="appendLastResult" secondary type="info" hot-key="a"/>
 
-      <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary"/>
-      <MathButton formula="\arccos" @click="append('acos(')" type="tertiary"/>
-      <MathButton formula="\arctan" @click="append('atan(')" type="tertiary"/>
+      <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary" hot-key="shift + s"/>
+      <MathButton formula="\arccos" @click="append('acos(')" type="tertiary" hot-key="shift + c"/>
+      <MathButton formula="\arctan" @click="append('atan(')" type="tertiary" hot-key="shift + t"/>
       <MathButton formula="0" @click="append('0')" />
       <MathButton formula="." @click="append('.')"/>
       <MathButton formula="," @click="append(',')"/>
       <MathButton formula="+" @click="append('+')" type="tertiary"/>
-      <MathButton formula="=" @click="calculate" secondary type="info"/>
+      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="Enter"/>
 
       <MathButton formula="(" @click="append('(')" type="tertiary"/>
       <MathButton formula=")" @click="append(')')" type="tertiary"/>
       <MathButton formula="x!" @click="append('!')" type="tertiary"/>
-      <MathButton formula="\pi" @click="append('pi')"/>
+      <MathButton formula="\pi" @click="append('pi')" hot-key="p + i"/>
       <MathButton formula="e" @click="append('e')"/>
       <MathButton formula="\%" @click="append('%')"/>
-      <MathButton formula="nPr" @click="append('permutations(')" type="tertiary"/>
-      <MathButton formula="nCr" @click="append('combinations(')" type="tertiary"/>
+      <MathButton formula="nPr" @click="append('permutations(')" type="tertiary" hot-key="["/>
+      <MathButton formula="nCr" @click="append('combinations(')" type="tertiary" hot-key="]"/>
       
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watchEffect, computed } from 'vue';
+import { ref, watch, watchEffect, computed, onMounted } from 'vue';
 import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/settingStore";
 import { evaluate } from 'mathjs';
@@ -75,14 +85,18 @@ import { convert2tex } from "@/utils/convert2tex";
 import katex from "katex"
 import { NSwitch } from 'naive-ui';
 import hotkeys from 'hotkeys-js';
+import { useBaseInputStore } from "@/stores/input/BaseInputStore"
+import { useBaseResultStore } from "@/stores/result/BaseResultStore"
+import { useBaseCalcStore } from "@/stores/baseCalcStore";
+import type { CSSProperties } from 'vue'
 
 
 // 定义状态变量
 const { precision } = storeToRefs(useSettingStore());
-const formula = ref<string>('');  // 存储公式
-const result = ref<string | null>(null);  // 存储结果
+const { formula } = storeToRefs(useBaseInputStore());  // 存储公式
+const { result } = storeToRefs(useBaseResultStore());  // 存储结果
 const lastResult = ref<string | null>(null);  // 存储上一次计算的结果
-const isAngle = ref(true);
+const { isKey, isAngle } = storeToRefs(useBaseCalcStore());
 const formulaDisplay = computed(() => {
   try {
     return convert2tex(formula.value);
@@ -151,7 +165,6 @@ const calculate = () => {
 // @@@@@@@@@@@@@@@@@@@@@@@@
 // 一些特殊按钮
 // @@@@@@@@@@@@@@@@@@@@@@@@
-
 // 清空输入框
 const clear = () => {
   if (formula.value === '' && result.value === '') {
@@ -233,6 +246,7 @@ hotkeys('0', () => append('0'));
 hotkeys('t', () => append('tan('));
 hotkeys('c', () => append('cos('));
 hotkeys('s', () => append('sin('));
+hotkeys('e', () => append('e'));
 hotkeys('shift+t', () => append('atan('));
 hotkeys('shify+c', () => append('acos('));
 hotkeys('shift+s', () => append('asin('));
@@ -242,8 +256,8 @@ hotkeys('enter', calculate);
 hotkeys('backspace', deleteLast); 
 hotkeys('shift+1', () => append('!'));
 hotkeys('shift+6', () => append('^('));
-hotkeys('shift+p', () => append('permutations('));
-hotkeys('shift+c', () => append('combinations('));
+hotkeys('[', () => append('permutations('));
+hotkeys(']', () => append('combinations('));
 hotkeys(',', () => append(','));
 hotkeys('.', () => append('.'));
 hotkeys('shift+=', () => append('+'));
@@ -255,7 +269,91 @@ hotkeys('esc', () => isAngle.value = !isAngle.value);
 hotkeys('shift+\\', () => append('abs('));
 hotkeys('shift+5', () => append('%'));
 hotkeys('p+i', () => append('pi'));
+hotkeys('a', appendLastResult);
 
+// 选择器样式
+const railStyle = ({
+  focused,
+  checked
+}: {
+  focused: boolean
+  checked: boolean
+}) => {
+  const style: CSSProperties = {}
+  if (checked) {
+    style.background = '#ba5140'
+    if (focused) {
+      style.boxShadow = '0 0 0 2px #ba514040'
+    }
+  }
+  else {
+    style.background = '#4994c4'
+    if (focused) {
+      style.boxShadow = '0 0 0 2px #4994c440'
+    }
+  }
+  return style
+}
+onMounted(() => {
+  const buttons = document.querySelectorAll('.buttons')[0]
+  const inputBtns = Array.from(buttons.children);
+  if (isKey.value) {
+    inputBtns.forEach(button => {
+      // @ts-ignore
+      button.style.height = '60px'
+      // @ts-ignore
+      button.style.fontSize = '22px'
+    })
+  } else {
+    inputBtns.forEach(button => {
+      // @ts-ignore
+      button.style.height = '50px'
+      // @ts-ignore
+      button.style.fontSize = '25px'
+    })
+  }
+
+})
+watch(isKey, (newVal) => {
+  const buttons = document.querySelectorAll('.buttons')[0]
+  const inputBtns = Array.from(buttons.children);
+  if (newVal) {
+    inputBtns.forEach(button => {
+      // @ts-ignore
+      button.style.height = '60px'
+      // @ts-ignore
+      button.style.fontSize = '22px'
+    })
+  } else {
+    inputBtns.forEach(button => {
+      // @ts-ignore
+      button.style.height = '50px'
+      // @ts-ignore
+      button.style.fontSize = '25px'
+    })
+  }
+})
+
+// @@@@@@@@@@@@@@@@@@@@@@@@
+// 添加历史记录
+// @@@@@@@@@@@@@@@@@@@@@@@@
+// const addHistory = () => {
+//     let history: HistoryData = {
+//       saveTime: Date.now(),
+//       name: 'circled-cashflow',
+//       inputData: {
+//         interest: interest.value,
+//         isContinueCompound: isContinueCompound.value,
+//         rawData: JSON.parse(JSON.stringify(rawData.value))  // 引用对象要深拷贝而不是浅拷贝
+//       },
+//       resultData: {
+//         npv: npv.value,
+//         irr: irr.value,
+//         pi: pi.value
+//       }
+//     } 
+//     historyStore.addHistory(history);
+//   }
 </script>
 
 <style scoped>
@@ -297,5 +395,11 @@ hotkeys('p+i', () => append('pi'));
 button {
   height: 50px;
   font-size: 25px;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
 }
 </style>
