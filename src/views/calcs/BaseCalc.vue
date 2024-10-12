@@ -5,10 +5,19 @@
       <!-- 显示计算结果 -->
       <div class="result-display">= {{ result }}</div>
     </div>
+    <n-switch :round="false">
+      <template #checked>
+        弧度制
+      </template>
+      <template #unchecked>
+        角度制
+      </template>
+    </n-switch>
     <div class="buttons">
       <MathButton formula="x^2" @click="append('^2')" type="tertiary"/>
       <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary"/>
       <MathButton formula="|x|" @click="append('abs(')" type="tertiary"/> 
+      <MathButton formula="\%" @click="append('%')" type="tertiary"/>
       <MathButton formula="7" @click="append('7')"/>
       <MathButton formula="8" @click="append('8')" />
       <MathButton formula="9" @click="append('9')" />
@@ -18,6 +27,7 @@
       <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary"/>
       <MathButton formula="\pi" @click="append('pi')" type="tertiary"/>
       <MathButton formula="e" @click="append('e')" type="tertiary"/>
+      <MathButton formula="\sqrt[n]{}" @click="append('e')" type="tertiary"/>
       <MathButton formula="4" @click="append('4')" />
       <MathButton formula="5" @click="append('5')" />
       <MathButton formula="6" @click="append('6')" />
@@ -27,6 +37,7 @@
       <MathButton formula="\sin" @click="append('sin(')" type="tertiary"/>
       <MathButton formula="\cos" @click="append('cos(')" type="tertiary"/>
       <MathButton formula="\tan" @click="append('tan(')" type="tertiary"/>
+      <MathButton formula="\cdot 10^k" @click="append('e')" type="tertiary"/>
       <MathButton formula="1" @click="append('1')" />
       <MathButton formula="2" @click="append('2')" />
       <MathButton formula="3" @click="append('3')" />
@@ -35,11 +46,12 @@
       <MathButton formula="(" @click="append('(')" type="tertiary"/>
       <MathButton formula=")" @click="append(')')" type="tertiary"/>
       <MathButton formula="x!" @click="append('!')" type="tertiary"/>
+      <MathButton formula="\ln" @click="append('!')" type="tertiary"/>
       <MathButton formula="0" @click="append('0')" />
       <MathButton formula="." @click="append('.')" />
-      <MathButton formula="\%" @click="append('%')" />
-      <MathButton formula="=" @click="calculate" secondary type="info"/>
+      <MathButton formula="\pm" @click="append('.')" />
       <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
+      <MathButton formula="=" @click="calculate" secondary type="info"/>
     </div>
 
 
@@ -56,6 +68,7 @@ import { MESSAGE_CONFIG } from '@/constants/messageConfig';
 import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
 import katex from "katex"
+import { NSwitch } from 'naive-ui';
 
 // 定义状态变量
 const { precision } = storeToRefs(useSettingStore());
@@ -89,10 +102,7 @@ const calculate = () => {
       let expression = formula.value;
 
       // 替换符号为 JavaScript 可识别的表达式
-      expression = expression
-        .replace(/\u00D7/g, '*')
-        .replace(/\u00F7/g, '/')
-        .replace(/%/g, '/100');
+      expression = expression.replace(/%/g, '/100');
 
       // 正则表达式匹配 tan 函数，并提取其参数
       const tanRegex = /tan\((.*?)\)/g;
@@ -198,12 +208,13 @@ watchEffect(() => {
   border-radius: 0.5cap;
   height: 70px;
   justify-self: center;
+  margin-bottom: 10px;
 }
 .buttons {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(9, 1fr);
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 10px;
   color: rgb(35, 34, 34);
   font-family: 'Times New Roman', Times, serif;
 }
