@@ -12,17 +12,17 @@
       <MathButton formula="7" @click="append('7')"/>
       <MathButton formula="8" @click="append('8')" />
       <MathButton formula="9" @click="append('9')" />
-      <MathButton formula="DEL" @click="deleteLast" secondary type="warning"/>
+      <MathButton formula="\div" @click="append('/')" type="tertiary"/>
       <MathButton formula="AC" @click="clear" secondary type="error"/>
 
       <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary"/>
-      <MathButton formula="\pi" @click="append('pi')" type="tertiary"/>
-      <MathButton formula="e" @click="append('e')" type="tertiary"/>
+      <MathButton formula="\log" @click="append('log(')" type="tertiary"/>
+      <MathButton formula="1/x" @click="append('(1/')" type="tertiary"/>
       <MathButton formula="4" @click="append('4')" />
       <MathButton formula="5" @click="append('5')" />
       <MathButton formula="6" @click="append('6')" />
       <MathButton formula="\times" @click="append('*')" type="tertiary"/>
-      <MathButton formula="\div" @click="append('/')" type="tertiary"/>
+      <MathButton formula="DEL" @click="deleteLast" secondary type="warning"/>
 
       <MathButton formula="\sin" @click="append('sin(')" type="tertiary"/>
       <MathButton formula="\cos" @click="append('cos(')" type="tertiary"/>
@@ -30,19 +30,30 @@
       <MathButton formula="1" @click="append('1')" />
       <MathButton formula="2" @click="append('2')" />
       <MathButton formula="3" @click="append('3')" />
-      <MathButton formula="+" @click="append('+')" type="tertiary"/>
       <MathButton formula="-" @click="append('-')" type="tertiary"/>
+      <MathButton formula="=" @click="calculate" secondary type="info"/>
+
+      <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary"/>
+      <MathButton formula="\arccos" @click="append('acos(')" type="tertiary"/>
+      <MathButton formula="\arctan" @click="append('atan(')" type="tertiary"/>
+      <MathButton formula="0" @click="append('0')" />
+      <MathButton formula="." @click="append('.')" type="tertiary"/>
+      <MathButton formula="," @click="append(',')" type="tertiary"/>
+      <MathButton formula="+" @click="append('+')" type="tertiary"/>
+      <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
+
+
       <MathButton formula="(" @click="append('(')" type="tertiary"/>
       <MathButton formula=")" @click="append(')')" type="tertiary"/>
       <MathButton formula="x!" @click="append('!')" type="tertiary"/>
-      <MathButton formula="0" @click="append('0')" />
-      <MathButton formula="." @click="append('.')" />
-      <MathButton formula="\%" @click="append('%')" />
-      <MathButton formula="=" @click="calculate" secondary type="info"/>
-      <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
+      <MathButton formula="\pi" @click="append('pi')"/>
+      <MathButton formula="e" @click="append('e')"/>
+      <MathButton formula="\%" @click="append('%')" type="tertiary"/>
+      <MathButton formula="nPr" @click="append('permutations(')" type="tertiary"/>
+      <MathButton formula="nCr" @click="append('combinations(')" type="tertiary"/>
+
+
     </div>
-
-
   </div>
 </template>
 

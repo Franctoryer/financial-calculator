@@ -85,7 +85,7 @@
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
   import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
-  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/stores/compute/computeFiveOneTax";
+  import { computeFiveOneTax,computeSocialInsuranceBase,computeAccumulationFundBase} from "@/utils/computeFiveOneTax";
 
   const settingStore = useSettingStore();
   const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
