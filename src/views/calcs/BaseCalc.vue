@@ -74,6 +74,8 @@ import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
 import katex from "katex"
 import { NSwitch } from 'naive-ui';
+import hotkeys from 'hotkeys-js';
+
 
 // 定义状态变量
 const { precision } = storeToRefs(useSettingStore());
@@ -153,7 +155,7 @@ const calculate = () => {
 // 清空输入框
 const clear = () => {
   if (formula.value === '' && result.value === '') {
-    handleRedirectAC()
+    return;
   }
   formula.value = '';
   result.value = '';
@@ -161,7 +163,7 @@ const clear = () => {
 // 删除最后一个字符
 const deleteLast = () => {
   if (formula.value === '') {
-    handleRedirectDel()
+    return;
   } else { 
     formula.value = formula.value.slice(0, -1); 
   }
@@ -213,6 +215,47 @@ function addDegreeToTrigFunctions(str: string) {
     // 使用正则表达式和替换函数来替换字符串中的所有匹配项
     return str.replace(regex, replaceFunc);
 }
+
+// @@@@@@@@@@@@@@@@@@@@@@
+// 键盘输入
+// @@@@@@@@@@@@@@@@@@@@@@
+
+hotkeys('1', () => append('1'));
+hotkeys('2', () => append('2'));
+hotkeys('3', () => append('3'));
+hotkeys('4', () => append('4'));
+hotkeys('5', () => append('5'));
+hotkeys('6', () => append('6'));
+hotkeys('7', () => append('7'));
+hotkeys('8', () => append('8'));
+hotkeys('9', () => append('9'));
+hotkeys('0', () => append('0'));
+hotkeys('t', () => append('tan('));
+hotkeys('c', () => append('cos('));
+hotkeys('s', () => append('sin('));
+hotkeys('shift+t', () => append('atan('));
+hotkeys('shify+c', () => append('acos('));
+hotkeys('shift+s', () => append('asin('));
+hotkeys('shift+9', () => append('('));
+hotkeys('shift+0', () => append(')'));
+hotkeys('enter', calculate);
+hotkeys('backspace', deleteLast); 
+hotkeys('shift+1', () => append('!'));
+hotkeys('shift+6', () => append('^('));
+hotkeys('shift+p', () => append('permutations('));
+hotkeys('shift+c', () => append('combinations('));
+hotkeys(',', () => append(','));
+hotkeys('.', () => append('.'));
+hotkeys('shift+=', () => append('+'));
+hotkeys('-', () => append('-'));
+hotkeys('shift+8', () => append('*'));
+hotkeys('/', () => append('/'));
+hotkeys('shift+backspace', clear);
+hotkeys('esc', () => isAngle.value = !isAngle.value);
+hotkeys('shift+\\', () => append('abs('));
+hotkeys('shift+5', () => append('%'));
+hotkeys('p+i', () => append('pi'));
+
 </script>
 
 <style scoped>
