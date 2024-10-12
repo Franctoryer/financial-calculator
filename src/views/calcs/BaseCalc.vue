@@ -112,7 +112,12 @@ const formulaDisplay = computed(() => {
 // 添加输入字符到公式
 const appendLastResult = () => {
   if (lastResult.value) {
-    formula.value += lastResult.value;
+    // 如果数字结尾，此时输入ANS，代表用户想丢弃当前输入框的所有数据，因此ANS覆盖已有数据
+    if (/\d$/.test(formula.value)) {
+      formula.value = lastResult.value;
+    } else {
+      formula.value += lastResult.value;
+    }
   }
 };
 const append = (char: string) => {
@@ -360,22 +365,22 @@ const addHistory = () => {
   historyStore.addHistory(history);
 }
 const route = useRoute();
-  onMounted(() => {
-    handleHistoryRoute();
-  });
-  // 在当前页面回滚历史数据
-  watch(route, () => {
-    handleHistoryRoute();
-  })
-  // 回滚历史数据
-  const handleHistoryRoute = () => {
-    if (route.query.inputData && route.query.resultData) {
-      let inputData = JSON.parse(route.query.inputData as string)
-      let resultData = JSON.parse(route.query.resultData as string)
-      formula.value = inputData.formula;
-      result.value = resultData.result;
-    }
+onMounted(() => {
+  handleHistoryRoute();
+});
+// 在当前页面回滚历史数据
+watch(route, () => {
+  handleHistoryRoute();
+})
+// 回滚历史数据
+const handleHistoryRoute = () => {
+  if (route.query.inputData && route.query.resultData) {
+    let inputData = JSON.parse(route.query.inputData as string)
+    let resultData = JSON.parse(route.query.resultData as string)
+    formula.value = inputData.formula;
+    result.value = resultData.result;
   }
+}
 </script>
 
 <style scoped>
