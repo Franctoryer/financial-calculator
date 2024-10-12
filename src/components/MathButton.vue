@@ -1,5 +1,5 @@
 <template>
-  <n-button>
+  <n-button :focusable="false">
     <span ref="katexElement"></span>
   </n-button>
 </template>

@@ -17,6 +17,7 @@
     "@vscode/markdown-it-katex": "^1.1.0",
     "echarts": "^5.5.1",
     "gsap": "^3.12.5",
+    "hotkeys-js": "^3.13.7",
     "katex": "^0.16.11",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",

@@ -5,19 +5,18 @@
       <!-- 显示计算结果 -->
       <div class="result-display">= {{ result }}</div>
     </div>
-    <n-switch :round="false">
+    <n-switch :round="false" v-model:value="isAngle">
       <template #checked>
-        弧度制
+        角度制
       </template>
       <template #unchecked>
-        角度制
+        弧度制
       </template>
     </n-switch>
     <div class="buttons">
       <MathButton formula="x^2" @click="append('^2')" type="tertiary"/>
       <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary"/>
       <MathButton formula="|x|" @click="append('abs(')" type="tertiary"/> 
-      <MathButton formula="\%" @click="append('%')" type="tertiary"/>
       <MathButton formula="7" @click="append('7')"/>
       <MathButton formula="8" @click="append('8')" />
       <MathButton formula="9" @click="append('9')" />
@@ -36,33 +35,30 @@
       <MathButton formula="\sin" @click="append('sin(')" type="tertiary"/>
       <MathButton formula="\cos" @click="append('cos(')" type="tertiary"/>
       <MathButton formula="\tan" @click="append('tan(')" type="tertiary"/>
-      <MathButton formula="\cdot 10^k" @click="append('e')" type="tertiary"/>
       <MathButton formula="1" @click="append('1')" />
       <MathButton formula="2" @click="append('2')" />
       <MathButton formula="3" @click="append('3')" />
       <MathButton formula="-" @click="append('-')" type="tertiary"/>
-      <MathButton formula="=" @click="calculate" secondary type="info"/>
+      <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
 
       <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary"/>
       <MathButton formula="\arccos" @click="append('acos(')" type="tertiary"/>
       <MathButton formula="\arctan" @click="append('atan(')" type="tertiary"/>
       <MathButton formula="0" @click="append('0')" />
-      <MathButton formula="." @click="append('.')" type="tertiary"/>
-      <MathButton formula="," @click="append(',')" type="tertiary"/>
+      <MathButton formula="." @click="append('.')"/>
+      <MathButton formula="," @click="append(',')"/>
       <MathButton formula="+" @click="append('+')" type="tertiary"/>
-      <MathButton formula="Ans" @click="appendLastResult" secondary type="info"/>
-
+      <MathButton formula="=" @click="calculate" secondary type="info"/>
 
       <MathButton formula="(" @click="append('(')" type="tertiary"/>
       <MathButton formula=")" @click="append(')')" type="tertiary"/>
       <MathButton formula="x!" @click="append('!')" type="tertiary"/>
       <MathButton formula="\pi" @click="append('pi')"/>
       <MathButton formula="e" @click="append('e')"/>
-      <MathButton formula="\%" @click="append('%')" type="tertiary"/>
+      <MathButton formula="\%" @click="append('%')"/>
       <MathButton formula="nPr" @click="append('permutations(')" type="tertiary"/>
       <MathButton formula="nCr" @click="append('combinations(')" type="tertiary"/>
-
-
+      
     </div>
   </div>
 </template>
@@ -78,12 +74,15 @@ import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
 import katex from "katex"
 import { NSwitch } from 'naive-ui';
+import hotkeys from 'hotkeys-js';
+
 
 // 定义状态变量
 const { precision } = storeToRefs(useSettingStore());
 const formula = ref<string>('');  // 存储公式
 const result = ref<string | null>(null);  // 存储结果
-let lastResult = ref<string | null>(null);  // 存储上一次计算的结果
+const lastResult = ref<string | null>(null);  // 存储上一次计算的结果
+const isAngle = ref(true);
 const formulaDisplay = computed(() => {
   try {
     return convert2tex(formula.value);
@@ -114,20 +113,24 @@ const calculate = () => {
       expression = expression.replace(/%/g, '/100');
 
       // 正则表达式匹配 tan 函数，并提取其参数
-      const tanRegex = /tan\((.*?)\)/g;
-      let match;
-      while ((match = tanRegex.exec(expression)) !== null) {
-        const tanArgument = match[1]; // 获取 tan 函数中的参数
-        const evaluatedArgument = evaluate(tanArgument); // 计算参数的值
+      if (!isAngle.value) {
+        const tanRegex = /tan\((.*?)\)/g;
+        let match;
+        while ((match = tanRegex.exec(expression)) !== null) {
+          const tanArgument = match[1]; // 获取 tan 函数中的参数
+          const evaluatedArgument = evaluate(tanArgument); // 计算参数的值
 
-        const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
-        // 检查参数是否接近 π/2 的倍数
-        if (Math.abs((evaluatedArgument - Math.PI / 2) % Math.PI) < tolerance) {
-          result.value = 'Error';
-          return; // 返回错误，不继续计算
+          const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
+          // 检查参数是否接近 π/2 的倍数
+          if (Math.abs((evaluatedArgument - Math.PI / 2) % Math.PI) < tolerance) {
+            result.value = 'Error';
+            return; // 返回错误，不继续计算
+          }
         }
+      } else {
+        expression = addDegreeToTrigFunctions(expression);  // 如果采用角度制，sin(x)改成 sin(x deg)
       }
-
+      
       // 使用 mathjs 计算表达式的结果
       const evaluatedResult = evaluate(expression);
 
@@ -138,7 +141,7 @@ const calculate = () => {
         result.value = evaluatedResult.toFixed(precision.value).toString(); // 结果为小数，使用精度
       }
 
-      lastResult.value = result.value; // 仅更新结果
+      lastResult.value = result.value; // 更新ANS
     } catch (error) {
       result.value = 'Error';
     }
@@ -152,7 +155,7 @@ const calculate = () => {
 // 清空输入框
 const clear = () => {
   if (formula.value === '' && result.value === '') {
-    handleRedirectAC()
+    return;
   }
   formula.value = '';
   result.value = '';
@@ -160,7 +163,7 @@ const clear = () => {
 // 删除最后一个字符
 const deleteLast = () => {
   if (formula.value === '') {
-    handleRedirectDel()
+    return;
   } else { 
     formula.value = formula.value.slice(0, -1); 
   }
@@ -189,6 +192,70 @@ watchEffect(() => {
     }
   }
 })
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// 一些替换函数
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+function addDegreeToTrigFunctions(str: string) {
+    // 正则表达式匹配 tan(x), sin(x), cos(x)，确保它们带有括号
+    const regex = /\btan\(([^)]+)\)|\bsin\(([^)]+)\)|\bcos\(([^)]+)\)/g;
+
+    // 替换函数，用于替换匹配到的字符串
+    // @ts-ignore
+    const replaceFunc = (match, p1, p2, p3) => {
+        // 根据匹配的组来决定是 tan, sin 还是 cos
+        const type = match.startsWith('tan') ? 'tan' :
+                     match.startsWith('sin') ? 'sin' : 'cos';
+        // 提取 x 的值
+        const value = p1 || p2 || p3; // 提取匹配到的参数
+        // 返回替换后的字符串
+        return `${type}(${value} deg)`;
+    };
+
+    // 使用正则表达式和替换函数来替换字符串中的所有匹配项
+    return str.replace(regex, replaceFunc);
+}
+
+// @@@@@@@@@@@@@@@@@@@@@@
+// 键盘输入
+// @@@@@@@@@@@@@@@@@@@@@@
+
+hotkeys('1', () => append('1'));
+hotkeys('2', () => append('2'));
+hotkeys('3', () => append('3'));
+hotkeys('4', () => append('4'));
+hotkeys('5', () => append('5'));
+hotkeys('6', () => append('6'));
+hotkeys('7', () => append('7'));
+hotkeys('8', () => append('8'));
+hotkeys('9', () => append('9'));
+hotkeys('0', () => append('0'));
+hotkeys('t', () => append('tan('));
+hotkeys('c', () => append('cos('));
+hotkeys('s', () => append('sin('));
+hotkeys('shift+t', () => append('atan('));
+hotkeys('shify+c', () => append('acos('));
+hotkeys('shift+s', () => append('asin('));
+hotkeys('shift+9', () => append('('));
+hotkeys('shift+0', () => append(')'));
+hotkeys('enter', calculate);
+hotkeys('backspace', deleteLast); 
+hotkeys('shift+1', () => append('!'));
+hotkeys('shift+6', () => append('^('));
+hotkeys('shift+p', () => append('permutations('));
+hotkeys('shift+c', () => append('combinations('));
+hotkeys(',', () => append(','));
+hotkeys('.', () => append('.'));
+hotkeys('shift+=', () => append('+'));
+hotkeys('-', () => append('-'));
+hotkeys('shift+8', () => append('*'));
+hotkeys('/', () => append('/'));
+hotkeys('shift+backspace', clear);
+hotkeys('esc', () => isAngle.value = !isAngle.value);
+hotkeys('shift+\\', () => append('abs('));
+hotkeys('shift+5', () => append('%'));
+hotkeys('p+i', () => append('pi'));
+
 </script>
 
 <style scoped>
@@ -221,7 +288,7 @@ watchEffect(() => {
 }
 .buttons {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 10px;
   margin-top: 10px;
   color: rgb(35, 34, 34);
