@@ -292,6 +292,7 @@ hotkeys('shift+5', () => append('%'));
 hotkeys('p+i', () => append('pi'));
 hotkeys('a', appendLastResult);
 hotkeys('`', () => isKey.value = !isKey.value);
+hotkeys('ctrl+enter', () => isFranctional.value = !isFranctional.value);
 hotkeys('l', () => append('log('));
 hotkeys('q', () => append('sqrt('));
 hotkeys('w', () => append('(1/'));
@@ -440,5 +441,6 @@ button {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
+  width: 100%;
 }
 </style>
