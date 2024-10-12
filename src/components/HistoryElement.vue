@@ -44,6 +44,7 @@
   overflow: hidden; /* 隐藏溢出的内容 */
   text-overflow: ellipsis; /* 用省略号表示溢出的内容 */
   width: 90%;
+  text-align: center;
 }
 
 .result-data {
@@ -53,5 +54,6 @@
   overflow: hidden; /* 隐藏溢出的内容 */
   text-overflow: ellipsis; /* 用省略号表示溢出的内容 */
   width: 90%;
+  text-align: center;
 }
 </style>

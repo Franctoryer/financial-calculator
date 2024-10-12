@@ -33,9 +33,9 @@
       <MathButton formula="\div" @click="append('/')" type="tertiary" hot-key="/"/>
       <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + BS"/>
 
-      <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary"/>
-      <MathButton formula="\log" @click="append('log(')" type="tertiary"/>
-      <MathButton formula="1/x" @click="append('(1/')" type="tertiary"/>
+      <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary" hot-key="q"/>
+      <MathButton formula="\log" @click="append('log(')" type="tertiary" hot-key="l"/>
+      <MathButton formula="1/x" @click="append('(1/')" type="tertiary" hot-key="w"/>
       <MathButton formula="4" @click="append('4')" />
       <MathButton formula="5" @click="append('5')" />
       <MathButton formula="6" @click="append('6')" />
@@ -89,6 +89,9 @@ import { useBaseInputStore } from "@/stores/input/BaseInputStore"
 import { useBaseResultStore } from "@/stores/result/BaseResultStore"
 import { useBaseCalcStore } from "@/stores/baseCalcStore";
 import type { CSSProperties } from 'vue'
+import type { HistoryData } from "@/types/HistoryData";
+import { useHistoryStore } from "@/stores/historyStore";
+import { useRoute } from "vue-router";
 
 
 // 定义状态变量
@@ -156,6 +159,7 @@ const calculate = () => {
       }
 
       lastResult.value = result.value; // 更新ANS
+      addHistory();
     } catch (error) {
       result.value = 'Error';
     }
@@ -270,6 +274,10 @@ hotkeys('shift+\\', () => append('abs('));
 hotkeys('shift+5', () => append('%'));
 hotkeys('p+i', () => append('pi'));
 hotkeys('a', appendLastResult);
+hotkeys('`', () => isKey.value = !isKey.value);
+hotkeys('l', () => append('log('));
+hotkeys('q', () => append('sqrt('));
+hotkeys('w', () => append('(1/'));
 
 // 选择器样式
 const railStyle = ({
@@ -334,26 +342,40 @@ watch(isKey, (newVal) => {
   }
 })
 
+const historyStore = useHistoryStore();
 // @@@@@@@@@@@@@@@@@@@@@@@@
 // 添加历史记录
 // @@@@@@@@@@@@@@@@@@@@@@@@
-// const addHistory = () => {
-//     let history: HistoryData = {
-//       saveTime: Date.now(),
-//       name: 'circled-cashflow',
-//       inputData: {
-//         interest: interest.value,
-//         isContinueCompound: isContinueCompound.value,
-//         rawData: JSON.parse(JSON.stringify(rawData.value))  // 引用对象要深拷贝而不是浅拷贝
-//       },
-//       resultData: {
-//         npv: npv.value,
-//         irr: irr.value,
-//         pi: pi.value
-//       }
-//     } 
-//     historyStore.addHistory(history);
-//   }
+const addHistory = () => {
+  let history: HistoryData = {
+    saveTime: Date.now(),
+    name: 'base',
+    inputData: {
+      formula: formula.value
+    },
+    resultData: {
+      result: result.value
+    }
+  } 
+  historyStore.addHistory(history);
+}
+const route = useRoute();
+  onMounted(() => {
+    handleHistoryRoute();
+  });
+  // 在当前页面回滚历史数据
+  watch(route, () => {
+    handleHistoryRoute();
+  })
+  // 回滚历史数据
+  const handleHistoryRoute = () => {
+    if (route.query.inputData && route.query.resultData) {
+      let inputData = JSON.parse(route.query.inputData as string)
+      let resultData = JSON.parse(route.query.resultData as string)
+      formula.value = inputData.formula;
+      result.value = resultData.result;
+    }
+  }
 </script>
 
 <style scoped>
