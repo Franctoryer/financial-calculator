@@ -27,5 +27,5 @@ test("TVM-N", () => {
 
 test("TVM-I/Y", () => {
   expect(calculateIY(-1000, 1728, 0, 3, false).toFixed(2)).toBe("20.00");
-  expect(calculateIY(1000, 1728, 0, 3, false).toFixed(2)).toBe("NaN");
+  expect(calculateIY(1000, 1728, 0, 3, false).toFixed(2)).toBe("NaN");  // 现金流不平衡
 })

@@ -4,6 +4,8 @@ export const translateToChinese = (obj: any): string => {
   let maxLength = 200;
   let chineseTxT =  objectToString(obj);
   const dictionary = {
+    'allInterest': '总支付利息',
+    'allPmt': '定期支付之和',
     '"interest"': '利率',
     '"isContinueCompound": false': '分期复利',
     '"isContinueCompound": true': '连续复利',
@@ -21,7 +23,9 @@ export const translateToChinese = (obj: any): string => {
     '"result":': '',
     'permutations': 'P',
     'combinations': 'C',
-    '"': ''
+    '"': '',
+    'objectiveResult': '结果',
+    'objective': '计算目标',
   }
 
   for (const item in dictionary) {
