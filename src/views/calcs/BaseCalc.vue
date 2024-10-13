@@ -4,7 +4,7 @@
       <div ref="katexContainer" class="formula-display"></div>
       <!-- 显示计算结果 -->
       <div class="result-display" v-if="isFranctional"> = {{ convertToFraction(result) }}</div>
-      <div class="result-display" v-else> = {{ result }}</div>
+      <div class="result-display" v-else> = {{ displayResult }}</div>
     </div>
     <div class="setting">
       <n-switch :round="false" v-model:value="isAngle" :rail-style="railStyle">
@@ -105,11 +105,13 @@ import { canConvertToFraction, convertToFraction } from "@/utils/fraction";
 
 
 // 定义状态变量
-const { precision } = storeToRefs(useSettingStore());
+const { precision } = storeToRefs(useSettingStore());  // 精度
 const { formula } = storeToRefs(useBaseInputStore());  // 存储公式
 const { result } = storeToRefs(useBaseResultStore());  // 存储结果
+// 定义了一个新变量 displayResult，原来的result默认保持8位小数（用于判断是否需要转成小数，因为只知道四舍五入后的结果没法判断这个）
+const displayResult = computed(() => Number(result.value).toFixed(precision.value))
 const lastResult = ref<string | null>(null);  // 存储上一次计算的结果
-const { isKey, isAngle } = storeToRefs(useBaseCalcStore());
+const { isKey, isAngle } = storeToRefs(useBaseCalcStore());   // 是否键盘输入/是否角度制
 const formulaDisplay = computed(() => {
   try {
     return convert2tex(formula.value);
@@ -118,8 +120,8 @@ const formulaDisplay = computed(() => {
     return formula.value;
   }
 })
-const isFranctional = ref(false);
-const canBeFractional = computed(() => canConvertToFraction(result.value))
+const isFranctional = ref(false);   // 是否已经转成小数
+const canBeFractional = computed(() => canConvertToFraction(result.value))  // 是否能够转成小数
 
 // 添加输入字符到公式
 const appendLastResult = () => {
@@ -172,7 +174,7 @@ const calculate = () => {
       if (Number.isInteger(evaluatedResult)) {
         result.value = evaluatedResult.toString(); // 结果为整数，直接输出
       } else {
-        result.value = evaluatedResult.toFixed(precision.value).toString(); // 结果为小数，使用精度
+        result.value = evaluatedResult.toFixed(8); // 结果为小数，使用精度
       }
 
       lastResult.value = result.value; // 更新ANS
@@ -182,6 +184,13 @@ const calculate = () => {
     }
   }
 };
+
+// 如果检测到不能转成分数，则立马把 isFractional 置为fasle
+watchEffect(() => {
+  if (!canBeFractional.value) {
+    isFranctional.value = false;
+  }
+})
 
 // @@@@@@@@@@@@@@@@@@@@@@@@
 // 一些特殊按钮

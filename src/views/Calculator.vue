@@ -12,7 +12,7 @@
         @expand="collapsed = false">
         <CalcSideMenu/>
         <div class="calc-setting-container">
-          <n-button class="btn" @click="collapsed = !collapsed"> {{ btnTxt }} </n-button>
+          <n-button class="btn" @click="collapsed = !collapsed" :focusable="false"> {{ btnTxt }} </n-button>
         </div>
       </n-layout-sider>
       <n-layout>
