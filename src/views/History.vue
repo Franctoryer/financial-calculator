@@ -26,7 +26,7 @@
       <n-scrollbar style="max-height: 100vh">
         <n-empty description="没有任何记录" v-if="historyData.length === 0" class="nothing"></n-empty>
         <div v-for="(data, index) in historyData" class="history-element">
-          <n-icon v-if="isDeleting" :size="25" @click="historyStore.deleteOneHistory(index)" class="delete-one">
+          <n-icon v-if="isDeleting" :size="20" @click="historyStore.deleteOneHistory(index)" class="delete-one">
             <DismissCircle28Regular/>
           </n-icon>
           <n-popover 
@@ -167,6 +167,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 }
 
 .delete-icon {
@@ -188,6 +189,8 @@
   color: rgb(159, 159, 159);
   margin-left: 10px;
   cursor: pointer;
+  position: absolute;
+  right: 5%;
 }
 .delete-one:hover {
   color: #c35c5d;
