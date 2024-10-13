@@ -191,6 +191,7 @@
   cursor: pointer;
   position: absolute;
   right: 5%;
+  top: 15%;
 }
 .delete-one:hover {
   color: #c35c5d;
