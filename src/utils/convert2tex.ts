@@ -56,7 +56,7 @@ function replaceAbsWithPipes(expression: string) {
 
           // 如果有未匹配的括号，保持原样
           if (openBrackets > 0) {
-              result += expression.slice(start - 4, i); // 保留 'abs(' 及后面的内容
+              result += "abs(" + replaceAbsWithPipes(expression.slice(start, i)); // 保留 'abs(' 及后面的内容
           } else {
               // abs() 内部的表达式
               let innerExpression = expression.slice(start, i - 1);
