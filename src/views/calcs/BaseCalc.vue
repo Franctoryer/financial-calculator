@@ -301,7 +301,11 @@ onMounted(() => {
   hotkeys('p+i', () => append('pi'));
   hotkeys('a', appendLastResult);
   hotkeys('`', () => isKey.value = !isKey.value);
-  hotkeys('ctrl+enter', () => isFranctional.value = !isFranctional.value);
+  hotkeys('ctrl+enter', () => {
+    if (canBeFractional.value) {
+      isFranctional.value = !isFranctional.value
+    }
+  });
   hotkeys('l', () => append('log('));
   hotkeys('q', () => append('sqrt('));
   hotkeys('w', () => append('(1/'));
