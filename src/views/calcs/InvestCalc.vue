@@ -50,7 +50,7 @@
         </n-input-number>
         </div>
         <div class="option">
-          每期投资/付款（PMT）：
+          每期付款/收益（PMT）：
           <n-input-number 
             :disabled="objective == 'PMT'" 
             :placeholder="objective == 'PMT' ? '计算目标' : '请输入'"
@@ -93,7 +93,7 @@
       <thead>
         <tr>
           <th class="result-column">{{ objectiveText }}</th>
-          <th>总利息支付</th>
+          <th>总利息</th>
           <th>所有定期支付的总和</th>
         </tr>
       </thead>
@@ -226,7 +226,7 @@
         break;
     }
 
-    allInterest.value = pv + fv + pmt * n;
+    allInterest.value = -(pv + fv + pmt * n);
   }
   // 每次更改计算目标，结果归零
   watch(objective, (newVal) => {

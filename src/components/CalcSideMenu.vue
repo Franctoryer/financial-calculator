@@ -42,11 +42,6 @@
       icon: renderIcon(BaseCalculator)
     },
     {
-      label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
-      key: 'invest',
-      icon: renderIcon(LoadAndInvestIcon)
-    },
-    {
       label: '现金流计算器',
       key: 'CashFlow',
       children: [
@@ -60,6 +55,11 @@
         }
       ],
       icon: renderIcon(CashFlowIcon)
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
+      key: 'invest',
+      icon: renderIcon(LoadAndInvestIcon)
     },
     {
       label: () => h(RouterLink, { to: { name: 'deposit'}}, { default: () => '储蓄计算器'}),
