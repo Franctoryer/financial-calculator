@@ -1,7 +1,8 @@
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
-
-const { initialDeposit,depositCategory,termType,interestRate, interest,finalDeposit,year,month,day,termMonths } = storeToRefs(useDepositInputStore());
+import {useDepositResultStore } from "@/stores/result/DepositResultStore"
+const { initialDeposit,depositCategory,termType,finalDeposit,year,month,day, } = storeToRefs(useDepositInputStore());
+const {interestRate, interest,termMonths} = storeToRefs(useDepositResultStore());
 export const calculateInterestRate = () => {
      termMonths.value = year.value * 12 + month.value + day.value/30; // 将年和月转为月数计算
     if (depositCategory.value === '活期') {
@@ -48,5 +49,4 @@ export const calculateInterestRate = () => {
         termMonths.value = 60;
       }
     }
-  
   }
