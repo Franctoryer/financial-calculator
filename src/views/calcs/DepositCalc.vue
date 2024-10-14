@@ -1,14 +1,14 @@
 <template>
-  <n-space vertical class="DepositCalc-container">
+  
+  <n-space vertical class="deposit-calc-container">
 
-    <!-- 存款种类 -->
-    <n-space vertical>
+<!-- 存款种类 -->
+<n-space vertical>
       <label>存款种类：</label>
       <n-select v-model:value="depositCategory" size="large" :options="depositOptions" placeholder="选择存款种类" class="select" />
     </n-space>
-
-    <!-- 期限种类 -->
-    <n-space vertical v-if="showTermType1">
+  <!-- 期限种类 -->
+  <n-space vertical v-if="showTermType1">
       <label>存款期限：</label>
       <n-select v-model:value="termType" :options="termOptions1" size="large" />
     </n-space>
@@ -32,7 +32,7 @@
         </div>
       </n-space>
     </n-space>
-
+    <n-space vertical align=center>
     <!-- 初始储蓄金额输入框 -->
     <n-space vertical>
       <n-space v-if="isDividedDeposit">
@@ -47,10 +47,12 @@
     </n-space>
 
     <!-- 计算按钮 -->
+     <div>
     <n-space justify="center">
       <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button @click="calculateSavings" type="primary" size="large">计算</n-button>
+      <n-button @click="calculateSavings" type="primary">计算</n-button>
     </n-space>
+     </div>
 
        <!-- 利率 -->
        <n-space align=center>
@@ -73,6 +75,8 @@
       <label>最终储蓄金额：</label>
       <n-input-number v-model:value="finalDeposit" size="large" :show-button="false" readonly />元
     </n-space>
+  </n-space>
+
   </n-space>
 </template>
 
@@ -188,14 +192,42 @@ const deleteAll = () => {
 </script>
 
 <style scoped>
-.DepositCalc-container {
+.deposit-calc-container {
   width: 70%;
-  margin-left: 20px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  margin: 0 auto;
+  padding: 20px;
+  border-width: 20px;
+  border-color: black;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-.select {
-  width: 190px;
+
+.input-group {
+  margin-bottom: 16px;
 }
+
+.select, .amount-input {
+  width: 100%;
+}
+
+.date-inputs {
+  gap: 12px;
+}
+
+.button-group {
+  margin-top: 24px;
+}
+
+.result-group {
+  margin-top: 16px;
+}
+
+button-group n-button {
+  width: 100px;
+}
+
+button-group n-button:hover {
+  opacity: 0.8;
+}
+
 </style>
