@@ -1,6 +1,6 @@
 <template>
     <div>
-    <n-space :size="5" vertical class="PersonalTaxCalc-container">
+    <n-space :size="5" vertical align =center class="PersonalTaxCalc-container">
 
     <div>
       <n-space vertical>
@@ -61,15 +61,13 @@
         </n-space>
        </div>
 
-        <!-- 总计： -->
-        <div>总计：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false"/>元</n-space>
-       </div>
-
       </n-space>
     </div>
 
-
+  <!-- 总计： -->
+  <div>总计：
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false"/>元</n-space>
+       </div>
       </n-space>
   </div>
 </template>
@@ -128,5 +126,11 @@
 </script>
 
 <style>
-
+.PersonalTaxCalc-container {
+  width: 75%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 </style>

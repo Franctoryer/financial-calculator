@@ -1,6 +1,7 @@
 <template>
   <div>
-    <n-space :size="5" vertical class="PersonalTaxCalc-container">
+    <n-space :size="5" vertical class="personal-tax-calc-container" align="center">
+     
  <!-- 月份 -->
  <n-space vertical :size="5">
         <div>月份：</div>
@@ -24,8 +25,8 @@
         <n-input-number class="input-container" v-model:value="months" size="small" :validator="monthsValidator"/>
       </n-space>
 
-      <!-- 单月税前工资 -->
-      <div>
+       <!-- 单月税前工资 -->
+       <div>
         <n-space :wrap="false">
         <div>单月税前工资：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
@@ -81,51 +82,48 @@
         </div>
       </n-space>
 
-    </div>
+    
+   
     <div class="button-group">
       <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
       <n-button color="#3271ae" @click="computeAllInput">按月份更新输入</n-button>
       <n-button color="green" @click="computeResult">计算结果</n-button>
     </div>
+    </div>
     </n-space>
   </div>
-  <hr>
-  <div>
-  
-    <n-space :size="5" vertical class="PersonalTaxCalc-container">
-      <div>
-        <n-space :wrap="false">
-        <div>应纳税所得额：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="taxable_income" size="small" :step="1000" :show-button="false"/>元</n-space>
-        </div>
-        <div>累计应纳税额：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="tax"  size="small" :step="1000" :show-button="false" />元</n-space>
-        </div>
-        </n-space>
-        </div>
 
-        <div>
-        <n-space :wrap="false">
-        <div>税率：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="display_taxRate" size="small" :step="1000" :show-button="false"/>%</n-space>
-        </div>
-        <div>累计已缴税额：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="lastweek_tax"  size="small" :step="1000" :show-button="false" />元</n-space>
-        </div>
-        </n-space>
-        </div>
+    <hr />
 
-        <div>
-        <n-space :wrap="false">
-        <div>速算扣除数：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="quickDeduction" size="small" :step="1000" :show-button="false"/>元</n-space>
-        </div>
-        <div>当月个税：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="current_tax"  size="small" :step="1000" :show-button="false" />元</n-space>
-        </div>
+    <div>
+    <n-space :size="5" vertical class="personal-tax-calc-container" align=center>
+      <!-- 计算结果展示 -->
+      <n-space :size="5" vertical class="results-container">
+        <n-space align="center" :wrap="false">
+          <div class="result-label">应纳税所得额：</div>
+          <n-input-number class="input-container" v-model:value="taxable_income" size="small" :step="1000" :show-button="false" />元
         </n-space>
-        </div>税后工资：
-        <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display5" v-model:value="taxed_income" size="medium" :step="1000" :show-button="false" />元</n-space>
+
+        <n-space align="center" :wrap="false">
+          <div class="result-label">累计应纳税额：</div>
+          <n-input-number class="input-container" v-model:value="tax" size="small" :step="1000" :show-button="false" />元
+        </n-space>
+
+        <n-space align="center" :wrap="false">
+          <div class="result-label">税率：</div>
+          <n-input-number class="input-container" v-model:value="display_taxRate" size="small" :show-button="false" />%
+        </n-space>
+
+        <n-space align="center" :wrap="false">
+          <div class="result-label">当月个税：</div>
+          <n-input-number class="input-container" v-model:value="current_tax" size="small" :step="1000" :show-button="false" />元
+        </n-space>
+
+        <n-space align="center" :wrap="false">
+          <div class="result-label">税后工资：</div>
+          <n-input-number class="input-container" v-model:value="taxed_income" size="small" :step="1000" :show-button="false" />元
+        </n-space>
+      </n-space>
     </n-space>
   </div>
 </template>
@@ -271,55 +269,56 @@
 
 </script>
 
-<style>
-  .PersonalTaxCalc-container {
-    width: 75%;
-    margin-left: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .input-container {
-  border: 1.5px solid rgb(83, 186, 86);
-  border-radius: 5px;
-}
-  .result-display1{
-    border: 1.5px solid rgb(4, 6, 7);
-    border-radius: 5px;
-  }
-
-  .result-display2{
-    border: 1.5px solid rgb(89, 142, 223);
-    border-radius: 5px;
-  }
-
-  .result-display3{
-    border: 1.5px solid rgb(218, 206, 131);
-    border-radius: 5px;
-  }
-
-  .result-display4{
-    border: 2px solid rgb(170, 64, 32);
-    border-radius: 5px;
-  }
-
-  .result-display5{
-    border: 2px solid rgb(128, 30, 241);
-    border-radius: 5px;
-  }
-
-  .custom-n-space {
-  margin-right: 20px;
+<style scoped>
+.personal-tax-calc-container {
+  width: 75%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-  .button-group {
-    margin-left: 0%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 40%;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
+.label, .result-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-right: 10px;
+}
+
+.input-box, .result-display {
+  width: 160px;
+}
+
+.result-display {
+  border: 1px solid ;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: right;
+  background-color: #e8f5e9;
+}
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.clear-btn {
+  background-color: #f44336;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background-color: #d32f2f;
+}
+
+.compute-btn {
+  background-color: #ff9800;
+  color: white;
+  transition: all 0.2s ease;
+}
+.custom-slider{
+  width:100%;
+}
 </style>
