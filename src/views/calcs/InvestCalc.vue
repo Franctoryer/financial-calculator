@@ -391,10 +391,8 @@
   const sensitiveMax = ref(0);
   // 生成横坐标数据
   const SenX = computed(() => {
-    if (sensitiveMin.value > sensitiveMax.value) {
+    if (sensitiveMin.value >= sensitiveMax.value) {
       return [NaN];
-    } else if (sensitiveMin.value === sensitiveMax.value) {
-      return [sensitiveMax.value];
     } else {
       let result = [];
       let step = (sensitiveMax.value - sensitiveMin.value) / 100;  // 10个采样点
