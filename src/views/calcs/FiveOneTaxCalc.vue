@@ -8,18 +8,27 @@
       <div>
         <n-space vertical :wrap="false">
         <div>单月税前工资：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </div>
         <div>社保基数：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="SocialInsuranceBase" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="SocialInsuranceBase" size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </div>
         <div>住房公积金基数：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="AccumulationFundBase" size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="AccumulationFundBase" size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </div>
         </n-space>
@@ -27,7 +36,7 @@
 
       <div class="button-group">
         <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
-        <n-button color="green" @click="computeFiveOneTax">计算结果</n-button>
+        <n-button color="#3271ae" @click="computeFiveOneTax">计算结果</n-button>
       </div>
       </n-space>
     </div>
@@ -39,11 +48,17 @@
         <div>养老保险金：
           <n-space :wrap="false">
           <n-space :wrap="false" class="custom-n-space">
-            <n-input-number class="result-display1" v-model:value="OldAgeInsuranceRate" size="small" :step="1000" :show-button="false"/>
-             {{ currencySymbol }}
+            <n-input-number class="result-display1" v-model:value="OldAgeInsuranceRate" size="small" :step="1000" :show-button="false">
+              <template #suffix>
+            %
+          </template>
+        </n-input-number>
              </n-space>
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="OldAgeInsurance"  size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="OldAgeInsurance"  size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </n-space>
        </div>
@@ -51,9 +66,17 @@
        <!-- 医疗保险金 -->
        <div>医疗保险金：
           <n-space :wrap="false">
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="MedicalInsuranceRate" size="small" :step="1000" :show-button="false"/>%</n-space>
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="MedicalInsurance"  size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="MedicalInsuranceRate" size="small" :step="1000" :show-button="false">
+            <template #suffix>
+            %
+          </template>
+        </n-input-number>
+          </n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="MedicalInsurance"  size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </n-space>
        </div>
@@ -61,9 +84,17 @@
        <!-- 失业保险金 -->
        <div>失业保险金：
           <n-space :wrap="false">
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="UnemploymentInsuranceRate" size="small" :step="1000" :show-button="false"/>%</n-space>
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="UnemploymentInsurance"  size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="UnemploymentInsuranceRate" size="small" :step="1000" :show-button="false">
+            <template #suffix>
+            %
+          </template>
+        </n-input-number>
+          </n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="UnemploymentInsurance"  size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </n-space>
        </div>
@@ -71,9 +102,17 @@
         <!-- 住房公积金 -->
         <div>住房公积金：
           <n-space :wrap="false">
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="AccumulationFundRate" size="small" :step="1000" :show-button="false"/>%</n-space>
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="AccumulationFund"  size="small" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="AccumulationFundRate" size="small" :step="1000" :show-button="false">
+            <template #suffix>
+            %
+          </template>
+        </n-input-number>
+      </n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display2" v-model:value="AccumulationFund"  size="small" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
         </n-space>
        </div>
@@ -83,8 +122,11 @@
 
   <!-- 总计： -->
   <div>总计：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false"/>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false">
+            <template #suffix>
             {{ currencySymbol }}
+          </template>
+        </n-input-number>
           </n-space>
        </div>
       </n-space>
