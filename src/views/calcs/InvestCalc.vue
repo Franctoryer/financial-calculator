@@ -105,12 +105,77 @@
         </tr>
       </tbody>
     </n-table>
+    <n-divider/>
+    <div class="sensitive-options">
+      <div class="sensitive-option">
+        敏感因子：
+        <n-radio-group v-model:value="senseitiveFactor">
+          <n-radio-button value="PV" :disabled="objective === 'PV'">
+            PV
+          </n-radio-button>
+          <n-radio-button value="FV" :disabled="objective === 'FV'">
+            FV
+          </n-radio-button>
+          <n-radio-button value="PMT" :disabled="objective === 'PMT'">
+            PMT
+          </n-radio-button>
+          <n-radio-button value="I/Y" :disabled="objective === 'I/Y'">
+            I/Y
+          </n-radio-button>
+          <n-radio-button value="N" :disabled="objective === 'N'">
+            N
+          </n-radio-button>
+        </n-radio-group>
+      </div>
+      <div class="sensitive-option">
+        阈值：
+        <div class="max-and-min">
+          <n-input-number
+          v-model:value="sensitiveMin"
+          placeholder="最小值"
+          >
+          <template #prefix>
+            <span style="font-weight: bold;">MIN</span>
+          </template>
+          <template #suffix v-if="senseitiveFactor === 'PV' || senseitiveFactor === 'FV' || senseitiveFactor === 'PMT'">
+            {{ currencySymbol }}
+          </template>
+
+          <template #suffix v-if="senseitiveFactor === 'I/Y'">
+            %
+          </template>
+          <template #suffix v-if="senseitiveFactor === 'N'">
+            {{ timeUnitText }}
+          </template>
+          </n-input-number>
+        <n-input-number
+          v-model:value="sensitiveMax"
+          placeholder="最大值"
+        >
+          <template #prefix>
+            <span style="font-weight: bold;">MAX</span>
+          </template>
+          <template #suffix v-if="senseitiveFactor === 'PV' || senseitiveFactor === 'FV' || senseitiveFactor === 'PMT'">
+            {{ currencySymbol }}
+          </template>
+
+          <template #suffix v-if="senseitiveFactor === 'I/Y'">
+            %
+          </template>
+          <template #suffix v-if="senseitiveFactor === 'N'">
+            {{ timeUnitText }}
+          </template>
+        </n-input-number>
+      </div> 
+     </div>
+    </div>
+    <div ref="senChart" id="senChart"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NInputNumber, NButton, NTable } from "naive-ui";
-  import { onMounted, watch, computed } from "vue";
+  import { NRadioGroup, NRadioButton, NInputNumber, NButton, NTable, NDivider } from "naive-ui";
+  import { onMounted, watch, computed, ref, watchEffect } from "vue";
   import { storeToRefs } from "pinia";
   import { useSettingStore } from "@/stores/settingStore";
   import { useInvestInputStore } from "@/stores/input/InvestInputStore"
@@ -120,6 +185,9 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useHistoryStore } from "@/stores/historyStore";
   import { useRoute } from "vue-router";
+  import * as echarts from "echarts";
+  import { getTVMObjective } from "@/utils/getTVMObjective";
+
   // 获取全局设置信息
   const { timeUnitText, precision, currencySymbol, timeMode } = storeToRefs(useSettingStore());
   // 输入数据
@@ -145,61 +213,62 @@
   const isDue = computed(() => timeMode.value === 'BGN')
   // 计算方法
   const calculate = () => {
-    calculateResult();
+    
+    objectiveResult.value = calculateResult(PV.value, FV.value, PMT.value, N.value, I_Y.value);
     calculateAllPmt();
     calculateAllInterest();
     addHistory();
   }
   // 计算结果
-  const calculateResult = () => {
-    if (FV.value === null && objective.value !== "FV") {
+  const calculateResult = (PV: number | null, FV: number | null, PMT: number | null, N: number | null, I_Y: number | null): number => {
+    if (FV === null && objective.value !== "FV") {
       window.$message.error("请输入终值（FV）", MESSAGE_CONFIG)
-      return;
+      return NaN;
     }
-    if (PV.value === null && objective.value !== "PV") {
+    if (PV === null && objective.value !== "PV") {
       window.$message.error("请输入现值（PV）", MESSAGE_CONFIG)
-      return;
+      return NaN;
     }
-    if (N.value === null && objective.value !== "N") {
+    if (N === null && objective.value !== "N") {
       window.$message.error("请输入期数（N）", MESSAGE_CONFIG)
-      return;
+      return NaN;
     }
-    if (PMT.value === null && objective.value !== "PMT") {
+    if (PMT === null && objective.value !== "PMT") {
       window.$message.error("请输入每期付款/投资（PMT）", MESSAGE_CONFIG)
-      return;
+      return NaN;
     }
-    if (I_Y.value === null && objective.value !== "I/Y") {
+    if (I_Y === null && objective.value !== "I/Y") {
       window.$message.error("请输入贴现率（I/Y）", MESSAGE_CONFIG)
-      return;
+      return NaN;
     }
     switch (objective.value) {
       case 'PV':
         // @ts-ignore
-        objectiveResult.value = calculatePV(FV.value, PMT.value, I_Y.value, N.value, isDue.value);
-        break;
+        return calculatePV(FV, PMT, I_Y, N, isDue.value);
       case 'FV':
         // @ts-ignore
-        objectiveResult.value = calculateFV(PV.value, PMT.value, I_Y.value, N.value, isDue.value);
-        break;
+        return calculateFV(PV, PMT, I_Y, N, isDue.value);
       case 'PMT':
         // @ts-ignore
-        objectiveResult.value = calculatePMT(PV.value, FV.value, I_Y.value, N.value, isDue.value);
-        break;
+        return calculatePMT(PV, FV, I_Y, N, isDue.value);
       case 'I/Y':
         // @ts-ignore
-        objectiveResult.value = calculateIY(PV.value, FV.value, PMT.value, N.value, isDue.value);
-        break;
+        return calculateIY(PV, FV, PMT, N, isDue.value);
       case 'N':
         // @ts-ignore
-        objectiveResult.value = calculateN(PV.value, FV.value, PMT.value, I_Y.value, isDue.value);
-        break;
+        return calculateN(PV, FV, PMT, I_Y, isDue.value);
     }
+
+    return NaN;
   };
   // 计算所有定期支付总和
   const calculateAllPmt = () => {
     if (objective.value === "PMT") {
       // @ts-ignore
       allPmt.value = N.value * objectiveResult.value;
+    } else if (objective.value === "N") {
+      // @ts-ignore
+      allPmt.value = PMT.value * objectiveResult.value
     } else {
       // @ts-ignore
       allPmt.value = PMT.value * N.value;
@@ -233,6 +302,7 @@
     objectiveResult.value = 0;
     allInterest.value = 0;
     allPmt.value = 0;
+    senseitiveFactor.value = null;
     switch (newVal) { 
       case "PV":
         PV.value = null;
@@ -298,6 +368,230 @@
       allPmt.value = resultData.allPmt;
     }
   }
+
+
+  // @@@@@@@@@@@@@@@@@@@@@@@
+  // 敏感性分析
+  // @@@@@@@@@@@@@@@@@@@@@@@
+  const senseitiveFactor = ref<string | null>(null)
+  const sensitiveMin = ref(0);
+  const sensitiveMax = ref(0);
+  // 生成横坐标数据
+  const SenX = computed(() => {
+    if (sensitiveMin.value > sensitiveMax.value) {
+      return [NaN];
+    } else if (sensitiveMin.value === sensitiveMax.value) {
+      return [sensitiveMax.value];
+    } else {
+      let result = [];
+      let step = (sensitiveMax.value - sensitiveMin.value) / 100;  // 10个采样点
+      for (let i = 0; i <= 100; i++) {
+        result.push(Number((sensitiveMin.value + step * i).toFixed(2)));
+      }
+      return result;
+    }
+  })
+  // 生成纵坐标数据
+  const SenY = computed(() => {
+    // 如果还没有选择敏感因子，直接返回
+    if (senseitiveFactor.value === null) {
+      return;
+    }
+    let pv = PV.value;
+    let fv = FV.value;
+    let pmt = PMT.value;
+    let n = N.value;
+    let iy = I_Y.value;
+    let paramsMap = {
+      "PV": pv,
+      "FV": fv,
+      "PMT": pmt,
+      "N": n,
+      "I/Y": iy
+    }
+    let result1: number[] = [];
+    let result2: number[] = [];
+    SenX.value.forEach(x => {
+      // @ts-ignore
+      paramsMap[senseitiveFactor.value] = x;
+      // @ts-ignore
+      paramsMap[objective.value] = calculateResult(paramsMap["PV"], paramsMap["FV"], paramsMap["PMT"], paramsMap["N"], paramsMap["I/Y"]);
+      // @ts-ignore
+      let temp = -(paramsMap["FV"] + paramsMap["PV"] + paramsMap["PMT"] * paramsMap["N"])
+      // @ts-ignore
+      result1.push(Number(paramsMap[objective.value].toFixed(precision.value)));
+      result2.push(Number(temp.toFixed(precision.value)))
+    })
+
+    return { result1, result2 };
+  })
+  const isSenValid = () => senseitiveFactor.value !== null 
+                        && sensitiveMax.value !== null 
+                        && sensitiveMin.value !== null
+                        && sensitiveMax.value >= sensitiveMin.value
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  // 灵敏度分析可视化
+  // @@@@@@@@@@@@@@@@@@@@@@@@@@@
+  const senChart = ref(null);
+  let myChart: any;
+
+  onMounted(() => {
+    myChart = echarts.init(senChart.value);
+    const chartOption = {
+      title: {
+        text: '灵敏度分析',
+        left: 'center'
+      },
+      grid: [
+        {
+          left: 60,
+          right: 70,
+          height: '35%'
+        },
+        {
+          left: 60,
+          right: 70,
+          top: '55%',
+          height: '35%'
+        }
+      ],
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          animation: false
+        }
+      },
+      legend: {
+        data: [`${senseitiveFactor.value}`, '总利息'],
+        left: 10
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          saveAsImage: {}
+        }
+      },
+      axisPointer: {
+        link: [
+          {
+            xAxisIndex: 'all'
+          }
+        ]
+      },
+      xAxis: [
+        {
+          type: 'category',
+          name: `${getTVMObjective(senseitiveFactor.value || '')}`,
+          boundaryGap: false,
+          data: SenX.value,
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
+        },
+        {
+          type: 'category',
+          gridIndex: 1,
+          boundaryGap: false,
+          data: SenX.value,
+          position: 'top',
+          axisLabel: {
+            show: false // 不显示 X 轴标签
+          },
+          axisTick: {
+            show: false // 不显示 x 轴刻度线
+          },
+        }
+      ],
+      yAxis: [
+        {
+          name: `${senseitiveFactor.value}`,
+          type: 'value',
+          scale: true,
+        },
+        {
+          gridIndex: 1,
+          name: '总利息',
+          type: 'value',
+          inverse: true,
+          scale: true
+        }
+      ],
+      series: [
+        {
+          name: `${objective.value}`,
+          type: 'line',
+          symbolSize: 8,
+          data: SenY.value?.result1
+        },
+        {
+          name: '总利息',
+          type: 'line',
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          symbolSize: 8,
+          data: SenY.value?.result2
+        }
+      ]
+    }
+    myChart.setOption(chartOption);
+    const resizeOb = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        // 通过 ECharts 提供的方法获取实例并调用 resize 方法
+        // @ts-ignore
+        echarts.getInstanceByDom(entry.target).resize();
+      }
+    });
+    // @ts-ignore
+    resizeOb.observe(senChart.value);
+  })
+  watchEffect(() => {
+    if (senChart.value) {
+      myChart.setOption({
+        xAxis: [
+          {
+            type: 'category',
+            name: `${senseitiveFactor.value}`,
+            boundaryGap: false,
+            data: SenX.value,
+          },
+          {
+            type: 'category',
+            gridIndex: 1,
+            data: SenX.value,
+          }
+        ],
+        yAxis: [
+          {
+            name: `${objective.value}`,
+            type: 'value',
+            scale: true,
+          },
+          {
+            gridIndex: 1,
+            name: '总利息',
+            type: 'value',
+            inverse: true,
+            scale: true
+          }
+        ],
+        legend: {
+          data: [`${objective.value}`, '总利息'],
+          left: 10
+        },
+        series: [
+          {
+            name: `${objective.value}`,
+            data: SenY.value?.result1
+          },
+          {
+            data: SenY.value?.result2
+          }
+        ]
+      })
+    }
+  })
 </script>
 
 <style scoped>
@@ -360,5 +654,33 @@ th {
 
 .result-column {
   font-weight: bold;
+}
+
+.max-and-min {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.sensitive-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.sensitive-option {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+#senChart {
+  width: 90%;
+  height: 400px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

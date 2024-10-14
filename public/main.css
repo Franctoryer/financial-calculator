@@ -26,3 +26,9 @@ a {
   outline: none;
   color: #000;
 }
+
+hr {
+  height: 1px; /* 粗细 */
+  background-color: #cdcdcd; /* 颜色 */
+  border: none;
+}
