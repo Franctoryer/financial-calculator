@@ -42,7 +42,11 @@
       <label>初始储蓄金额：</label>
     </n-space>
       <n-space align="center">
-        <n-input-number v-model:value="initialDeposit" :min="0" :step="100" size="large" placeholder="请输入金额" :show-button="false" />{{ currencySymbol }}
+        <n-input-number v-model:value="initialDeposit" :min="0" :step="100" size="large" placeholder="请输入金额" :show-button="false" >
+          <template #suffix>
+            {{ currencySymbol }}
+          </template>
+        </n-input-number>
       </n-space>
     </n-space>
 
@@ -58,22 +62,39 @@
        <n-space align=center>
       <label>年利率：</label>
       <n-space align="center">
-        <n-input-number v-model:value="interestRate" size="large" :show-button="false" placeholder="请输入年利率" />%
+        <n-input-number v-model:value="interestRate" size="large" :show-button="false" placeholder="请输入年利率" >
+        <template #suffix>
+            %
+          </template>
+        </n-input-number>
       </n-space>
     </n-space>
 
     <!-- 结果显示 -->
     <n-space align="center" v-if="isFetchInterest">
       <label>每月利息：</label>
-      <n-input-number v-model:value="monthlyInterest" size="large" :show-button="false" readonly />{{ currencySymbol }}
+      <n-input-number v-model:value="monthlyInterest" size="large" :show-button="false" readonly >
+        <template #suffix>
+            {{ currencySymbol }}
+          </template>
+        </n-input-number>
     </n-space>
     <n-space align="center">
       <label>总利息：</label>
-      <n-input-number v-model:value="interest" size="large" :show-button="false" readonly />{{ currencySymbol }}
+      <n-input-number v-model:value="interest" size="large" :show-button="false" readonly >
+      <template #suffix>
+            {{ currencySymbol }}
+          </template>
+        </n-input-number>
     </n-space>
     <n-space align="center">
       <label>最终储蓄金额：</label>
-      <n-input-number v-model:value="finalDeposit" size="large" :show-button="false" readonly />{{ currencySymbol }}
+      <n-input-number v-model:value="finalDeposit" size="large" :show-button="false" readonly >
+        <template #suffix>
+            {{ currencySymbol }}
+          </template>
+        </n-input-number>
+  
     </n-space>
   </n-space>
 
