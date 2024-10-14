@@ -34,6 +34,7 @@
             :disabled="objective == 'PV'" 
             :placeholder="objective == 'PV' ? '计算目标' : '请输入'"
             v-model:value="PV"
+            :show-button="false"
           >
           <template #suffix>
             {{ currencySymbol }}
@@ -46,6 +47,7 @@
             :disabled="objective == 'FV'" 
             :placeholder="objective == 'FV' ? '计算目标' : '请输入'"
             v-model:value="FV"
+            :show-button="false"
           >
           <template #suffix>
             {{ currencySymbol }}
@@ -58,6 +60,7 @@
             :disabled="objective == 'PMT'" 
             :placeholder="objective == 'PMT' ? '计算目标' : '请输入'"
             v-model:value="PMT"
+            :show-button="false"
           >
           <template #suffix>
             {{ currencySymbol }}

@@ -121,7 +121,11 @@
       <n-space :size="5" vertical class="results-container">
         <n-space align="center" :wrap="false">
           <div class="result-label">应纳税所得额：</div>
-          <n-input-number class="input-container" v-model:value="taxable_income" size="small" :step="1000" :show-button="false" />{{ currencySymbol }}
+          <n-input-number class="input-container" v-model:value="taxable_income" size="small" :step="1000" :show-button="false">
+            <template #suffix>
+              {{ currencySymbol }}
+            </template>
+          </n-input-number>
         </n-space>
 
         <n-space align="center" :wrap="false">
