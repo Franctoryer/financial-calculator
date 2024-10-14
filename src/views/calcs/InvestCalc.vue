@@ -435,10 +435,6 @@
 
     return { result1, result2 };
   })
-  const isSenValid = () => senseitiveFactor.value !== null 
-                        && sensitiveMax.value !== null 
-                        && sensitiveMin.value !== null
-                        && sensitiveMax.value >= sensitiveMin.value
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 灵敏度分析可视化
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@

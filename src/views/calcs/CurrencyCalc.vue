@@ -29,8 +29,8 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ Number(resultMoney).toFixed(precision) }} {{ getCurrencySymbol(toCurrency) }}</td>
-          <td>{{ exchangeRate }}</td>
+          <td>{{ resultMoneyView.number }} {{ getCurrencySymbol(toCurrency) }}</td>
+          <td>{{ exchangeRateView.number }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -41,7 +41,7 @@
   import { NInputNumber, NSelect, NTable, NDivider, NButton } from "naive-ui";
   import { getCurrencySymbol } from "@/utils/getCurrencyFlag";
   import { storeToRefs } from "pinia"
-  import { onMounted, watch} from "vue"
+  import { onMounted, watch, reactive } from "vue"
   import { useCurrencyInputStore } from "@/stores/input/CurrencyInputStore"
   import { useCurrencyResultStore } from "@/stores/result/CurrencyResultStore"
   import { useSettingStore } from "@/stores/settingStore";
@@ -50,6 +50,7 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useHistoryStore } from "@/stores/historyStore";
   import { useRoute } from "vue-router";
+  import gsap from "gsap"
 
   const currencyOptions = [
     {
@@ -179,6 +180,32 @@
       exchangeRate.value = inputData.exchangeRate;
     }
   }
+
+  // @@@@@@@@@@@@@@@@@@@
+  // 添加数字递增效果
+  // @@@@@@@@@@@@@@@@@@@
+  const resultMoneyView = reactive({
+    number: 0
+  })
+  const exchangeRateView = reactive({
+    number: 0
+  })
+  watch(resultMoney, (n) => {
+    gsap.to(resultMoneyView, {
+      duration: 0.5,
+      number: Number(n),
+      onUpdate: () => {
+        resultMoneyView.number = Number(resultMoneyView.number.toFixed(precision.value));
+      }
+    })
+  })
+
+  watch(exchangeRate, (n) => {
+    gsap.to(exchangeRateView, {
+      duration: 0.5,
+      number: Number(n),
+    })
+  })
 </script>
 
 <style scoped>
