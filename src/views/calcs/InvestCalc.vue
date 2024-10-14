@@ -21,7 +21,10 @@
             </n-radio-button>
           </n-radio-group>
         </div>
-        <n-button color="#3271ae" @click="calculate">计算</n-button>
+        <div class="btns">
+          <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
+          <n-button color="#3271ae" @click="calculate">计算</n-button>
+        </div>
       </div>
     <div class="options">
       <div class="row">
@@ -99,9 +102,9 @@
       </thead>
       <tbody>
         <tr>
-          <td class="result-column">{{ objectiveResult.toFixed(precision) }} {{ resultSymbol }}</td>
-          <td> {{ allInterest.toFixed(precision) }} {{ currencySymbol }} </td>
-          <td> {{ allPmt.toFixed(precision) }} {{ currencySymbol }} </td>
+          <td class="result-column">{{ Number(objectiveResult).toFixed(precision) }} {{ resultSymbol }}</td>
+          <td> {{ Number(allInterest).toFixed(precision) }} {{ currencySymbol }} </td>
+          <td> {{ Number(allPmt).toFixed(precision) }} {{ currencySymbol }} </td>
         </tr>
       </tbody>
     </n-table>
@@ -222,23 +225,23 @@
   // 计算结果
   const calculateResult = (PV: number | null, FV: number | null, PMT: number | null, N: number | null, I_Y: number | null): number => {
     if (FV === null && objective.value !== "FV") {
-      window.$message.error("请输入终值（FV）", MESSAGE_CONFIG)
+      // window.$message.error("请输入终值（FV）", MESSAGE_CONFIG)
       return NaN;
     }
     if (PV === null && objective.value !== "PV") {
-      window.$message.error("请输入现值（PV）", MESSAGE_CONFIG)
+      // window.$message.error("请输入现值（PV）", MESSAGE_CONFIG)
       return NaN;
     }
     if (N === null && objective.value !== "N") {
-      window.$message.error("请输入期数（N）", MESSAGE_CONFIG)
+      // window.$message.error("请输入期数（N）", MESSAGE_CONFIG)
       return NaN;
     }
     if (PMT === null && objective.value !== "PMT") {
-      window.$message.error("请输入每期付款/投资（PMT）", MESSAGE_CONFIG)
+      // window.$message.error("请输入每期付款/投资（PMT）", MESSAGE_CONFIG)
       return NaN;
     }
     if (I_Y === null && objective.value !== "I/Y") {
-      window.$message.error("请输入贴现率（I/Y）", MESSAGE_CONFIG)
+      // window.$message.error("请输入贴现率（I/Y）", MESSAGE_CONFIG)
       return NaN;
     }
     switch (objective.value) {
@@ -321,7 +324,14 @@
         break;
     }
   })
-
+  // 删除按钮 
+  const deleteAll = () => {
+    PV.value = null;
+    FV.value = null;
+    PMT.value = null;
+    I_Y.value = null;
+    N.value = null;
+  }
   // 添加历史记录
   const historyStore = useHistoryStore();
   const addHistory = () => {
@@ -483,7 +493,7 @@
       xAxis: [
         {
           type: 'category',
-          name: `${getTVMObjective(senseitiveFactor.value || '')}`,
+          name: `${senseitiveFactor.value}`,
           boundaryGap: false,
           data: SenX.value,
           axisTick: {
@@ -633,9 +643,15 @@
 
 .head {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   flex-direction: row;
   align-items: flex-end;
+}
+
+.btns {
+  display: flex;
+  flex-direction: row;
+  gap:20px;
 }
 
 .result-table {
@@ -677,7 +693,7 @@ th {
 }
 
 #senChart {
-  width: 90%;
+  width: 100%;
   height: 400px;
   margin-top: 20px;
   margin-left: auto;
