@@ -96,7 +96,7 @@
     {
       title: '日期',
       key: 'date',
-      width: '40%',
+      width: '50%',
       render(row, index) {
         return h(NDatePicker, {
           value: row.date, 
@@ -111,7 +111,7 @@
       // 这个有取相反数的图标
       title: '现金流入/支出',
       key: 'cash',
-      width: '60%',
+      width: '50%',
       render(row, index) {
         return h('div', {
           style: {
@@ -139,12 +139,14 @@
             parse: parseCurrency,
             step: 100,
             size: 'small',
-            style: 'width: 60%',
+            style: 'width: 100%',
+            showButton: false,
             onUpdateValue(v) {
               rawData.value[index].cash = v || 0;
             }
-          }),
-          h('span', { style: 'padding-left: 4px'}, `${currencySymbol.value}`),
+          }, {
+              suffix: () => currencySymbol.value
+          })
         ]);
       }
     },
