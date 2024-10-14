@@ -29,10 +29,14 @@
        <div>
         <n-space :wrap="false">
         <div>单月税前工资：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         <div>累计税前工资：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_income"  size="small" :step="1000" :show-button="false" :validator="incomeValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         </n-space>
     </div>
@@ -41,10 +45,14 @@
         <div>
         <n-space :wrap="false">
         <div>五险一金：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="fiveonetax" size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         <div>累计五险一金：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_fiveonetax"  size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         </n-space>
         </div>
@@ -53,10 +61,14 @@
         <div>
         <n-space :wrap="false">
         <div>专项附加扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         <div>累计专项附加扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_sidecosts"  size="small" :step="1000" :show-button="false" :validator="sidecostsValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
       </n-space>
       </div>
@@ -65,20 +77,28 @@
         <div>
         <n-space :wrap="false">
         <div>其他扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         <div>累计其他扣除：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="all_othercosts"  size="small" :step="1000" :show-button="false" :validator="othercostsValidator"/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
       </n-space>
 
       <!-- 固定扣除 -->
       <n-space :wrap="false">
         <div>个税起征点：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="tax_threshold" size="small" :show-button="false" readonly/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="tax_threshold" size="small" :show-button="false" readonly/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
         <div>累计减除:
-          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>元</n-space>
+          <n-space :wrap="false" class="custom-n-space"><n-input-number class="result-display1" v-model:value="all_tax_threshold"  size="small" :show-button="false" readonly/>
+            {{ currencySymbol }}
+          </n-space>
         </div>
       </n-space>
 
@@ -101,12 +121,12 @@
       <n-space :size="5" vertical class="results-container">
         <n-space align="center" :wrap="false">
           <div class="result-label">应纳税所得额：</div>
-          <n-input-number class="input-container" v-model:value="taxable_income" size="small" :step="1000" :show-button="false" />元
+          <n-input-number class="input-container" v-model:value="taxable_income" size="small" :step="1000" :show-button="false" />{{ currencySymbol }}
         </n-space>
 
         <n-space align="center" :wrap="false">
           <div class="result-label">累计应纳税额：</div>
-          <n-input-number class="input-container" v-model:value="tax" size="small" :step="1000" :show-button="false" />元
+          <n-input-number class="input-container" v-model:value="tax" size="small" :step="1000" :show-button="false" />{{ currencySymbol }}
         </n-space>
 
         <n-space align="center" :wrap="false">
@@ -116,12 +136,12 @@
 
         <n-space align="center" :wrap="false">
           <div class="result-label">当月个税：</div>
-          <n-input-number class="input-container" v-model:value="current_tax" size="small" :step="1000" :show-button="false" />元
+          <n-input-number class="input-container" v-model:value="current_tax" size="small" :step="1000" :show-button="false" />{{ currencySymbol }}
         </n-space>
 
         <n-space align="center" :wrap="false">
           <div class="result-label">税后工资：</div>
-          <n-input-number class="input-container" v-model:value="taxed_income" size="small" :step="1000" :show-button="false" />元
+          <n-input-number class="input-container" v-model:value="taxed_income" size="small" :step="1000" :show-button="false" />{{ currencySymbol }}
         </n-space>
       </n-space>
     </n-space>
@@ -146,7 +166,7 @@
 
 
   const settingStore = useSettingStore();
-  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
+  const { interestMethod, precision, currencySymbol, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
   const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
   const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
   const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold, 
