@@ -26,6 +26,11 @@ export const translateToChinese = (obj: any): string => {
     '"': '',
     'objectiveResult': '结果',
     'objective': '计算目标',
+    'money:': '金额数:',
+    'fromCurrency': '从',
+    'toCurrency': '到',
+    'resultMoney:': '转化金额数',
+    'exchangeRate:': '汇率:'
   }
 
   for (const item in dictionary) {
