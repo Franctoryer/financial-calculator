@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { getCurrencySymbol } from "@/utils/getCurrencyFlag";
 import { getTimeUnitText } from "@/utils/getTimeUnitText";
 
+
 export const useSettingStore = defineStore('settingStore', {
   state: () => ({
     interestMethod: 'compound',
@@ -9,11 +10,14 @@ export const useSettingStore = defineStore('settingStore', {
     precision: 2,
     currencyType: 'CNY',
     timeUnit: 'year',
-    isDisplayInfo: true
+    isDisplayInfo: true,
   }),
   getters: {
+    // @ts-ignore
     currencySymbol: (state) => getCurrencySymbol(state.currencyType),
+    // @ts-ignore
     timeUnitText: (state) => getTimeUnitText(state.timeUnit),
+    // @ts-ignore
     isCompound: (state) => state.interestMethod === 'compound'
   },
   persist: true,

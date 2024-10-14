@@ -99,6 +99,7 @@
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
   import { watchEffect, watch } from 'vue';
+    // @ts-ignore
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';

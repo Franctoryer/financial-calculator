@@ -72,6 +72,7 @@
   import { ref, h, nextTick, onMounted, watchEffect, computed, watch, reactive } from "vue";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
   import type { CustomedCFData } from "@/types/CustomedCFData";
+    // @ts-ignore
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, IRR_CONVERGENCE_ERROR } from "@/constants/message";

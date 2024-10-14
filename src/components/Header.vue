@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header :class="`header ${themeClass}`">
     <router-link to="/home" class="header-title" @click="handleRedirect1">
       <TitleIcon class="title-icon"/> 金融计算器
     </router-link>
@@ -15,6 +15,14 @@
       </router-link>
     </div>
     <div class="tabs others">
+      <n-switch v-model:value="isDark" :round="false">
+        <template #checked-icon>
+          <n-icon :component="WeatherSunny24Regular" />
+        </template>
+        <template #unchecked-icon>
+          <n-icon :component="WeatherSunnyLow24Filled" />
+        </template>
+      </n-switch>
       <a :href="PROJ_URL" class="tab" target="_blank">
         <GithubIcon class="tab-icon"/> Github
       </a>
@@ -42,15 +50,25 @@
   import { ALREADY_AT_HOME } from "@/constants/message";
   import { ALREADY_AT_CALCULATOR } from "@/constants/message";
   import { ALREADY_AT_MANUAL } from "@/constants/message";
-  import { ref } from "vue";
+  import { ref, watchEffect } from "vue";
   import Setting from "@/components/Setting.vue";
-  import { NDrawer, NDrawerContent } from "naive-ui";
-
+  import { NDrawer, NDrawerContent, NSwitch, NIcon } from "naive-ui";
+  import { storeToRefs } from "pinia"
+  import { useThemeStore } from "@/stores/themeStore";
+  // @ts-ignore
+  import { WeatherSunnyLow24Filled, WeatherSunny24Regular } from "@vicons/fluent"
+  
   const active = ref(false);
-  /**
-   * 若重复点击首页各链接，显示提示
-   * @param event 点击事件
-   */
+  const isDark = ref(false);
+  const { themeClass } = storeToRefs(useThemeStore());
+  // 监听是亮色还是暗色
+  watchEffect(() => {
+    if (isDark.value) {
+      themeClass.value = 'dark-theme';
+    } else {
+      themeClass.value = 'light-theme';
+    }
+  });
 
   const handleRedirect1 = (event: MouseEvent): void => {
     if (window.location.pathname === '/home') {
@@ -70,8 +88,15 @@
 </script>
 
 <style scoped>
+.dark-theme {
+  --header-background-color: black;
+}
+
+.light-theme {
+  --header-background-color: white;
+}
 .header {
-  background-color: white;
+  background-color: var(--header-background-color);
   position: fixed;
   top: 0;
   left: 0;

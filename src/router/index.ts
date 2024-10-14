@@ -98,7 +98,7 @@ const router = createRouter({
 				{
 					name: 'cashFlowManual',
 					path: 'cashflow-calc',
-					component: () => import('@/views/manuals/CashFlowCalcManual.vue')
+					component: () => import('@/views/manuals/CashFlowCalcManual.vue'),
 				},
 				{
 					name: 'investCalcManual',
