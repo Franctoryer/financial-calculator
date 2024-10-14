@@ -294,7 +294,7 @@
     if (cashFlowData.value.length === 0 || cashFlowData.value[0] >= 0) {
       return NaN;
     }
-    let result = npv.value / (-cashFlowData.value[0]);
+    let result = (npv.value - cashFlowData.value[0]) / (-cashFlowData.value[0]);
     return  Number(result.toFixed(precision.value));
   }
   // 判断输入的现金流是否能计算IRR(至少一正一负)

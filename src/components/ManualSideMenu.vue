@@ -23,11 +23,11 @@
       key: 'BaseCalc',
     },
     {
-      label: () => h(RouterLink, { to: { name: 'cashFlowDoc'}}, { default: () => '现金流'}),
+      label: () => h(RouterLink, { to: { name: 'cashFlowManual'}}, { default: () => '现金流计算器'}),
       key: 'CashFlow',
     },
     {
-      label: () => h(RouterLink, { to: { name: 'TVMDoc'}}, { default: () => '货币时间价值'}),
+      label: () => h(RouterLink, { to: { name: 'investCalcManual'}}, { default: () => '投资/贷款计算器'}),
       key: 'TVM',
     },
     {

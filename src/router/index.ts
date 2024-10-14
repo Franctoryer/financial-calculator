@@ -96,14 +96,14 @@ const router = createRouter({
 					component: () => import('@/views/manuals/BaseCalcManual.vue')
 				},
 				{
-					name: 'cashFlowDoc',
-					path: 'cashflow',
-					component: () => import('@/views/manuals/CashFlowDoc.vue')
+					name: 'cashFlowManual',
+					path: 'cashflow-calc',
+					component: () => import('@/views/manuals/CashFlowCalcManual.vue')
 				},
 				{
-					name: 'TVMDoc',
-					path: 'tvm',
-					component: () => import('@/views/manuals/TVMDoc.vue')
+					name: 'investCalcManual',
+					path: 'invest-calc',
+					component: () => import('@/views/manuals/InvestCalcManual.vue')
 				},
 				{
 					name: 'setting-manual',
