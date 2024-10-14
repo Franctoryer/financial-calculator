@@ -37,6 +37,14 @@
     {
       label: () => h(RouterLink, { to: { name: 'interest-method'}}, { default: () => '计息方式介绍'}),
       key: 'interest-method',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'personalTaxCalcManual'}}, { default: () => '个税计算器'}),
+      key: 'PersonalTax',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'depositCalcManual'}}, { default: () => '储蓄计算器'}),
+      key: 'Deposit',
     }
   ];
 </script>

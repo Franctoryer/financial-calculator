@@ -114,7 +114,17 @@ const router = createRouter({
 					name: 'interest-method',
 					path: 'interest-method',
 					component: () => import('@/views/manuals/InterestMethodManual.vue')
-				}
+				},
+				{
+                    name: 'personalTaxCalcManual',
+					path: 'personalTaxCalcManual' ,
+					component: () => import('@/views/manuals/PersonalTaxCalcManual.vue')
+				},
+				{
+                    name: 'depositCalcManual',
+					path: 'depositCalcManual' ,
+					component: () => import('@/views/manuals/DepositCalcManual.vue')
+				},
 			]
 		}
 	]
