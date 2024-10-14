@@ -170,12 +170,14 @@
               parse: parseCurrency,
               step: 100,
               size: 'small',
-              style: 'width: 60%',
+              style: 'width: 100%',
+              showButton: false,
               onUpdateValue(v) {
                 rawData.value[index].cash = v || 0;
               }
-            }),
-            h('span', { style: 'padding-left: 4px'}, `${currencySymbol.value}`),
+            }, {
+              suffix: () => currencySymbol.value
+            })
           ]);
         }
       },

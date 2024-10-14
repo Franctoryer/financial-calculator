@@ -3,7 +3,7 @@
     <div class="options">
       <div class="option">
         金额数：
-        <n-input-number v-model:value="money">
+        <n-input-number v-model:value="money" :show-button="false">
           <template #suffix>
             {{ getCurrencySymbol(fromCurrency) }}
           </template>
