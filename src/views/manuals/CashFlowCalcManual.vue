@@ -8,7 +8,7 @@
   import Doc from "@/components/Doc.vue";
   const content = 
   `
-  # 现金流计算器计算器
+  # 现金流计算器
   [[TOC]]
 
   现金流分析是评估投资项目财务可行性的重要工具。通过计算NPV、IRR和PI，投资者可以更好地理解项目的价值和风险，从而做出明智的投资决策。
