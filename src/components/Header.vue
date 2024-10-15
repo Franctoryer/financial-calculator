@@ -15,7 +15,7 @@
       </router-link>
     </div>
     <div class="tabs others">
-      <n-switch v-model:value="isDark" :round="false">
+      <n-switch v-model:value="isDark" :round="false" class="theme-btn">
         <template #checked-icon>
           <n-icon :component="WeatherSunny24Regular" />
         </template>
@@ -153,5 +153,9 @@
 }
 .others {
   margin-right: 5%;
+}
+
+.theme-btn {
+  margin-right: 10px;
 }
 </style>

@@ -194,9 +194,10 @@
   import * as echarts from "echarts";
   import { getTVMObjective } from "@/utils/getTVMObjective";
   import { useThemeStore } from "@/stores/themeStore";
+  import 'echarts/theme/dark'
 
   // 主题颜色
-  const { themeClass } = storeToRefs(useThemeStore());
+  const { themeClass, isDark } = storeToRefs(useThemeStore());
 
   // 获取全局设置信息
   const { timeUnitText, precision, currencySymbol, timeMode } = storeToRefs(useSettingStore());
@@ -445,10 +446,8 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   const senChart = ref(null);
   let myChart: any;
-
-  onMounted(() => {
-    myChart = echarts.init(senChart.value);
-    const chartOption = {
+  let chartOption = {
+      backgroundColor: '',
       title: {
         text: '灵敏度分析',
         left: 'center'
@@ -545,7 +544,10 @@
           data: SenY.value?.result2
         }
       ]
-    }
+  }
+  chartOption.backgroundColor = isDark.value ? '#101014' : 'white'
+  onMounted(() => {
+    myChart = isDark.value ? echarts.init(senChart.value, 'dark') : echarts.init(senChart.value);
     myChart.setOption(chartOption);
     const resizeOb = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -601,6 +603,19 @@
           }
         ]
       })
+    }
+  })
+
+  watch(isDark, () => {
+    myChart.dispose(); // 销毁旧实例
+    if (isDark.value) {
+      chartOption.backgroundColor = '#101014';
+      myChart = echarts.init(senChart.value, 'dark');
+      myChart.setOption(chartOption);
+    } else {
+      chartOption.backgroundColor = 'white';
+      myChart = echarts.init(senChart.value);
+      myChart.setOption(chartOption);
     }
   })
 </script>
