@@ -1,7 +1,6 @@
 <template>
     <div>
     <n-space :size="5" vertical align =center class="PersonalTaxCalc-container">
-
     <div>
       <n-space vertical>
       <!-- 单月税前工资 -->
@@ -193,5 +192,11 @@
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>
