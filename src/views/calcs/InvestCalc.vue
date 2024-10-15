@@ -22,11 +22,11 @@
           </n-radio-group>
         </div>
         <div class="btns">
-          <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-          <n-button color="#3271ae" @click="calculate">计算</n-button>
+          <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
+          <n-button @click="calculate" type="info" strong secondary>计算</n-button>
         </div>
       </div>
-    <div class="options">
+    <div :class="`options ${themeClass}`">
       <div class="row">
         <div class="option">
           现值（PV）：
@@ -193,6 +193,10 @@
   import { useRoute } from "vue-router";
   import * as echarts from "echarts";
   import { getTVMObjective } from "@/utils/getTVMObjective";
+  import { useThemeStore } from "@/stores/themeStore";
+
+  // 主题颜色
+  const { themeClass } = storeToRefs(useThemeStore());
 
   // 获取全局设置信息
   const { timeUnitText, precision, currencySymbol, timeMode } = storeToRefs(useSettingStore());
@@ -602,6 +606,14 @@
 </script>
 
 <style scoped>
+.light-theme {
+  --options-border: 2px solid rgb(225, 225, 225);
+}
+
+.dark-theme {
+  --options-border: 2px solid #275747;
+}
+
 .main {
   width: 90%;
   margin-left: auto;
@@ -613,7 +625,7 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 20px;
-  border: 2px solid rgb(225, 225, 225);
+  border: var(--options-border);
   padding: 15px;
   border-radius: 1cap;
 }

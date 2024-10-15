@@ -27,10 +27,10 @@
       当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
     </n-alert>
     <div class="button-group">
-      <n-button @click="addRow()" color="#6e9bc5"> 添加行 </n-button>
-      <n-button @click="deleteRow()" color="#c67915">删除最后一行</n-button>
-      <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button color="#3271ae" @click="computeResult">计算</n-button>
+      <n-button @click="addRow()" type="success" strong secondary> 添加行 </n-button>
+      <n-button @click="deleteRow()" type="warning" strong secondary>删除最后一行</n-button>
+      <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
+      <n-button type="info" @click="computeResult" strong secondary>计算</n-button>
     </div>
     <hr>
     <div class="data-and-chart">
@@ -106,6 +106,10 @@
   import { useHistoryStore } from "@/stores/historyStore";
   import gsap from "gsap";
   import type { HistoryData } from "@/types/HistoryData";
+  import { useThemeStore } from "@/stores/themeStore";
+
+  // 主题颜色
+  const { themeClass } = storeToRefs(useThemeStore());
 
   const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -746,6 +750,17 @@
 </script>
 
 <style scoped>
+  /* .light-theme {
+    --btn-color: black;
+  }
+
+  .dark-theme {
+    --btn-color: #d4d4d5;
+  }
+
+  .btn {
+    color: var(--btn-color)
+  } */
   .main {
     width: 95%;
     margin-left: auto;

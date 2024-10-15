@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div :class="`app ${themeClass}`">
     <GlobalConfig>
       <!-- 滚轮 -->
       <n-scrollbar style="max-height: 100vh;" content-style="overflow: hidden;">
@@ -21,7 +21,13 @@
   import Header from '@/components/Header.vue';
   import { RouterView } from 'vue-router';
   import { NScrollbar, NBackTop, NIcon } from "naive-ui";
+  // @ts-ignore
   import { ArrowExportUp24Regular } from "@vicons/fluent";
+  import { storeToRefs } from "pinia"
+  import { useThemeStore } from "@/stores/themeStore";
+
+  const { themeClass } = storeToRefs(useThemeStore());
+
 </script>
 
 <style>

@@ -11,10 +11,10 @@
       />
     </n-space>
     <div class="button-group">
-      <n-button @click="addRow()" color="#6e9bc5"> 添加行 </n-button>
-      <n-button @click="deleteRow()" color="#c67915">删除最后一行</n-button>
-      <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button color="#3271ae" @click="computeResult">计算</n-button>
+      <n-button @click="addRow()" type="success" strong secondary> 添加行 </n-button>
+      <n-button @click="deleteRow()" type="warning" strong secondary>删除最后一行</n-button>
+      <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
+      <n-button type="info" @click="computeResult" strong secondary>计算</n-button>
     </div>
     <div class="data-and-chart">
       <n-data-table

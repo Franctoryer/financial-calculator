@@ -1,6 +1,6 @@
 <template>
   <div class="calculator">
-    <div class="display">
+    <div :class="`display ${themeClass}`">
       <div ref="katexContainer" class="formula-display"></div>
       <!-- 显示计算结果 -->
       <div class="result-display" v-if="isFranctional"> = {{ convertToFraction(result) }}</div>
@@ -102,7 +102,10 @@ import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router";
 import { canConvertToFraction, convertToFraction } from "@/utils/fraction";
+import { useThemeStore } from "@/stores/themeStore";
 
+// 主题颜色
+const { themeClass } = storeToRefs(useThemeStore());
 
 // 定义状态变量
 const { precision } = storeToRefs(useSettingStore());  // 精度
@@ -457,10 +460,23 @@ const handleHistoryRoute = () => {
 </script>
 
 <style scoped>
+
+.light-theme {
+  --display-border: 2px solid rgb(168, 166, 166);
+  --calculator-border: 2px solid rgb(168, 166, 166);
+}
+
+.dark-theme {
+  --display-border: 2px solid #1d5e50;
+  --calculator-border: 2px solid #1d5e50;
+}
 .calculator {
   width: 95%;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 5px;
+  border-bottom: var(--calculator-border);
+  border-radius: 1cap;
 }
 
 .formula-display {
@@ -473,7 +489,7 @@ const handleHistoryRoute = () => {
 }
 
 .display {
-  border: 2px solid rgb(168, 166, 166);
+  border: var(--display-border);
   display: flex;
   flex-direction: column;
   justify-content: center;

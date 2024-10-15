@@ -1,3 +1,11 @@
+.light-theme {
+  --background-color: white;
+}
+
+.dark-theme {
+  --background-color: #101014;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -31,4 +39,10 @@ hr {
   height: 1px; /* 粗细 */
   background-color: #cdcdcd; /* 颜色 */
   border: none;
+}
+
+.app {
+  background-color: var(--background-color) !important;
+  transition: background-color 0.33s, color 0.33s; /* 过渡效果 */
+  height: 100vh;
 }

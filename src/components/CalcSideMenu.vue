@@ -25,7 +25,8 @@
   import TaxIcon from "@/assets/icons/side-menu-icons/TaxIcon.vue"
   import { useRoute } from "vue-router";
   import { getActiveMenu } from "@/utils/getActiveMenu";
-
+  import { Calculator24Filled, ChartMultiple24Filled, BuildingGovernment24Filled } from "@vicons/fluent"
+  import { Coins, Bitcoin, HandHoldingUsd } from "@vicons/fa"
 
   /**
    * 将SVG图标组件转化为VNode对象
@@ -39,12 +40,12 @@
     {
       label: () => h(RouterLink, { to: { name: 'base'}}, { default: () => '科学计算器'}),
       key: 'base',
-      icon: renderIcon(BaseCalculator)
+      icon: renderIcon(Calculator24Filled)
     },
     {
       label: () => h(RouterLink, { to: { name: 'invest'}}, { default: () => '投资/贷款计算器'}),
       key: 'invest',
-      icon: renderIcon(LoadAndInvestIcon)
+      icon: renderIcon(HandHoldingUsd)
     },
     {
       label: '现金流计算器',
@@ -59,17 +60,17 @@
           key: 'customed-cashflow'
         }
       ],
-      icon: renderIcon(CashFlowIcon)
+      icon: renderIcon(ChartMultiple24Filled)
     },
     {
       label: () => h(RouterLink, { to: { name: 'deposit'}}, { default: () => '储蓄计算器'}),
       key: 'deposit',
-      icon: renderIcon(DepositIcon)
+      icon: renderIcon(Coins)
     },
     {
       label: () => h(RouterLink, { to: { name: 'currency'}}, { default: () => '货币汇率转化计算器'}),
       key: 'currency',
-      icon: renderIcon(CurrencyIcon)
+      icon: renderIcon(Bitcoin)
     },
     {
       label: '税务计算器',
@@ -84,7 +85,7 @@
           key: 'fiveone-tax'
         }
       ],
-      icon: renderIcon(TaxIcon)
+      icon: renderIcon(BuildingGovernment24Filled)
     }
   ];
   const route = useRoute();

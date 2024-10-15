@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div :class="`main ${themeClass}`">
     <div class="save-time"><b>{{ saveTime }}</b></div>
     <n-tag :bordered="false" type="info" size="small" class="calc-name"> {{ calcName }} </n-tag>
     <div class="input-data">{{ inputData }}</div>
@@ -9,10 +9,23 @@
 
 <script setup lang="ts">
   import { NTag } from "naive-ui";
+  import { storeToRefs } from "pinia"
+  import { useThemeStore } from "@/stores/themeStore";
+
   defineProps(['saveTime', 'calcName', 'inputData', 'resultData'])
+  const { themeClass } = storeToRefs(useThemeStore());
 </script>
 
 <style scoped>
+.light-theme {
+  --main-background-color: rgb(250, 250, 250);
+  --main-hover-background-color: rgb(231, 231, 231);
+}
+
+.dark-theme {
+  --main-background-color: #1f1f1f;
+  --main-hover-background-color: #3f3f3f;
+}
 .main {
   display: grid;
   grid-template-columns: 50% 50%;
@@ -24,13 +37,13 @@
   justify-items: center;
   align-items: center;
   padding: 5px;
-  background-color: rgb(250, 250, 250);
+  background-color: var(--main-background-color);
   cursor: pointer;
   width: 100%;
 }
 
 .main:hover {
-  background-color: rgb(231, 231, 231);
+  background-color: var(--main-hover-background-color);
 }
 
 .save-time {

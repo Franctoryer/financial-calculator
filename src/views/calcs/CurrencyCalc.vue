@@ -17,7 +17,7 @@
         到：
         <n-select :options="currencyOptions" v-model:value="toCurrency"/>
       </div>
-      <n-button color="#3271ae" @click="calculateResult">转化</n-button>
+      <n-button type="info" @click="calculateResult" strong secondary>转化</n-button>
     </div>
     <n-divider/>
     <n-table>
