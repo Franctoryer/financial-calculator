@@ -17,14 +17,9 @@
   import { RouterLink } from 'vue-router';
   import type { Component } from 'vue';
   // 一些图标
-  import CashFlowIcon from '@/assets/icons/side-menu-icons/CashFlowIcon.vue';
-  import BaseCalculator from '@/assets/icons/side-menu-icons/BaseCalculator.vue';
-  import LoadAndInvestIcon from '@/assets/icons/side-menu-icons/LoadAndInvestIcon.vue';
-  import DepositIcon from "@/assets/icons/side-menu-icons/DepositIcon.vue";
-  import CurrencyIcon from "@/assets/icons/side-menu-icons/CurrencyIcon.vue"
-  import TaxIcon from "@/assets/icons/side-menu-icons/TaxIcon.vue"
   import { useRoute } from "vue-router";
   import { getActiveMenu } from "@/utils/getActiveMenu";
+  // @ts-ignore
   import { Calculator24Filled, ChartMultiple24Filled, BuildingGovernment24Filled } from "@vicons/fluent"
   import { Coins, Bitcoin, HandHoldingUsd } from "@vicons/fa"
 

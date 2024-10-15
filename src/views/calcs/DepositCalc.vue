@@ -1,14 +1,14 @@
 <template>
-  
   <n-space vertical class="deposit-calc-container">
 
-<!-- 存款种类 -->
-<n-space vertical>
+    <!-- 存款种类 -->
+    <n-space vertical>
       <label>存款种类：</label>
-      <n-select v-model:value="depositCategory" size="large" :options="depositOptions" placeholder="选择存款种类" class="select" />
+      <n-select v-model:value="depositCategory" size="medium" :options="depositOptions" placeholder="选择存款种类"
+        class="select" />
     </n-space>
-  <!-- 期限种类 -->
-  <n-space vertical v-if="showTermType1">
+    <!-- 期限种类 -->
+    <n-space vertical v-if="showTermType1">
       <label>存款期限：</label>
       <n-select v-model:value="termType" :options="termOptions1" size="large" />
     </n-space>
@@ -32,87 +32,65 @@
         </div>
       </n-space>
     </n-space>
-    <n-space vertical align=center>
-    <!-- 初始储蓄金额输入框 -->
-    <n-space vertical>
-      <n-space v-if="isDividedDeposit">
-      <label>每月存入金额：</label>
-    </n-space>
-    <n-space v-if="!isDividedDeposit">
-      <label>初始储蓄金额：</label>
-    </n-space>
-      <n-space align="center">
-        <n-input-number v-model:value="initialDeposit" :min="0" :step="100" size="large" placeholder="请输入金额" :show-button="false" >
-          <template #suffix>
-            {{ currencySymbol }}
-          </template>
-        </n-input-number>
-      </n-space>
-    </n-space>
+    <div class="options">
+      <!-- 初始储蓄金额输入框 -->
+      <div class="option">
+        <div v-if="isDividedDeposit">
+          每月存入金额：
+        </div>
+        <div v-if="!isDividedDeposit">
+          初始储蓄金额：
+        </div>
+          <n-input-number v-model:value="initialDeposit" :min="0" :step="100" size="medium" placeholder="请输入金额"
+            :show-button="false">
+            <template #suffix>
+              {{ currencySymbol }}
+            </template>
+          </n-input-number>
+        </div>
 
-    <!-- 计算按钮 -->
-     <div>
-    <n-space justify="center">
-      <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-      <n-button @click="calculateSavings" type="info" strong secondary>计算</n-button>
-    </n-space>
-     </div>
+      <!-- 计算按钮 -->
+      <div class="btns">
+        <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
+        <n-button @click="calculateSavings" type="info" strong secondary>计算</n-button>
+      </div>
 
-       <!-- 利率 -->
-       <n-space align=center>
-      <label>年利率：</label>
-      <n-space align="center">
-        <n-input-number v-model:value="interestRate" size="large" :show-button="false" placeholder="请输入年利率" >
-        <template #suffix>
-            %
-          </template>
-        </n-input-number>
-      </n-space>
-    </n-space>
-
-    <!-- 结果显示 -->
-    <n-space align="center" v-if="isFetchInterest">
-      <label>每月利息：</label>
-      <n-input-number v-model:value="monthlyInterest" size="large" :show-button="false" readonly >
-        <template #suffix>
-            {{ currencySymbol }}
-          </template>
-        </n-input-number>
-    </n-space>
-    <n-space align="center">
-      <label>总利息：</label>
-      <n-input-number v-model:value="interest" size="large" :show-button="false" readonly >
-      <template #suffix>
-            {{ currencySymbol }}
-          </template>
-        </n-input-number>
-    </n-space>
-    <n-space align="center">
-      <label>最终储蓄金额：</label>
-      <n-input-number v-model:value="finalDeposit" size="large" :show-button="false" readonly >
-        <template #suffix>
-            {{ currencySymbol }}
-          </template>
-        </n-input-number>
-  
-    </n-space>
-  </n-space>
-
+    </div>
+    
+    <n-divider/>
+    <n-table>
+      <thead>
+        <tr>
+          <th>年利率</th>
+          <th v-if="isFetchInterest">每月利息</th>
+          <th>总利息</th>
+          <th>最终储蓄金额</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ interestRate }} %  </td>
+          <td v-if="isFetchInterest">{{ monthlyInterest }} {{ currencySymbol }}</td>
+          <td>{{ interest }} {{ currencySymbol }}</td>
+          <td>{{ finalDeposit }} {{ currencySymbol }}</td>
+        </tr>
+      </tbody>
+    </n-table>
   </n-space>
 </template>
 
 <script setup lang="ts">
-import { NSelect, NInputNumber, NSpace, NButton } from 'naive-ui';
+import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable } from 'naive-ui';
 import { ref, watch } from "vue";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
-import {useDepositResultStore } from "@/stores/result/DepositResultStore"
+import { useDepositResultStore } from "@/stores/result/DepositResultStore"
 import { calculateInterestRate } from '@/utils/depositUtils';
 import { useSettingStore } from '@/stores/settingStore';
 
 const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
-const { initialDeposit,depositCategory,termType,finalDeposit,year,month,day, } = storeToRefs(useDepositInputStore());
-const {interestRate, interest,termMonths} = storeToRefs(useDepositResultStore());
+const { initialDeposit, depositCategory, termType, finalDeposit, year, month, day, } = storeToRefs(useDepositInputStore());
+const { interestRate, interest, termMonths } = storeToRefs(useDepositResultStore());
 const monthlyInterest = ref(0);
 const depositOptions = [
   { label: '选择存款方式', value: '选择存款方式' },
@@ -168,17 +146,17 @@ watch(depositCategory, (newVal) => {
 });
 
 watch(depositCategory, (newVal) => {
-  if(['零存整取'].includes(newVal)) {
+  if (['零存整取'].includes(newVal)) {
     isDividedDeposit.value = true;
-  }else{
+  } else {
     isDividedDeposit.value = false;
   }
 });
 
 watch(depositCategory, (newVal) => {
-  if(['存本取息'].includes(newVal)) {
+  if (['存本取息'].includes(newVal)) {
     isFetchInterest.value = true;
-  }else{
+  } else {
     isFetchInterest.value = false;
   }
 });
@@ -186,17 +164,17 @@ watch(depositCategory, (newVal) => {
 
 // 计算利息和最终存款金额的函数
 const calculateSavings = () => {
-    calculateInterestRate();
-  
+  calculateInterestRate();
+
   // 计算总利息和最终存款金额
-  if(['零存整取'].includes(depositCategory.value)){
-    interest.value = initialDeposit.value * interestRate.value /100 * termMonths.value/12 *(0.5 + 6 * termMonths.value/12)
-    finalDeposit.value = initialDeposit.value * termMonths.value +interest.value;
-  }else{
-    interest.value = (initialDeposit.value * interestRate.value /100 * termMonths.value) / 12;
+  if (['零存整取'].includes(depositCategory.value)) {
+    interest.value = initialDeposit.value * interestRate.value / 100 * termMonths.value / 12 * (0.5 + 6 * termMonths.value / 12)
+    finalDeposit.value = initialDeposit.value * termMonths.value + interest.value;
+  } else {
+    interest.value = (initialDeposit.value * interestRate.value / 100 * termMonths.value) / 12;
     finalDeposit.value = initialDeposit.value + interest.value;
-    if(['存本取息'].includes(depositCategory.value)){
-      monthlyInterest.value = interest.value/termMonths.value;
+    if (['存本取息'].includes(depositCategory.value)) {
+      monthlyInterest.value = interest.value / termMonths.value;
     }
   }
   //精确输出
@@ -206,10 +184,10 @@ const calculateSavings = () => {
 };
 
 const deleteAll = () => {
-    depositCategory.value = '选择存款方式'; initialDeposit.value = 0; termType.value = '选择存款期限',
-        interestRate.value = 0, interest.value = 0, finalDeposit.value = 0, year.value = 0,
-        month.value = 0,  day.value = 0, termMonths.value = 0, monthlyInterest.value = 0
-  }
+  depositCategory.value = '选择存款方式'; initialDeposit.value = 0; termType.value = '选择存款期限',
+    interestRate.value = 0, interest.value = 0, finalDeposit.value = 0, year.value = 0,
+    month.value = 0, day.value = 0, termMonths.value = 0, monthlyInterest.value = 0
+}
 </script>
 
 <style scoped>
@@ -223,32 +201,31 @@ const deleteAll = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.input-group {
-  margin-bottom: 16px;
+
+.btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;  
+}
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.select, .amount-input {
-  width: 100%;
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 5px;
 }
 
-.date-inputs {
-  gap: 12px;
+td {
+  text-align: center;
 }
-
-.button-group {
-  margin-top: 24px;
+th {
+  text-align: center;
+  font-weight: bold;
 }
-
-.result-group {
-  margin-top: 16px;
-}
-
-button-group n-button {
-  width: 100px;
-}
-
-button-group n-button:hover {
-  opacity: 0.8;
-}
-
 </style>
