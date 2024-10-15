@@ -31,20 +31,20 @@
       key: 'TVM',
     },
     {
-      label: () => h(RouterLink, { to: { name: 'setting-manual'}}, { default: () => '全局设置'}),
-      key: 'Setting',
-    },
-    {
-      label: () => h(RouterLink, { to: { name: 'interest-method'}}, { default: () => '计息方式介绍'}),
-      key: 'interest-method',
-    },
-    {
       label: () => h(RouterLink, { to: { name: 'personalTaxCalcManual'}}, { default: () => '个税计算器'}),
       key: 'PersonalTax',
     },
     {
       label: () => h(RouterLink, { to: { name: 'depositCalcManual'}}, { default: () => '储蓄计算器'}),
       key: 'Deposit',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'interest-method'}}, { default: () => '计息方式介绍'}),
+      key: 'interest-method',
+    },
+    {
+      label: () => h(RouterLink, { to: { name: 'setting-manual'}}, { default: () => '全局设置'}),
+      key: 'Setting',
     }
   ];
 </script>

@@ -15,17 +15,8 @@ import { sum } from 'mathjs';
 const settingStore = useSettingStore();
 const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
 const { income } = storeToRefs(usePersonalTaxInputStore());
-const {SocialInsuranceBase,
-      AccumulationFundBase,
-      OldAgeInsuranceRate,
-      OldAgeInsurance,
-      MedicalInsuranceRate,
-      MedicalInsurance,
-      UnemploymentInsuranceRate,
-      UnemploymentInsurance,
-      AccumulationFundRate,
-      AccumulationFund} = storeToRefs(useFiveOneTaxInputStore());
-const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
+const { SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate } = storeToRefs(useFiveOneTaxInputStore());
+const { fiveonetax, OldAgeInsurance, MedicalInsurance, UnemploymentInsurance, AccumulationFund} = storeToRefs(useFiveOneTaxResultStore());
 
 
 export const computeFiveOneTax = () => {

@@ -132,7 +132,7 @@
     <div class="button-group">
       <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
       <n-button @click="computeAllInput" strong secondary type="warning">按月份更新输入</n-button>
-      <n-button @click="computeResult" strong secondary type="info">计算结果</n-button>
+      <n-button @click="computeResult(); addHistory();" strong secondary type="info">计算结果</n-button>
     </div>
     <n-divider/>
   <n-table>
@@ -168,7 +168,7 @@ import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
 import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
 import { useSettingStore } from '@/stores/settingStore';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { watchEffect, watch } from 'vue';
 import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
 import { MESSAGE_CONFIG } from "@/constants/messageConfig";
@@ -176,6 +176,9 @@ import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
 import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
 import { computeFiveOneTax, computeSocialInsuranceBase, computeAccumulationFundBase } from "@/utils/computeFiveOneTax";
+import type { HistoryData } from "@/types/HistoryData";
+import { useHistoryStore } from "@/stores/historyStore";
+import { useRoute } from "vue-router"
 
 
 const settingStore = useSettingStore();
@@ -298,7 +301,68 @@ watch(() => months.value, () => {
   computeAllInput();
 });
 
-
+  const historyStore = useHistoryStore();
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  // 添加历史记录
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  const addHistory = () => {
+    let history: HistoryData = {
+      saveTime: Date.now(),
+      name: 'personal-tax',
+      inputData: {
+        months: months.value,
+        income: income.value,
+        fiveonetax: fiveonetax.value,
+        sidecosts: sidecosts.value,
+        othercosts: othercosts.value,
+        tax_threshold: tax_threshold.value
+      },
+      resultData: {
+        all_income: all_income.value,
+        all_fiveonetax: all_fiveonetax.value,
+        all_sidecosts: all_sidecosts.value,
+        all_othercosts: all_othercosts.value,
+        all_tax_threshold: all_tax_threshold.value,
+        taxable_income: taxable_income.value,
+        tax: tax.value,
+        display_taxRate: display_taxRate.value,
+        current_tax: current_tax.value,
+        taxed_income: taxed_income.value   
+      }
+    } 
+    historyStore.addHistory(history);
+  }
+  const route = useRoute();
+  onMounted(() => {
+    handleHistoryRoute();
+  });
+  // 在当前页面回滚历史数据
+  watch(route, () => {
+    handleHistoryRoute();
+  })
+  // 回滚历史数据
+  const handleHistoryRoute = () => {
+    if (route.query.inputData && route.query.resultData) {
+      let inputData = JSON.parse(route.query.inputData as string)
+      let resultData = JSON.parse(route.query.resultData as string)
+      months.value = inputData.months;
+      income.value = inputData.income;
+      fiveonetax.value = inputData.fiveonetax;
+      sidecosts.value = inputData.sidecosts;
+      othercosts.value = inputData.othercosts;
+      tax_threshold.value = inputData.tax_threshold;
+      all_income.value = resultData.all_income;
+      all_fiveonetax.value = resultData.all_fiveonetax;
+      all_sidecosts.value = resultData.all_sidecosts;
+      all_othercosts.value = resultData.all_othercosts;
+      all_tax_threshold.value = resultData.all_tax_threshold;
+      taxable_income.value = resultData.taxable_income;
+      tax.value = resultData.tax;
+      display_taxRate.value = resultData.display_taxRate;
+      current_tax.value = resultData.current_tax;
+      taxed_income.value = resultData.taxed_income;
+    }
+  }
 
 </script>
 

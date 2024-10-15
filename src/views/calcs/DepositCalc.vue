@@ -10,12 +10,12 @@
     <!-- 期限种类 -->
     <n-space vertical v-if="showTermType1">
       <label>存款期限：</label>
-      <n-select v-model:value="termType" :options="termOptions1" size="large" />
+      <n-select v-model:value="termType" :options="termOptions1" size="medium" />
     </n-space>
 
     <n-space vertical v-if="showTermType2">
       <label>存款期限：</label>
-      <n-select v-model:value="termType" :options="termOptions2" size="large" />
+      <n-select v-model:value="termType" :options="termOptions2" size="medium" />
     </n-space>
 
     <n-space vertical v-if="showTermType3">
@@ -52,7 +52,7 @@
       <!-- 计算按钮 -->
       <div class="btns">
         <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-        <n-button @click="calculateSavings" type="info" strong secondary>计算</n-button>
+        <n-button @click="calculateSavings(); addHistory();" type="info" strong secondary>计算</n-button>
       </div>
 
     </div>
@@ -81,16 +81,19 @@
 
 <script setup lang="ts">
 import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable } from 'naive-ui';
-import { ref, watch } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
 import { useDepositResultStore } from "@/stores/result/DepositResultStore"
 import { calculateInterestRate } from '@/utils/depositUtils';
 import { useSettingStore } from '@/stores/settingStore';
+import type { HistoryData } from "@/types/HistoryData";
+import { useHistoryStore } from "@/stores/historyStore";
+import { useRoute } from "vue-router"
 
-const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
-const { initialDeposit, depositCategory, termType, finalDeposit, year, month, day, } = storeToRefs(useDepositInputStore());
-const { interestRate, interest, termMonths } = storeToRefs(useDepositResultStore());
+const { precision, currencySymbol } = storeToRefs(useSettingStore());
+const { initialDeposit, depositCategory, termType, year, month, day, } = storeToRefs(useDepositInputStore());
+const { interestRate, interest, termMonths, finalDeposit, } = storeToRefs(useDepositResultStore());
 const monthlyInterest = ref(0);
 const depositOptions = [
   { label: '选择存款方式', value: '选择存款方式' },
@@ -118,49 +121,11 @@ const termOptions2 = ref([
   { label: '五年', value: '五年' }
 ]);
 
-const showTermType1 = ref(false);
-const showTermType2 = ref(false);
-const showTermType3 = ref(false);
-const isDividedDeposit = ref(false);
-const isFetchInterest = ref(false);
-
-// 监听存款种类的变化，显示不同的期限选择框
-watch(depositCategory, (newVal) => {
-  if (['整存整取'].includes(newVal)) {
-    showTermType1.value = true;
-    showTermType2.value = false;
-    showTermType3.value = false;
-  } else if (['存本取息', '零存整取'].includes(newVal)) {
-    showTermType2.value = true;
-    showTermType1.value = false;
-    showTermType3.value = false;
-  } else if (['活期', '定活两便'].includes(newVal)) {
-    showTermType3.value = true;
-    showTermType1.value = false;
-    showTermType2.value = false;
-  } else {
-    showTermType1.value = false;
-    showTermType2.value = false;
-    showTermType3.value = false;
-  }
-});
-
-watch(depositCategory, (newVal) => {
-  if (['零存整取'].includes(newVal)) {
-    isDividedDeposit.value = true;
-  } else {
-    isDividedDeposit.value = false;
-  }
-});
-
-watch(depositCategory, (newVal) => {
-  if (['存本取息'].includes(newVal)) {
-    isFetchInterest.value = true;
-  } else {
-    isFetchInterest.value = false;
-  }
-});
-
+const showTermType1 = computed(() => depositCategory.value === '整存整取')
+const showTermType2 = computed(() => depositCategory.value === '存本取息' || depositCategory.value === '零存整取')
+const showTermType3 = computed(() => depositCategory.value === '活期' || depositCategory.value === '定活两便')
+const isDividedDeposit = computed(() => depositCategory.value === '零存整取')
+const isFetchInterest = computed(() => depositCategory.value === '零存整取')
 
 // 计算利息和最终存款金额的函数
 const calculateSavings = () => {
@@ -188,6 +153,57 @@ const deleteAll = () => {
     interestRate.value = 0, interest.value = 0, finalDeposit.value = 0, year.value = 0,
     month.value = 0, day.value = 0, termMonths.value = 0, monthlyInterest.value = 0
 }
+
+const historyStore = useHistoryStore();
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  // 添加历史记录
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  const addHistory = () => {
+    let history: HistoryData = {
+      saveTime: Date.now(),
+      name: 'deposit',
+      inputData: {
+        initialDeposit: initialDeposit.value,
+        depositCategory: depositCategory.value,
+        termType: termType.value,
+        year: year.value,
+        month: month.value,
+        day: day.value
+      },
+      resultData: { 
+        interestRate: interestRate.value,
+        interest: interest.value,
+        monthlyInterest: monthlyInterest.value,
+        finalDeposit: finalDeposit.value
+      }
+    } 
+    historyStore.addHistory(history);
+  }
+  const route = useRoute();
+  onMounted(() => {
+    handleHistoryRoute();
+  });
+  // 在当前页面回滚历史数据
+  watch(route, () => {
+    handleHistoryRoute();
+  })
+  // 回滚历史数据
+  const handleHistoryRoute = () => {
+    if (route.query.inputData && route.query.resultData) {
+      let inputData = JSON.parse(route.query.inputData as string)
+      let resultData = JSON.parse(route.query.resultData as string)
+      initialDeposit.value = inputData.initialDeposit;
+      depositCategory.value = inputData.depositCategory;
+      termType.value = inputData.termType;
+      year.value = inputData.year;
+      month.value = inputData.month;
+      day.value = inputData.day;
+      interestRate.value = resultData.interestRate;
+      interest.value = resultData.interest;
+      monthlyInterest.value = resultData.monthlyInterest;
+      finalDeposit.value = resultData.finalDeposit;
+    }
+  }
 </script>
 
 <style scoped>

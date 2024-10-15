@@ -23,7 +23,7 @@ onMounted(() => {
   gsap.fromTo(
     slogan.value, 
     { opacity: 0,x:100, y: 0 }, // 初始状态
-    { opacity: 1,x:0, y: 0, duration: 2.5, ease: 'power2.out' } // 目标状态
+    { opacity: 1,x:0, y: 0, duration: 1, ease: 'power2.out' } // 目标状态
   );
 });
 </script>
