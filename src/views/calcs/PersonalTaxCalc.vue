@@ -135,9 +135,9 @@
     
    
     <div class="button-group">
-      <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
-      <n-button color="green" @click="computeAllInput">按月份更新输入</n-button>
-      <n-button color="#3271ae" @click="computeResult">计算结果</n-button>
+      <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
+      <n-button @click="computeAllInput" strong secondary type="warning">按月份更新输入</n-button>
+      <n-button @click="computeResult" strong secondary type="info">计算结果</n-button>
     </div>
     </div>
     </n-space>

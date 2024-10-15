@@ -40,7 +40,6 @@ onMounted(() => {
 </script>
 
 <style>
-@import 'katex/dist/katex.min.css';
 .markdown-container {
   display: flex;
 }

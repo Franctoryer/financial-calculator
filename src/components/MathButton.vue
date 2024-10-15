@@ -33,13 +33,13 @@ onMounted(() => {
   renderFormula();
 });
 
-watch(() => props.formula, () => {
-  renderFormula();
-});
+// watch(() => props.formula, () => {
+//   renderFormula();
+// });
 
-onActivated(() => {
-  renderFormula();  // 在切换回来时重新渲染公式
-});
+// onActivated(() => {
+//   renderFormula();  // 在切换回来时重新渲染公式
+// });
 
 function renderFormula() {
   if (katexElement.value) {

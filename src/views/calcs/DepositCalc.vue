@@ -53,8 +53,8 @@
     <!-- 计算按钮 -->
      <div>
     <n-space justify="center">
-      <n-button @click="deleteAll" color="#ba5b49">全部清除</n-button>
-      <n-button @click="calculateSavings" type="primary">计算</n-button>
+      <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
+      <n-button @click="calculateSavings" type="info" strong secondary>计算</n-button>
     </n-space>
      </div>
 

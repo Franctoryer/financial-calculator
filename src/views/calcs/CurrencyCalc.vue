@@ -129,7 +129,7 @@
   // 计算结果
   const calculateResult = async () => {
     try {
-      const url = `https://api.frankfurter.app/latest?from=${fromCurrency.value}&to=${toCurrency.value}`;url
+      const url = `https://api.frankfurter.app/latest?from=${fromCurrency.value}&to=${toCurrency.value}`;
       const res = await fetch(url, { method: 'GET' });
       const jsonData = await res.json();
       exchangeRate.value = jsonData["rates"][`${toCurrency.value}`]

@@ -731,7 +731,7 @@
       myChart2 = echarts.init(senChart.value);
       myChart2.setOption(chartOption2);
     }
-  })
+  })  
 </script>
 
 <style scoped>

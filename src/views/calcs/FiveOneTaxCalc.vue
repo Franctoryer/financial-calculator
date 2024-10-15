@@ -35,8 +35,8 @@
       </div>
 
       <div class="button-group">
-        <n-button color="#ba5b49" @click="deleteAll">全部清除</n-button>
-        <n-button color="#3271ae" @click="computeFiveOneTax">计算结果</n-button>
+        <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
+        <n-button @click="computeFiveOneTax" strong secondary type="info">计算结果</n-button>
       </div>
       </n-space>
     </div>
