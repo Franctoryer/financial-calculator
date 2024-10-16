@@ -93,37 +93,58 @@ const router = createRouter({
 				{
 					name: 'BaseCalcManual',
 					path: 'base-calc',
-					component: () => import('@/views/manuals/BaseCalcManual.vue')
+					component: () => import('@/views/manuals/BaseCalcManual.vue'),
+					meta: {
+						activeMenu: 'BaseCalcManual'
+					}
 				},
 				{
 					name: 'cashFlowManual',
 					path: 'cashflow-calc',
 					component: () => import('@/views/manuals/CashFlowCalcManual.vue'),
+					meta: {
+						activeMenu: 'cashFlowManual'
+					}
 				},
 				{
 					name: 'investCalcManual',
 					path: 'invest-calc',
-					component: () => import('@/views/manuals/InvestCalcManual.vue')
+					component: () => import('@/views/manuals/InvestCalcManual.vue'),
+					meta: {
+						activeMenu: 'investCalcManual'
+					}
 				},
 				{
 					name: 'setting-manual',
 					path: 'setting-manual',
-					component: () => import('@/views/manuals/SettingManual.vue')
+					component: () => import('@/views/manuals/SettingManual.vue'),
+					meta: {
+						activeMenu: 'setting-manual'
+					}
 				},
 				{
 					name: 'interest-method',
 					path: 'interest-method',
-					component: () => import('@/views/manuals/InterestMethodManual.vue')
+					component: () => import('@/views/manuals/InterestMethodManual.vue'),
+					meta: {
+						activeMenu: 'interest-method'
+					}
 				},
 				{
-                    name: 'personalTaxCalcManual',
+          name: 'personalTaxCalcManual',
 					path: 'personalTaxCalcManual' ,
-					component: () => import('@/views/manuals/PersonalTaxCalcManual.vue')
+					component: () => import('@/views/manuals/PersonalTaxCalcManual.vue'),
+					meta: {
+						activeMenu: 'personalTaxCalcManual'
+					}
 				},
 				{
-                    name: 'depositCalcManual',
+          name: 'depositCalcManual',
 					path: 'depositCalcManual' ,
-					component: () => import('@/views/manuals/DepositCalcManual.vue')
+					component: () => import('@/views/manuals/DepositCalcManual.vue'),
+					meta: {
+						activeMenu: 'depositCalcManual'
+					}
 				},
 			]
 		}

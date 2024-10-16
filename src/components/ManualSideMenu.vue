@@ -2,6 +2,7 @@
 <template>
   <div class="slide-com">
       <n-menu
+        v-model:value="activeMenu"
         :options="menuOptions"
         :indent="15"
         :collapsed-width="64"
@@ -13,30 +14,32 @@
 <script setup lang="ts">
   import type { MenuOption } from 'naive-ui';
   import { NMenu } from 'naive-ui';
-  import { h } from 'vue';
+  import { h, ref, watch } from 'vue';
   import { RouterLink } from 'vue-router';
+  import { useRoute } from "vue-router";
+  import { getActiveMenu } from "@/utils/getActiveMenu";
   
 
   const menuOptions: MenuOption[] = [
     {
       label: () => h(RouterLink, { to: { name: 'BaseCalcManual'}}, { default: () => '科学计算器'}),
-      key: 'BaseCalc',
+      key: 'BaseCalcManual',
     },
     {
       label: () => h(RouterLink, { to: { name: 'cashFlowManual'}}, { default: () => '现金流计算器'}),
-      key: 'CashFlow',
+      key: 'cashFlowManual',
     },
     {
       label: () => h(RouterLink, { to: { name: 'investCalcManual'}}, { default: () => '投资/贷款计算器'}),
-      key: 'TVM',
+      key: 'investCalcManual',
     },
     {
       label: () => h(RouterLink, { to: { name: 'personalTaxCalcManual'}}, { default: () => '个税计算器'}),
-      key: 'PersonalTax',
+      key: 'personalTaxCalcManual',
     },
     {
       label: () => h(RouterLink, { to: { name: 'depositCalcManual'}}, { default: () => '储蓄计算器'}),
-      key: 'Deposit',
+      key: 'depositCalcManual',
     },
     {
       label: () => h(RouterLink, { to: { name: 'interest-method'}}, { default: () => '计息方式介绍'}),
@@ -44,9 +47,22 @@
     },
     {
       label: () => h(RouterLink, { to: { name: 'setting-manual'}}, { default: () => '全局设置'}),
-      key: 'Setting',
+      key: 'setting-manual',
     }
   ];
+
+  const route = useRoute();
+  
+  // 使用 route.meta.activeMenu 作为默认值
+  const activeMenu = ref(getActiveMenu(route.meta.activeMenu || null));
+
+  // 监听路由变化，动态设置 activeMenu
+  watch(
+    () => route.meta.activeMenu,
+    (newActiveMenu) => {
+      activeMenu.value = getActiveMenu(newActiveMenu);
+    }
+  );
 </script>
 
 <style>
