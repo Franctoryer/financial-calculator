@@ -33,50 +33,50 @@
       </n-switch>
     </div>
     <div class="buttons">
-      <MathButton formula="x^2" @click="append('^2')" type="tertiary" hot-key="^2"/>
-      <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary" hot-key="^"/>
-      <MathButton formula="|x|" @click="append('abs(')" type="tertiary" hot-key="|"/> 
-      <MathButton formula="7" @click="append('7')"/>
-      <MathButton formula="8" @click="append('8')" />
-      <MathButton formula="9" @click="append('9')" />
-      <MathButton formula="\div" @click="append('/')" type="tertiary" hot-key="/"/>
-      <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + BS"/>
+      <MathButton formula="x^2" @click="append('^2')" type="tertiary" hot-key="^2" id="^2"/>
+      <MathButton formula="x^{\square}" @click="append('^(')" type="tertiary" hot-key="^" id="shift+6"/>
+      <MathButton formula="|x|" @click="append('abs(')" type="tertiary" hot-key="|" id="|"/> 
+      <MathButton formula="7" @click="append('7')" id="button7"/>
+      <MathButton formula="8" @click="append('8')" id="button8"/>
+      <MathButton formula="9" @click="append('9')" id="button9"/>
+      <MathButton formula="\div" @click="append('/')" type="tertiary" hot-key="/" id="/"/>
+      <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + BS" id="clear"/>
 
-      <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary" hot-key="q"/>
-      <MathButton formula="\log" @click="append('log(')" type="tertiary" hot-key="l"/>
-      <MathButton formula="1/x" @click="append('(1/')" type="tertiary" hot-key="w"/>
-      <MathButton formula="4" @click="append('4')" />
-      <MathButton formula="5" @click="append('5')" />
-      <MathButton formula="6" @click="append('6')" />
-      <MathButton formula="\times" @click="append('*')" type="tertiary" hot-key="*"/>
-      <MathButton formula="DEL" @click="deleteLast" secondary type="warning" hot-key="BS"/>
+      <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary" hot-key="q" id="q"/>
+      <MathButton formula="\log" @click="append('log(')" type="tertiary" hot-key="l" id="l"/>
+      <MathButton formula="1/x" @click="append('(1/')" type="tertiary" hot-key="w" id="w"/>
+      <MathButton formula="4" @click="append('4')" id="button4"/>
+      <MathButton formula="5" @click="append('5')" id="button5"/>
+      <MathButton formula="6" @click="append('6')" id="button6"/>
+      <MathButton formula="\times" @click="append('*')" type="tertiary" hot-key="*" id="shift+8"/>
+      <MathButton formula="DEL" @click="deleteLast" secondary type="warning" hot-key="BS" id="backspace"/>
 
-      <MathButton formula="\sin" @click="append('sin(')" type="tertiary" hot-key="s"/>
-      <MathButton formula="\cos" @click="append('cos(')" type="tertiary" hot-key="c"/>
-      <MathButton formula="\tan" @click="append('tan(')" type="tertiary" hot-key="t"/>
-      <MathButton formula="1" @click="append('1')" />
-      <MathButton formula="2" @click="append('2')" />
-      <MathButton formula="3" @click="append('3')" />
-      <MathButton formula="-" @click="append('-')" type="tertiary"/>
-      <MathButton formula="Ans" @click="appendLastResult" secondary type="info" hot-key="a"/>
+      <MathButton formula="\sin" @click="append('sin(')" type="tertiary" hot-key="s" id="buttonS"/>
+      <MathButton formula="\cos" @click="append('cos(')" type="tertiary" hot-key="c" id="buttonC"/>
+      <MathButton formula="\tan" @click="append('tan(')" type="tertiary" hot-key="t" id="buttonT"/>
+      <MathButton formula="1" @click="append('1')" id="button1"/>
+      <MathButton formula="2" @click="append('2')" id="button2"/>
+      <MathButton formula="3" @click="append('3')" id="button3"/>
+      <MathButton formula="-" @click="append('-')" type="tertiary" id="-"/>
+      <MathButton formula="Ans" @click="appendLastResult" secondary type="info" hot-key="a" id="a"/>
 
-      <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary" hot-key="shift + s"/>
-      <MathButton formula="\arccos" @click="append('acos(')" type="tertiary" hot-key="shift + c"/>
-      <MathButton formula="\arctan" @click="append('atan(')" type="tertiary" hot-key="shift + t"/>
-      <MathButton formula="0" @click="append('0')" />
-      <MathButton formula="." @click="append('.')"/>
-      <MathButton formula="," @click="append(',')"/>
-      <MathButton formula="+" @click="append('+')" type="tertiary"/>
-      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="Enter"/>
+      <MathButton formula="\arcsin" @click="append('asin(')" type="tertiary" hot-key="shift + s" id="buttonShiftS"/>
+      <MathButton formula="\arccos" @click="append('acos(')" type="tertiary" hot-key="shift + c" id="buttonShiftC"/>
+      <MathButton formula="\arctan" @click="append('atan(')" type="tertiary" hot-key="shift + t" id="buttonShiftT"/>
+      <MathButton formula="0" @click="append('0')" id="button0"/>
+      <MathButton formula="." @click="append('.')" id="."/>
+      <MathButton formula="," @click="append(',')" id=","/>
+      <MathButton formula="+" @click="append('+')" type="tertiary" id="shift+="/>
+      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="Enter" id="enter"/>
 
-      <MathButton formula="(" @click="append('(')" type="tertiary"/>
-      <MathButton formula=")" @click="append(')')" type="tertiary"/>
-      <MathButton formula="x!" @click="append('!')" type="tertiary"/>
-      <MathButton formula="\pi" @click="append('pi')" hot-key="p + i"/>
-      <MathButton formula="e" @click="append('e')"/>
-      <MathButton formula="\%" @click="append('%')"/>
-      <MathButton formula="nPr" @click="append('permutations(')" type="tertiary" hot-key="["/>
-      <MathButton formula="nCr" @click="append('combinations(')" type="tertiary" hot-key="]"/>
+      <MathButton formula="(" @click="append('(')" type="tertiary" id="("/>
+      <MathButton formula=")" @click="append(')')" type="tertiary" id=")"/>
+      <MathButton formula="x!" @click="append('!')" type="tertiary" id="shift+1"/>
+      <MathButton formula="\pi" @click="append('pi')" hot-key="p + i" id="p+i"/>
+      <MathButton formula="e" @click="append('e')" id="buttonE"/>
+      <MathButton formula="\%" @click="append('%')" id="shift+5"/>
+      <MathButton formula="nPr" @click="append('permutations(')" type="tertiary" hot-key="[" id="permutations("/>
+      <MathButton formula="nCr" @click="append('combinations(')" type="tertiary" hot-key="]" id="combinations("/>
       
     </div>
   </div>
@@ -266,52 +266,57 @@ function addDegreeToTrigFunctions(str: string) {
 // 键盘输入
 // @@@@@@@@@@@@@@@@@@@@@@
 onMounted(() => {
-  hotkeys('1', () => append('1'));
-  hotkeys('2', () => append('2'));
-  hotkeys('3', () => append('3'));
-  hotkeys('4', () => append('4'));
-  hotkeys('5', () => append('5'));
-  hotkeys('6', () => append('6'));
-  hotkeys('7', () => append('7'));
-  hotkeys('8', () => append('8'));
-  hotkeys('9', () => append('9'));
-  hotkeys('0', () => append('0'));
-  hotkeys('t', () => append('tan('));
-  hotkeys('c', () => append('cos('));
-  hotkeys('s', () => append('sin('));
-  hotkeys('e', () => append('e'));
-  hotkeys('shift+t', () => append('atan('));
-  hotkeys('shify+c', () => append('acos('));
-  hotkeys('shift+s', () => append('asin('));
-  hotkeys('shift+9', () => append('('));
-  hotkeys('shift+0', () => append(')'));
-  hotkeys('enter', calculate);
-  hotkeys('backspace', deleteLast); 
-  hotkeys('shift+1', () => append('!'));
-  hotkeys('shift+6', () => append('^('));
-  hotkeys('[', () => append('permutations('));
-  hotkeys(']', () => append('combinations('));
-  hotkeys(',', () => append(','));
-  hotkeys('.', () => append('.'));
-  hotkeys('shift+=', () => append('+'));
-  hotkeys('-', () => append('-'));
-  hotkeys('shift+8', () => append('*'));
-  hotkeys('/', () => append('/'));
-  hotkeys('shift+backspace', clear);
-  hotkeys('esc', () => isAngle.value = !isAngle.value);
-  hotkeys('shift+\\', () => append('abs('));
-  hotkeys('shift+5', () => append('%'));
-  hotkeys('p+i', () => append('pi'));
-  hotkeys('a', appendLastResult);
-  hotkeys('`', () => isKey.value = !isKey.value);
-  hotkeys('ctrl+enter', () => {
-    if (canBeFractional.value) {
-      isFranctional.value = !isFranctional.value
-    }
+  hotkeys('1', () => { append('1'); document.getElementById('button1')?.focus(); });
+  hotkeys('2', () => { append('2'); document.getElementById('button2')?.focus(); });
+  hotkeys('3', () => { append('3'); document.getElementById('button3')?.focus(); });
+  hotkeys('4', () => { append('4'); document.getElementById('button4')?.focus(); });
+  hotkeys('5', () => { append('5'); document.getElementById('button5')?.focus(); });
+  hotkeys('6', () => { append('6'); document.getElementById('button6')?.focus(); });
+  hotkeys('7', () => { append('7'); document.getElementById('button7')?.focus(); });
+  hotkeys('8', () => { append('8'); document.getElementById('button8')?.focus(); });
+  hotkeys('9', () => { append('9'); document.getElementById('button9')?.focus(); });
+  hotkeys('0', () => { append('0'); document.getElementById('button0')?.focus(); });
+  hotkeys('t', () => { append('tan('); document.getElementById('buttonT')?.focus(); });
+  hotkeys('c', () => { append('cos('); document.getElementById('buttonC')?.focus(); });
+  hotkeys('s', () => { append('sin('); document.getElementById('buttonS')?.focus(); });
+  hotkeys('e', () => { append('e'); document.getElementById('buttonE')?.focus(); });
+  hotkeys('shift+t', () => { append('atan('); document.getElementById('buttonShiftT')?.focus(); });
+  hotkeys('shift+c', () => { append('acos('); document.getElementById('buttonShiftC')?.focus(); });
+  hotkeys('shift+s', () => { append('asin('); document.getElementById('buttonShiftS')?.focus(); });
+  hotkeys('shift+9', () => { append('('); document.getElementById('(')?.focus(); });
+  hotkeys('shift+0', () => { append(')'); document.getElementById(')')?.focus(); });
+  hotkeys('enter', () => { calculate(); document.getElementById('enter')?.focus(); });
+  hotkeys('backspace', () => { deleteLast(); document.getElementById('backspace')?.focus(); }); 
+  hotkeys('shift+1', () => { append('!'); document.getElementById('shift+1')?.focus(); });
+  hotkeys('shift+6', () => { append('^('); document.getElementById('shift+6')?.focus(); });
+  hotkeys('[', () => { append('permutations('); document.getElementById('permutations(')?.focus(); });
+  hotkeys(']', () => { append('combinations('); document.getElementById('combinations(')?.focus(); });
+  hotkeys(',', () => { append(','); document.getElementById(',')?.focus(); });
+  hotkeys('.', () => { append('.'); document.getElementById('.')?.focus(); });
+  hotkeys('shift+=', () => { append('+'); document.getElementById('shift+=')?.focus(); });
+  hotkeys('-', () => { append('-'); document.getElementById('-')?.focus(); });
+  hotkeys('shift+8', () => { append('*'); document.getElementById('shift+8')?.focus(); });
+  hotkeys('/', () => { append('/'); document.getElementById('/')?.focus(); });
+  hotkeys('shift+backspace', () => { clear(); document.getElementById('shift+backspace')?.focus(); });
+  hotkeys('esc', () => { 
+    isAngle.value = !isAngle.value; 
+    document.getElementById('esc')?.focus(); 
   });
-  hotkeys('l', () => append('log('));
-  hotkeys('q', () => append('sqrt('));
-  hotkeys('w', () => append('(1/'));
+  hotkeys('shift+\\', () => { append('abs('); document.getElementById('shift+\\')?.focus(); });
+  hotkeys('shift+5', () => { append('%'); document.getElementById('shift+5')?.focus(); });
+  hotkeys('p+i', () => { append('pi'); document.getElementById('p+i')?.focus(); });
+  hotkeys('a', () => { appendLastResult(); document.getElementById('a')?.focus(); });
+  hotkeys('`', () => { 
+    isKey.value = !isKey.value; 
+  });
+  hotkeys('ctrl+enter', () => { 
+    if (canBeFractional.value) { 
+      isFranctional.value = !isFranctional.value 
+    } 
+  });
+  hotkeys('l', () => { append('log('); document.getElementById('l')?.focus(); });
+  hotkeys('q', () => { append('sqrt('); document.getElementById('q')?.focus(); });
+  hotkeys('w', () => { append('(1/'); document.getElementById('w')?.focus(); });
 })
 
 // 解绑热键

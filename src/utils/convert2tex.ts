@@ -9,7 +9,7 @@ export function convert2tex(formula: string): string {
     'sqrt': '\\surd',
     '%': '\\%',
     'permutations': 'P',
-    'combinations': 'C'
+    'combinations': 'C', 
   }
   // 遍历 latexMap 的键，并替换 formula 中的对应字符
   for (const key in latexMap) {
