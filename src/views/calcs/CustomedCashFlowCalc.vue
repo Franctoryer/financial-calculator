@@ -95,7 +95,7 @@
   // @@@@@@@@@@@@@@@@@@@@@@@@@
   // @@@@设置信息、利率输入；表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@
-  const { isDisplayInfo, currencySymbol, precision } = storeToRefs(useSettingStore());
+  const { isDisplayInfo, currencySymbol, precision, isBarrierFree } = storeToRefs(useSettingStore());
   const {interest, rawData} = storeToRefs(useCustomedCFInputStore())
   // 创建表格的每一字段的内容（日期、现金流）
   const createColumns = (): DataTableColumns<CustomedCFData> => [
@@ -447,6 +447,12 @@
   const cashFlowChart = ref(null);
   let myChart: any;
   const chartOption1 = {
+    aria:{
+      enabled: true,
+      decal:{
+        show: isBarrierFree.value,
+      }
+    },
     backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
     gird: {
         right: '10px',
@@ -580,6 +586,11 @@
       myChart = echarts.init(cashFlowChart.value);
       myChart.setOption(chartOption1);
     }
+  })
+  watch(isBarrierFree,(newVal) => {
+    myChart.dispose();
+    myChart = echarts.init(cashFlowChart.value);
+    myChart.setOption(chartOption1);
   })
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 灵敏度分析可视化

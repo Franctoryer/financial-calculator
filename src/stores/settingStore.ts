@@ -11,6 +11,7 @@ export const useSettingStore = defineStore('settingStore', {
     currencyType: 'CNY',
     timeUnit: 'year',
     isDisplayInfo: true,
+    isBarrierFree: false,
   }),
   getters: {
     // @ts-ignore
@@ -29,6 +30,7 @@ export const useSettingStore = defineStore('settingStore', {
       this.currencyType = 'CNY';
       this.timeUnit = 'year';
       this.isDisplayInfo = true;
+      this.isBarrierFree = false;
     }
   }
 });

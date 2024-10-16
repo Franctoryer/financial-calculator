@@ -108,11 +108,12 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
+import { trueDependencies } from 'mathjs';
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
 
-  const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol } = storeToRefs(useSettingStore());
+  const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol, isBarrierFree } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -460,6 +461,12 @@
   let myChart: any;
   const chartOption1 = {
     backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
+    aria:{
+      enabled: true,
+      decal:{
+        show: isBarrierFree.value,
+      }
+    },
     gird: {
       right: '10px',
     },
@@ -591,6 +598,11 @@
       myChart = echarts.init(cashFlowChart.value);
       myChart.setOption(chartOption1);
     }
+  })
+  watch(isBarrierFree,(newVal) => {
+    myChart.dispose();
+    myChart = echarts.init(cashFlowChart.value);
+    myChart.setOption(chartOption1);
   })
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 灵敏度分析可视化

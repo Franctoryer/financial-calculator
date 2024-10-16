@@ -61,6 +61,10 @@
         是否显示提示信息：
         <n-switch :round="false" v-model:value="isDisplayInfo"/>
       </n-space>
+      <n-space vertical :size="5">
+        无障碍访问模式：
+        <n-switch :round="false" v-model:value="isBarrierFree" />
+      </n-space>
       <!-- 恢复默认设置按钮 -->
       <n-button @click="settingStore.storeDefault" type="default" secondary>
         <template #icon>
@@ -87,7 +91,7 @@
   import type { SelectOption } from 'naive-ui';
 
   const settingStore = useSettingStore();
-  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
+  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree } = storeToRefs(settingStore);
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
     {
