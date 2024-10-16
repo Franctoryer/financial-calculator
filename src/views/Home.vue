@@ -1,6 +1,6 @@
 <template>
   <div  :class="`${isDark ? 'slogan-dark-theme' : 'slogan-light-theme'} main`">
-    <img ref="image" src="@/assets/pictures/logo3.png" alt="Growth Image" class="growth-image" />
+    <img ref="image" src="@/assets/pictures/logo3.png" alt="Growth Image" class="growth-image" @load="onImageLoad"/>
     <div ref="slogan">
       <n-space  vertical><div class="slogan-text">一键计算，财富增长</div>
         <div class="slogan-sidetext">一款人性化的（非）智能计算器</div>
@@ -19,13 +19,13 @@ import { NSpace } from 'naive-ui';
 const { themeClass, isDark } = storeToRefs(useThemeStore());
 const slogan = ref(null);
 
-onMounted(() => {
+const onImageLoad = () => {
   gsap.fromTo(
     slogan.value, 
     { opacity: 0,x:100, y: 0 }, // 初始状态
     { opacity: 1,x:0, y: 0, duration: 1, ease: 'power2.out' } // 目标状态
   );
-});
+};
 </script>
 
 <style scoped>
@@ -55,14 +55,12 @@ onMounted(() => {
 .slogan-text {
   font-size: 3vw;  /* 根据页面宽度自适应大小 */
   white-space: nowrap;  /* 防止换行 */
-
   transform: translateX(-10vw) translateY(-3vw); /* 向左移动10vw */
 
 }
 .slogan-sidetext {
   font-size: 1.5vw;  /* 根据页面宽度自适应大小 */
   white-space: nowrap;  /* 防止换行 */
-
   transform: translateX(-10vw) translateY(-3vw); /* 向左移动10vw */
 
 }
