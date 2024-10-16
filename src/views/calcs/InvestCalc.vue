@@ -400,8 +400,8 @@
       return [NaN];
     } else {
       let result = [];
-      let step = (sensitiveMax.value - sensitiveMin.value) / 100;  // 10个采样点
-      for (let i = 0; i <= 100; i++) {
+      let step = (sensitiveMax.value - sensitiveMin.value) / 20;  // 10个采样点
+      for (let i = 0; i <= 20; i++) {
         result.push(Number((sensitiveMin.value + step * i).toFixed(2)));
       }
       return result;
@@ -447,7 +447,7 @@
   const senChart = ref(null);
   let myChart: any;
   let chartOption = {
-      backgroundColor: '',
+      backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
       title: {
         text: '灵敏度分析',
         left: 'center'
@@ -533,6 +533,7 @@
           name: `${objective.value}`,
           type: 'line',
           symbolSize: 8,
+          symbol: 'circle',
           data: SenY.value?.result1
         },
         {
@@ -541,11 +542,11 @@
           xAxisIndex: 1,
           yAxisIndex: 1,
           symbolSize: 8,
+          symbol: 'diamond',
           data: SenY.value?.result2
         }
       ]
   }
-  chartOption.backgroundColor = isDark.value ? '#101014' : 'white'
   onMounted(() => {
     myChart = isDark.value ? echarts.init(senChart.value, 'dark') : echarts.init(senChart.value);
     myChart.setOption(chartOption);

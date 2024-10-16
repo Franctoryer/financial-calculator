@@ -108,7 +108,7 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
-import { trueDependencies } from 'mathjs';
+  import { trueDependencies } from 'mathjs';
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
@@ -522,7 +522,7 @@ import { trueDependencies } from 'mathjs';
     series: [
       {
         name: '支出',
-        data: cashFlowData.value,
+        data: cashFlowData.value.map(value => value < 0 ? value : 0),
         type: 'bar',
         itemStyle: {
           color: (params: any) => {
@@ -530,18 +530,22 @@ import { trueDependencies } from 'mathjs';
           }
         },
         label: {
-          show: cashFlowData.value.length <= 15,
-          formatter: '{b}'
+          show: true,
+          formatter: (params: any) => params.value < 0 && cashFlowData.value.length <= 15 ? params.name : ''
         },
       },
       {
         name: '流入',
-        data: cashFlowData.value,
+        data: cashFlowData.value.map(value => value > 0 ? value : 0),
         type: 'bar',
         itemStyle: {
           color: (params: any) => {
             return params.value < 0 ? '#ba5140' : '#4f6f46';
           }
+        },
+        label: {
+          show: true,
+          formatter: (params: any) => params.value > 0 && cashFlowData.value.length <= 15 ? params.name : ''
         },
         barGap: '-100%', // 设置柱形图重叠
         xAxisIndex: 0 // 确保两个系列使用同一个x轴
@@ -566,6 +570,12 @@ import { trueDependencies } from 'mathjs';
     // 更新 ECharts 图表
     if (cashFlowChart.value) {
       myChart.setOption({
+        aria:{
+          enabled: true,
+          decal:{
+            show: isBarrierFree.value,
+          }
+        },
         yAxis: {
           data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
         },
@@ -574,14 +584,18 @@ import { trueDependencies } from 'mathjs';
         },
         series: [
           {
-            data: cashFlowData.value,
+            data: cashFlowData.value.map(value => value < 0 ? value : 0),
             label: {
-              show: cashFlowData.value.length <= 15,
-              formatter: '{b}'
+              show: true,
+              formatter: (params: any) => params.value < 0 && cashFlowData.value.length <= 15 ? params.name : ''
             }
           },
           {
-            data: []
+            data: cashFlowData.value.map(value => value > 0 ? value : 0),
+            label: {
+              show: true,
+              formatter: (params: any) => params.value > 0 && cashFlowData.value.length <= 15 ? params.name : ''
+            }
           }
         ],
       });
@@ -598,11 +612,6 @@ import { trueDependencies } from 'mathjs';
       myChart = echarts.init(cashFlowChart.value);
       myChart.setOption(chartOption1);
     }
-  })
-  watch(isBarrierFree,(newVal) => {
-    myChart.dispose();
-    myChart = echarts.init(cashFlowChart.value);
-    myChart.setOption(chartOption1);
   })
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 灵敏度分析可视化
@@ -701,6 +710,7 @@ import { trueDependencies } from 'mathjs';
         name: '净现值',
         type: 'line',
         symbolSize: 8,
+        symbol: 'circle',
         data: senArr.value.result1
       },
       {
@@ -709,6 +719,7 @@ import { trueDependencies } from 'mathjs';
         xAxisIndex: 1,
         yAxisIndex: 1,
         symbolSize: 8,
+        symbol: 'diamond',
         data: senArr.value.result2
       }
     ]
