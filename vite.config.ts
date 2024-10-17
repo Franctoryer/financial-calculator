@@ -14,6 +14,13 @@ export default defineConfig({
   },
   base: './',
   build: {
-    minify: false
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // 移除 console.log
+        drop_debugger: true, // 移除 debugger
+      },
+      mangle: true, // 启用名称混淆
+    },
   },
 })
