@@ -176,8 +176,8 @@
       money.value = inputData.money;
       fromCurrency.value = inputData.fromCurrency;
       toCurrency.value = inputData.toCurrency;
-      resultMoney.value = inputData.resultMoney;
-      exchangeRate.value = inputData.exchangeRate;
+      resultMoney.value = resultData.resultMoney;
+      exchangeRate.value = resultData.exchangeRate;
     }
   }
 
@@ -185,10 +185,10 @@
   // 添加数字递增效果
   // @@@@@@@@@@@@@@@@@@@
   const resultMoneyView = reactive({
-    number: 0
+    number: Number(resultMoney.value)
   })
   const exchangeRateView = reactive({
-    number: 0
+    number: Number(exchangeRate.value)
   })
   watch(resultMoney, (n) => {
     gsap.to(resultMoneyView, {
