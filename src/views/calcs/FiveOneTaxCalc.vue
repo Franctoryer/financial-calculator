@@ -230,18 +230,21 @@
   }
 </script>
 
-<style>
+<style scoped>
 .PersonalTaxCalc-container {
   width: 75%;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 10px auto;
+  /* border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
 }
 
 .button-group {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
+}
+
+.input-container {
+  width: 400px;
 }
 </style>

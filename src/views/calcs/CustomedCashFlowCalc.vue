@@ -488,6 +488,9 @@
           // 如果是 'axis' 触发，params 是一个数组，包含每个系列的数据
           // 如果是 'item' 触发，params 只有一个系列的数据
           let result = params.map((item: TooltipItem) => {
+              if (item.value === 0) {
+                return '';
+              }
               let color = item.value < 0 ? '#ba5140' : '#4f6f46';
               return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
           }).join('<br/>');
@@ -633,6 +636,9 @@
               // 如果是 'axis' 触发，params 是一个数组，包含每个系列的数据
               // 如果是 'item' 触发，params 只有一个系列的数据
               let result = params.map((item: TooltipItem) => {
+                  if (item.value === 0) {
+                    return '';
+                  }
                   let color = item.value < 0 ? '#ba5140' : '#4f6f46';
                   return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
               }).join('<br/>');
