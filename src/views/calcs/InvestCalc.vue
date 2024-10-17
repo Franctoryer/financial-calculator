@@ -607,16 +607,112 @@
     }
   })
 
-  watch(isDark, () => {
-    myChart.dispose(); // 销毁旧实例
-    if (isDark.value) {
-      chartOption.backgroundColor = '#101014';
-      myChart = echarts.init(senChart.value, 'dark');
-      myChart.setOption(chartOption);
-    } else {
-      chartOption.backgroundColor = 'white';
-      myChart = echarts.init(senChart.value);
-      myChart.setOption(chartOption);
+  watch(isDark, (newVal, oldVal) => {
+    if (newVal != oldVal) {
+      let newOption = {
+          backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
+          title: {
+            text: '灵敏度分析',
+            left: 'center'
+          },
+          grid: [
+            {
+              left: 60,
+              right: 70,
+              height: '35%'
+            },
+            {
+              left: 60,
+              right: 70,
+              top: '55%',
+              height: '35%'
+            }
+          ],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              animation: false
+            }
+          },
+          legend: {
+            data: [`${senseitiveFactor.value}`, '总利息'],
+            left: 10
+          },
+          toolbox: {
+            feature: {
+              dataZoom: {
+                yAxisIndex: 'none'
+              },
+              saveAsImage: {}
+            }
+          },
+          axisPointer: {
+            link: [
+              {
+                xAxisIndex: 'all'
+              }
+            ]
+          },
+          xAxis: [
+            {
+              type: 'category',
+              name: `${senseitiveFactor.value}`,
+              boundaryGap: false,
+              data: SenX.value,
+              axisTick: {
+                show: false // 不显示 x 轴刻度线
+              },
+            },
+            {
+              type: 'category',
+              gridIndex: 1,
+              boundaryGap: false,
+              data: SenX.value,
+              position: 'top',
+              axisLabel: {
+                show: false // 不显示 X 轴标签
+              },
+              axisTick: {
+                show: false // 不显示 x 轴刻度线
+              },
+            }
+          ],
+          yAxis: [
+            {
+              name: `${senseitiveFactor.value}`,
+              type: 'value',
+              scale: true,
+            },
+            {
+              gridIndex: 1,
+              name: '总利息',
+              type: 'value',
+              inverse: true,
+              scale: true
+            }
+          ],
+          series: [
+            {
+              name: `${objective.value}`,
+              type: 'line',
+              symbolSize: 8,
+              symbol: 'circle',
+              data: SenY.value?.result1
+            },
+            {
+              name: '总利息',
+              type: 'line',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              symbolSize: 8,
+              symbol: 'diamond',
+              data: SenY.value?.result2
+            }
+          ]
+      }
+      myChart.dispose(); // 销毁旧实例
+      myChart = echarts.init(senChart.value, isDark.value ? 'dark' : 'light'); // 根据主题初始化
+      myChart.setOption(newOption); // 设置配置
     }
   })
 </script>

@@ -601,16 +601,104 @@
       });
     }
   });
-  watch(isDark, () => {
-    myChart.dispose(); // 销毁旧实例
-    if (isDark.value) {
-      chartOption1.backgroundColor = '#101014';
-      myChart = echarts.init(cashFlowChart.value, 'dark');
-      myChart.setOption(chartOption1);
-    } else {
-      chartOption1.backgroundColor = 'white';
-      myChart = echarts.init(cashFlowChart.value);
-      myChart.setOption(chartOption1);
+  watch(isDark, (newVal, oldVal) => {
+    if (newVal != oldVal) {
+      let newOption = {
+        backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
+        aria:{
+          enabled: true,
+          decal:{
+            show: isBarrierFree.value,
+          }
+        },
+        gird: {
+          right: '10px',
+        },
+        yAxis: {
+          type: 'category',
+          data: Array.from({ length: cashFlowData.value.length }, (v, k) => `第${k}${timeUnitText.value}`),
+          axisLine: { show: false },
+          axisLabel: { show: false },
+          axisTick: { show: false },
+          splitLine: { show: false },
+        },
+        xAxis: {
+          type: 'value'
+        },
+        toolbox: {
+          show: true,
+          itemSize: 12,
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            saveAsImage: {},
+            restore: {},
+          },
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },//'<b>{b0}</b>: {c0}'
+          formatter: function (params: any) {
+              // 如果是 'axis' 触发，params 是一个数组，包含每个系列的数据
+              // 如果是 'item' 触发，params 只有一个系列的数据
+              let result = params.map((item: TooltipItem) => {
+                  let color = item.value < 0 ? '#ba5140' : '#4f6f46';
+                  return `<b>${item.name}</b>: <b style="color: ${color}">${item.value} ${currencySymbol.value}</b>`;
+              }).join('<br/>');
+            return result;
+          }
+        },
+        legend: {
+          show: true,
+          top: '5%',
+          left: '5%',
+          itemWidth: 15,
+          itemHeight: 15,
+          data: [
+            {name: '支出', itemStyle: { color: '#ba5140'}},
+            {name: '流入', itemStyle: { color: '#4f6f46'}}
+          ],
+          selectedMode: false
+        },
+        series: [
+          {
+            name: '支出',
+            data: cashFlowData.value.map(value => value < 0 ? value : 0),
+            type: 'bar',
+            itemStyle: {
+              color: (params: any) => {
+                return params.value < 0 ? '#ba5140' : '#4f6f46';
+              }
+            },
+            label: {
+              show: true,
+              formatter: (params: any) => params.value < 0 && cashFlowData.value.length <= 15 ? params.name : ''
+            },
+          },
+          {
+            name: '流入',
+            data: cashFlowData.value.map(value => value > 0 ? value : 0),
+            type: 'bar',
+            itemStyle: {
+              color: (params: any) => {
+                return params.value < 0 ? '#ba5140' : '#4f6f46';
+              }
+            },
+            label: {
+              show: true,
+              formatter: (params: any) => params.value > 0 && cashFlowData.value.length <= 15 ? params.name : ''
+            },
+            barGap: '-100%', // 设置柱形图重叠
+            xAxisIndex: 0 // 确保两个系列使用同一个x轴
+          },
+        ]
+      };
+      myChart.dispose(); // 销毁旧实例
+      myChart = echarts.init(cashFlowChart.value, isDark.value ? 'dark' : 'light'); // 根据主题初始化
+      myChart.setOption(newOption); // 设置配置
     }
   })
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -760,16 +848,113 @@
       })
     }
   })
-  watch(isDark, () => {
-    myChart2.dispose(); // 销毁旧实例
-    if (isDark.value) {
-      chartOption2.backgroundColor = '#101014';
-      myChart2 = echarts.init(senChart.value, 'dark');
-      myChart2.setOption(chartOption2);
-    } else {
-      chartOption2.backgroundColor = 'white';
-      myChart2 = echarts.init(senChart.value);
-      myChart2.setOption(chartOption2);
+  watch(isDark, (newVal, oldVal) => {
+    if (newVal != oldVal) {
+      let newOption = {
+        backgroundColor: `${isDark.value ? '#101014' : 'white'}`,
+        title: {
+          text: '灵敏度分析',
+          left: 'center'
+        },
+        grid: [
+          {
+            left: 60,
+            right: 70,
+            height: '35%'
+          },
+          {
+            left: 60,
+            right: 70,
+            top: '55%',
+            height: '35%'
+          }
+        ],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            animation: false
+          }
+        },
+        legend: {
+          data: ['净现值', '盈利指数'],
+          left: 10
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
+          }
+        },
+        axisPointer: {
+          link: [
+            {
+              xAxisIndex: 'all'
+            }
+          ]
+        },
+        xAxis: [
+          {
+            type: 'category',
+            name: '贴现率',
+            boundaryGap: false,
+            data: senChartXData,
+            axisTick: {
+              show: false // 不显示 x 轴刻度线
+            },
+          },
+          {
+            type: 'category',
+            gridIndex: 1,
+            boundaryGap: false,
+            data: senChartXData,
+            position: 'top',
+            axisLabel: {
+              show: false // 不显示 X 轴标签
+            },
+            axisTick: {
+              show: false // 不显示 x 轴刻度线
+            },
+          }
+        ],
+        yAxis: [
+          {
+            name: '净现值',
+            type: 'value',
+            scale: true,
+          },
+          {
+            gridIndex: 1,
+            name: '盈利指标',
+            type: 'value',
+            inverse: true,
+            scale: true
+          }
+        ],
+        series: [
+          {
+            name: '净现值',
+            type: 'line',
+            symbolSize: 8,
+            symbol: 'circle',
+            data: senArr.value.result1
+          },
+          {
+            name: '盈利指数',
+            type: 'line',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            symbolSize: 8,
+            symbol: 'diamond',
+            data: senArr.value.result2
+          }
+        ]
+      }
+      myChart2.dispose(); // 销毁旧实例
+      myChart2 = echarts.init(senChart.value, isDark.value ? 'dark' : 'light'); // 根据主题初始化
+      myChart2.setOption(newOption); // 设置配置
     }
   })
   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@
