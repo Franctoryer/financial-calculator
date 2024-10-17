@@ -125,7 +125,7 @@ const showTermType1 = computed(() => depositCategory.value === '整存整取')
 const showTermType2 = computed(() => depositCategory.value === '存本取息' || depositCategory.value === '零存整取')
 const showTermType3 = computed(() => depositCategory.value === '活期' || depositCategory.value === '定活两便')
 const isDividedDeposit = computed(() => depositCategory.value === '零存整取')
-const isFetchInterest = computed(() => depositCategory.value === '零存整取')
+const isFetchInterest = computed(() => depositCategory.value === '存本取息')
 
 // 计算利息和最终存款金额的函数
 const calculateSavings = () => {
