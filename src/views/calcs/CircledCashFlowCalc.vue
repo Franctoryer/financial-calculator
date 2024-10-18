@@ -22,7 +22,13 @@
           连续复利
         </n-radio-button>
       </n-radio-group>
-      <n-icon :component="BookSearch24Regular" :size="20" @click="isInterestMethod = true" :depth="3"></n-icon>
+      <n-icon 
+        :component="BookSearch24Regular" 
+        :size="20" @click="isInterestMethod = true" 
+        :depth="3"
+        v-if="isQkDocLkup"
+      >
+      </n-icon>
     </div>
     <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && interestMethod === 'Simple'">
       当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
@@ -130,10 +136,10 @@
   const { themeClass, isDark } = storeToRefs(useThemeStore());
   // 模态框
   const isInterestMethod = ref(false);
-  const handleModalShowChange = (value) => {
+  const handleModalShowChange = (value: any) => {
     isInterestMethod.value = value;
   };
-  const { timeUnitText, precision, isDisplayInfo, currencySymbol, isBarrierFree } = storeToRefs(useSettingStore());
+  const { timeUnitText, precision, isDisplayInfo, currencySymbol, isBarrierFree, isQkDocLkup } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -10,6 +10,7 @@ export const useSettingStore = defineStore('settingStore', {
     currencyType: 'CNY',
     timeUnit: 'year',
     isDisplayInfo: true,
+    isQkDocLkup: true,  // 快速文档查找
     isBarrierFree: false,
   }),
   getters: {
@@ -23,12 +24,12 @@ export const useSettingStore = defineStore('settingStore', {
   persist: true,
   actions: {
     storeDefault() {
-      this.interestMethod = 'compound';
       this.timeMode = 'END';
       this.precision = 2;
       this.currencyType = 'CNY';
       this.timeUnit = 'year';
       this.isDisplayInfo = true;
+      this.isQkDocLkup = true;
       this.isBarrierFree = false;
     }
   }

@@ -54,6 +54,10 @@
         <n-switch :round="false" v-model:value="isDisplayInfo"/>
       </n-space>
       <n-space vertical :size="5">
+        是否启用快速文档查找：
+        <n-switch :round="false" v-model:value="isQkDocLkup"/>
+      </n-space>
+      <n-space vertical :size="5">
         无障碍访问模式：
         <n-switch :round="false" v-model:value="isBarrierFree" />
       </n-space>
@@ -83,7 +87,7 @@
   import type { SelectOption } from 'naive-ui';
 
   const settingStore = useSettingStore();
-  const { precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree } = storeToRefs(settingStore);
+  const { precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree, isQkDocLkup } = storeToRefs(settingStore);
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
     {
