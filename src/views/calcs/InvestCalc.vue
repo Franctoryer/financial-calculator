@@ -181,7 +181,7 @@
 
 <script setup lang="ts">
   import { NRadioGroup, NRadioButton, NInputNumber, NButton, NTable, NDivider } from "naive-ui";
-  import { onMounted, watch, computed, ref, watchEffect } from "vue";
+  import { onMounted, watch, computed, ref, watchEffect, nextTick } from "vue";
   import { storeToRefs } from "pinia";
   import { useSettingStore } from "@/stores/settingStore";
   import { useInvestInputStore } from "@/stores/input/InvestInputStore"
@@ -311,27 +311,30 @@
     allInterest.value = -(pv + fv + pmt * n);
   }
   // 每次更改计算目标，结果归零
+  let isRouteHanding = false;
   watch(objective, (newVal) => {
-    objectiveResult.value = 0;
-    allInterest.value = 0;
-    allPmt.value = 0;
-    senseitiveFactor.value = null;
-    switch (newVal) { 
-      case "PV":
-        PV.value = null;
-        break;
-      case "FV":
-        FV.value = null;
-        break;
-      case "PMT":
-        PMT.value = null;
-        break;
-      case "I/Y":
-        I_Y.value = null;
-        break;
-      case "N":
-        N.value = null;
-        break;
+    if (!isRouteHanding) {
+      objectiveResult.value = 0;
+      allInterest.value = 0;
+      allPmt.value = 0;
+      senseitiveFactor.value = null;
+      switch (newVal) { 
+        case "PV":
+          PV.value = null;
+          break;
+        case "FV":
+          FV.value = null;
+          break;
+        case "PMT":
+          PMT.value = null;
+          break;
+        case "I/Y":
+          I_Y.value = null;
+          break;
+        case "N":
+          N.value = null;
+          break;
+      }
     }
   })
   // 删除按钮 
@@ -373,8 +376,9 @@
     handleHistoryRoute();
   })
   // 回滚历史数据
-  const handleHistoryRoute = () => {
+  const handleHistoryRoute = async () => {
     if (route.query.inputData && route.query.resultData) {
+      isRouteHanding = true;
       let inputData = JSON.parse(route.query.inputData as string)
       let resultData = JSON.parse(route.query.resultData as string)
       objective.value = inputData.objective;
@@ -386,6 +390,8 @@
       objectiveResult.value = resultData.objectiveResult;
       allInterest.value = resultData.allInterest;
       allPmt.value = resultData.allPmt;
+      await nextTick();
+      isRouteHanding = false;
     }
   }
 

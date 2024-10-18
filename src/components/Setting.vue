@@ -196,13 +196,6 @@
     { label: '马尔代夫拉菲亚', value: 'MVR' }
   ];
   
-  // TODO: 给每个选项加icon
-  const renderOption = ({ node, option }: { node: VNode, option: SelectOption }) =>
-    h(NTooltip, null, {
-      trigger: () => node,
-      default: () => `Rubber Soul -${option.label}`
-    })
-
 </script>
 
 <style scoped>
