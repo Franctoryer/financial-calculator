@@ -22,10 +22,17 @@
       </transition>
     </div>
     <div class="history-container">
-      <div class="total-num">总共 {{ historyData.length }} 条记录：</div>
+      <div class="total-num">
+        <span class="sum">{{ historyDataView.length }} 条记录：</span>
+        <n-select size="small" 
+          :options="tagOptions" 
+          v-model:value="tagFilter"
+          class="filter"
+        />
+      </div>
       <n-scrollbar style="max-height: 100vh" y-placement="left">
-        <n-empty description="没有任何记录" v-if="historyData.length === 0" class="nothing"></n-empty>
-        <div v-for="(data, index) in historyData" class="history-element">
+        <n-empty description="没有任何记录" v-if="historyDataView.length === 0" class="nothing"></n-empty>
+        <div v-for="(data, index) in historyDataView" class="history-element">
           <n-icon v-if="isDeleting" :size="20" @click="historyStore.deleteOneHistory(index)" class="delete-one">
             <DismissCircle28Regular/>
           </n-icon>
@@ -68,7 +75,7 @@
   import History16Regular from "@vicons/fluent/History16Regular";
   import DismissCircle28Regular from "@vicons/fluent/DismissCircle28Regular";
   import Delete20Filled from "@vicons/fluent/Delete20Filled";
-  import { NIcon, NButton, NScrollbar, NEmpty, NDivider, NText, NPopover, NTag } from "naive-ui";
+  import { NIcon, NButton, NScrollbar, NEmpty, NDivider, NSelect, NPopover, NTag } from "naive-ui";
   import { useRouter } from "vue-router";
   import { useHistoryStore } from "@/stores/historyStore";
   import { storeToRefs } from "pinia";
@@ -77,11 +84,13 @@
   import { standardTimeStamp } from "@/utils/standardTimeStamp";
   import { translateToChinese } from "@/utils/translateToChinese";
   import { formatTimestamp } from "@/utils/formatTimeStamp"
-  import { ref } from "vue";
+  import { ref, computed } from "vue";
+  import { getHistoryByTag } from '@/utils/historyDataFilter';
 
   const historyStore = useHistoryStore();
   const { historyData } = storeToRefs(historyStore);
   const isDeleting = ref(false);
+  const tagFilter = ref("all");
 
   const router = useRouter();
   const restoreCalculation = (item: HistoryData) => {
@@ -101,6 +110,47 @@
     // 刷新页面，使用路径部分作为新的URL
     window.location.href = baseUrl;
   }
+  // 选择标签菜单
+  const tagOptions = [
+    {
+      label: '全部',
+      value: 'all'
+    },
+    {
+      label: '科学计算器',
+      value: 'base'
+    },
+    {
+      label: '投资/贷款计算器',
+      value: 'invest'
+    },
+    {
+      label: '周期性现金流',
+      value: 'circled-cashflow'
+    },
+    {
+      label: '不规则现金流',
+      value: 'customed-cashflow'
+    },
+    {
+      label: '储蓄计算器',
+      value: 'deposit'
+    },
+    {
+      label: '货币汇率转化',
+      value: 'currency'
+    },
+    {
+      label: '个人所得税',
+      value: 'personal-tax'
+    },
+    {
+      label: '五险一金',
+      value: 'fiveone-tax'
+    }
+  ]
+  // @ts-ignore
+  const historyDataView = computed(() => getHistoryByTag(historyData.value, tagFilter.value))
 </script>
 
 <style scoped>
@@ -159,10 +209,18 @@
   margin-left: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap; /* 保持文本在一行内 */
+  padding-right: 15px;
+}
+
+.sum {
   font-size: medium;
   font-weight: bold;
 }
-
 .history-element {
   display: flex;
   flex-direction: row;
@@ -182,7 +240,7 @@
   flex-direction: row;
   align-items: center;
   margin-left: 10px;
-  height: 30px
+  height: 30px;
 }
 
 .delete-one {
@@ -215,5 +273,9 @@
   margin-right: auto;
   color: grey;
   text-align: center;
+}
+
+.filter {
+  width: 150px;
 }
 </style>
