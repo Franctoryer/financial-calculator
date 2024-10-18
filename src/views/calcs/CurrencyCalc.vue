@@ -17,7 +17,7 @@
         到：
         <n-select :options="currencyOptions" v-model:value="toCurrency"/>
       </div>
-      <n-button type="info" @click="calculateResult" strong secondary>转化</n-button>
+      <n-button type="info" @click="calculateResult" strong secondary :disabled="isButtonDisabled">转化</n-button>
     </div>
     <n-divider/>
     <n-table>
@@ -51,6 +51,7 @@
   import { useHistoryStore } from "@/stores/historyStore";
   import { useRoute } from "vue-router";
   import gsap from "gsap"
+  import { ref } from "vue";
 
   const currencyOptions = [
     {
@@ -125,9 +126,11 @@
   const { money, fromCurrency, toCurrency } = storeToRefs(useCurrencyInputStore());
   const { resultMoney, exchangeRate } = storeToRefs(useCurrencyResultStore())
   const { precision } = storeToRefs(useSettingStore());
+  const isButtonDisabled = ref(false);
 
   // 计算结果
   const calculateResult = async () => {
+    isButtonDisabled.value = true;  // 禁用按钮
     try {
       const url = `https://api.frankfurter.app/latest?from=${fromCurrency.value}&to=${toCurrency.value}`;
       const res = await fetch(url, { method: 'GET' });
@@ -137,6 +140,8 @@
       addHistory();
     } catch {
       window.$message.error(BAD_REQUEST, MESSAGE_CONFIG);
+    } finally {
+      isButtonDisabled.value = false;  // 启用按钮
     }
   }
 
