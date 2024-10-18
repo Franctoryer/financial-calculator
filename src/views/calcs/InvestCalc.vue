@@ -105,9 +105,9 @@
       </thead>
       <tbody>
         <tr>
-          <td class="result-column">{{ objectiveResultView.number }} {{ resultSymbol }}</td>
-          <td> {{ allInterestView.number }} {{ currencySymbol }} </td>
-          <td> {{ allPmtView.number }} {{ currencySymbol }} </td>
+          <td class="result-column">{{ Number(objectiveResultView.number).toFixed(precision) }} {{ resultSymbol }}</td>
+          <td> {{ Number(allInterestView.number).toFixed(precision) }} {{ currencySymbol }} </td>
+          <td> {{ Number(allPmtView.number).toFixed(precision) }} {{ currencySymbol }} </td>
         </tr>
       </tbody>
     </n-table>
