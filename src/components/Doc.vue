@@ -51,7 +51,7 @@ onMounted(() => {
 }
 .markdown-container a {
   text-decoration: none;
-  color: #2a947d;
+  color: #34b398;
 }
 
 .markdown-container a:hover {

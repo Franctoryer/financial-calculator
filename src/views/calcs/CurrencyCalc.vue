@@ -52,6 +52,7 @@
   import { useRoute } from "vue-router";
   import gsap from "gsap"
   import { ref } from "vue";
+  import { useLoadingBar } from 'naive-ui'
 
   const currencyOptions = [
     {
@@ -128,18 +129,22 @@
   const { precision } = storeToRefs(useSettingStore());
   const isButtonDisabled = ref(false);
 
+  const loadingBar = useLoadingBar(); // 加载条
   // 计算结果
   const calculateResult = async () => {
     isButtonDisabled.value = true;  // 禁用按钮
     try {
       const url = `https://api.frankfurter.app/latest?from=${fromCurrency.value}&to=${toCurrency.value}`;
+      loadingBar.start();
       const res = await fetch(url, { method: 'GET' });
       const jsonData = await res.json();
       exchangeRate.value = jsonData["rates"][`${toCurrency.value}`]
       resultMoney.value = exchangeRate.value * money.value;
       addHistory();
+      loadingBar.finish();
     } catch {
       window.$message.error(BAD_REQUEST, MESSAGE_CONFIG);
+      loadingBar.error();
     } finally {
       isButtonDisabled.value = false;  // 启用按钮
     }

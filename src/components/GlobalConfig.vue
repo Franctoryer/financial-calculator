@@ -2,13 +2,15 @@
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="theme">
     <n-message-provider>
       <MessageApi class="message"/>
-      <slot></slot>
+      <n-loading-bar-provider>
+        <slot></slot>
+      </n-loading-bar-provider>
     </n-message-provider>
   </n-config-provider>
 </template>
 
 <script setup lang="ts">
-  import { zhCN, dateZhCN, NConfigProvider } from 'naive-ui';
+  import { zhCN, dateZhCN, NConfigProvider, NLoadingBarProvider } from 'naive-ui';
   import { NMessageProvider} from "naive-ui";
   import MessageApi from '@/components/MessageApi.vue';
   import { storeToRefs } from "pinia"

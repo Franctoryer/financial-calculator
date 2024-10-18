@@ -23,7 +23,7 @@
     </div>
     <div class="history-container">
       <div class="total-num">总共 {{ historyData.length }} 条记录：</div>
-      <n-scrollbar style="max-height: 100vh">
+      <n-scrollbar style="max-height: 100vh" y-placement="left">
         <n-empty description="没有任何记录" v-if="historyData.length === 0" class="nothing"></n-empty>
         <div v-for="(data, index) in historyData" class="history-element">
           <n-icon v-if="isDeleting" :size="20" @click="historyStore.deleteOneHistory(index)" class="delete-one">

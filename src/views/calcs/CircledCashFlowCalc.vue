@@ -74,7 +74,6 @@
       size="huge"
       style="width: 80%;"
       preset="card"
-      title="计息方式"
       @update:show="handleModalShowChange"
     >
       <n-scrollbar style="max-height: 60vh" trigger="none">
@@ -1125,6 +1124,8 @@
     margin-right: auto;
   }
 
-
+  /* .modal-content {
+    border: 1px solid green;
+  } */
   
 </style>
