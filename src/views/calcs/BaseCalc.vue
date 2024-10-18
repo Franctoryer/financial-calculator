@@ -103,6 +103,7 @@ import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router";
 import { canConvertToFraction, convertToFraction } from "@/utils/fraction";
 import { useThemeStore } from "@/stores/themeStore";
+import { debounce } from 'lodash';
 
 // 主题颜色
 const { themeClass } = storeToRefs(useThemeStore());
@@ -141,7 +142,7 @@ const append = (char: string) => {
   formula.value += char;
   result.value = '';  // 每次输入时清空显示结果，重新输入公式
 };
-const calculate = () => {
+const calculate = debounce(() => {
   if (formula.value === '') {
     result.value = '0';
   } else {
@@ -183,11 +184,12 @@ const calculate = () => {
       lastResult.value = result.value; // 更新ANS
       addHistory();
     } catch (error) {
+      window.$message.error('表达式无效')
+      console.log('出错');
       result.value = 'Error';
     }
   }
-};
-
+}, 100)
 // 如果检测到不能转成分数，则立马把 isFractional 置为fasle
 watchEffect(() => {
   if (!canBeFractional.value) {
