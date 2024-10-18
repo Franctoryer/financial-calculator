@@ -113,7 +113,7 @@ const { precision } = storeToRefs(useSettingStore());  // 精度
 const { formula } = storeToRefs(useBaseInputStore());  // 存储公式
 const { result } = storeToRefs(useBaseResultStore());  // 存储结果
 // 定义了一个新变量 displayResult，原来的result默认保持8位小数（用于判断是否需要转成小数，因为只知道四舍五入后的结果没法判断这个）
-const displayResult = computed(() => Number(result.value).toFixed(precision.value))
+const displayResult = computed(() => Number(Number(result.value).toFixed(precision.value)))
 const lastResult = ref<string | null>(null);  // 存储上一次计算的结果
 const { isKey, isAngle } = storeToRefs(useBaseCalcStore());   // 是否键盘输入/是否角度制
 const formulaDisplay = computed(() => {

@@ -1,7 +1,7 @@
 // IRR 函数，通过二分法迭代计算
 export function IRR(NPV: Function, cashflows: number[], guess: number = 0.5): number {
-  let lowerRate = -10;
-  let upperRate = 10;
+  let lowerRate = -0.9999;
+  let upperRate = 100;
   let irr = guess;
 
   const tolerance = 1e-7;  // 迭代精度

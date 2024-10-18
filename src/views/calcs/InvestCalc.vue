@@ -105,9 +105,9 @@
       </thead>
       <tbody>
         <tr>
-          <td class="result-column">{{ Number(objectiveResult).toFixed(precision) }} {{ resultSymbol }}</td>
-          <td> {{ Number(allInterest).toFixed(precision) }} {{ currencySymbol }} </td>
-          <td> {{ Number(allPmt).toFixed(precision) }} {{ currencySymbol }} </td>
+          <td class="result-column">{{ objectiveResultView.number }} {{ resultSymbol }}</td>
+          <td> {{ allInterestView.number }} {{ currencySymbol }} </td>
+          <td> {{ allPmtView.number }} {{ currencySymbol }} </td>
         </tr>
       </tbody>
     </n-table>
@@ -195,6 +195,8 @@
   import { getTVMObjective } from "@/utils/getTVMObjective";
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
+  import { reactive } from "vue";
+  import gsap from "gsap";
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
@@ -715,6 +717,50 @@
       myChart.setOption(newOption); // 设置配置
     }
   })
+
+  // @@@@@@@@@@@@@@@@@@
+  // 数字递增特效
+  // @@@@@@@@@@@@@@@@@@@
+  const objectiveResultView = reactive({
+    number: objectiveResult.value
+  })
+  const allPmtView = reactive({
+    number: allPmt.value
+  })
+  const allInterestView = reactive({
+    number: allInterest.value
+  });
+
+  watch(objectiveResult, (n) => {
+    gsap.to(objectiveResultView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        objectiveResultView.number = Number(objectiveResultView.number.toFixed(precision.value));
+      }
+    });
+  });
+  watch(allPmt, (n) => {
+    gsap.to(allPmtView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        allPmtView.number = Number(allPmtView.number.toFixed(precision.value));
+      }
+    });
+  });
+  watch(allInterest, (n) => {
+    gsap.to(allInterestView, { 
+      duration: 0.5, 
+      number: Number(n),
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        allInterestView.number = Number(allInterestView.number.toFixed(precision.value));
+      }
+    });
+  });
 </script>
 
 <style scoped>

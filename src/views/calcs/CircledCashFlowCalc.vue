@@ -108,7 +108,6 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
-  import { trueDependencies } from 'mathjs';
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
