@@ -8,3 +8,8 @@ export const NO_CLEAR: string = '俺也一样！';
 export const IRR_REQUIREMENT_ERROR: string = '要计算IRR，现金流至少有一正一负';
 export const IRR_CONVERGENCE_ERROR: string = 'IRR计算不收敛';
 export const BAD_REQUEST: string = '请求失败';
+export const INF_ERROR: string = '计算结果为无穷大';
+export const COMPLEX_ERROR: string = '计算结果是复数，不能处理';
+export const TAN_ERROR: string = 'tan 函数在 π/2 的倍数处未定义';
+
+

@@ -86,8 +86,8 @@
 import { ref, watch, watchEffect, computed, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/settingStore";
-import { evaluate } from 'mathjs';
-import { NO_DELETING, ZERO_DIVISION_ERROR, NO_CLEAR } from "@/constants/message";
+import { evaluate, isComplex } from 'mathjs';
+import { NO_DELETING, INF_ERROR, NO_CLEAR, COMPLEX_ERROR, TAN_ERROR } from "@/constants/message";
 import { MESSAGE_CONFIG } from '@/constants/messageConfig';
 import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
@@ -152,9 +152,9 @@ const calculate = debounce(() => {
       // 替换符号为 JavaScript 可识别的表达式
       expression = expression.replace(/%/g, '/100');
 
+      const tanRegex = /tan\((.*?)\)/g;
       // 正则表达式匹配 tan 函数，并提取其参数
       if (!isAngle.value) {
-        const tanRegex = /tan\((.*?)\)/g;
         let match;
         while ((match = tanRegex.exec(expression)) !== null) {
           const tanArgument = match[1]; // 获取 tan 函数中的参数
@@ -163,16 +163,41 @@ const calculate = debounce(() => {
           const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
           // 检查参数是否接近 π/2 的倍数
           if (Math.abs((evaluatedArgument - Math.PI / 2) % Math.PI) < tolerance) {
+            window.$message.error(TAN_ERROR, MESSAGE_CONFIG)
             result.value = 'Error';
             return; // 返回错误，不继续计算
           }
         }
       } else {
+        let match;
+        while ((match = tanRegex.exec(expression)) !== null) {
+          const tanArgument = match[1]; // 获取 tan 函数中的参数
+          const evaluatedArgument = evaluate(tanArgument); // 计算参数的值
+
+          const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
+          // 检查参数是否接近 π/2 的倍数
+          if (Math.abs((evaluatedArgument - 90) % 90) < tolerance) {
+            window.$message.error(TAN_ERROR, MESSAGE_CONFIG)
+            result.value = 'Error';
+            return; // 返回错误，不继续计算
+          }
+        }
         expression = addDegreeToTrigFunctions(expression);  // 如果采用角度制，sin(x)改成 sin(x deg)
       }
       
       // 使用 mathjs 计算表达式的结果
       const evaluatedResult = evaluate(expression);
+       // 检查结果是否为无穷大或复杂数
+       if (isComplex(evaluatedResult)) {
+        result.value = 'Error';
+        window.$message.error(COMPLEX_ERROR, MESSAGE_CONFIG);
+        return;
+      }
+       if (!isFinite(evaluatedResult)) {
+        result.value = 'Error';
+        window.$message.error(INF_ERROR, MESSAGE_CONFIG);
+        return;
+      }
 
       // 整数、小数输出精确
       if (Number.isInteger(evaluatedResult)) {
@@ -185,11 +210,11 @@ const calculate = debounce(() => {
       addHistory();
     } catch (error) {
       window.$message.error('表达式无效')
-      console.log('出错');
       result.value = 'Error';
     }
   }
 }, 100)
+
 // 如果检测到不能转成分数，则立马把 isFractional 置为fasle
 watchEffect(() => {
   if (!canBeFractional.value) {
