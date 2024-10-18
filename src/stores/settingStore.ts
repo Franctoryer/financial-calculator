@@ -5,7 +5,6 @@ import { getTimeUnitText } from "@/utils/getTimeUnitText";
 
 export const useSettingStore = defineStore('settingStore', {
   state: () => ({
-    interestMethod: 'compound',
     timeMode: 'END',
     precision: 2,
     currencyType: 'CNY',

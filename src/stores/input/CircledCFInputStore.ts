@@ -5,7 +5,7 @@ import type { CCFRowDataRaw } from "@/types/CCFData";
 export const useCircledCFInputStore = defineStore('CircledCFInputStore', {
   state: () => ({
     interest: 0.2,
-    isContinueCompound: false,
+    interestMethod: 'compound',
     CCFRawData: [
       {
         order: 1,

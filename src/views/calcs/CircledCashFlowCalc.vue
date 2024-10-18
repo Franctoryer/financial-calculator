@@ -10,21 +10,22 @@
         :step="0.01"
       />
     </n-space>
-    <div class="judge-compound" v-if="isCompound">
-      <n-switch :round="false" v-model:value="isContinueCompound">
-        <template #checked>
-          采用连续复利
-        </template>
-        <template #unchecked>
-          默认分期复利
-        </template>
-      </n-switch>
-      <n-alert type="info" class="info-message" v-if="isDisplayInfo && isContinueCompound">
-        当前为 <b style="color: rgb(191, 15, 15)">连续复利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
-      </n-alert>
-    </div>
-    <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && !isCompound">
+    <n-radio-group v-model:value="interestMethod" class="judge-compound">
+      <n-radio-button value="Simple">
+        单利
+      </n-radio-button>
+      <n-radio-button value="Compound">
+        分期复利
+      </n-radio-button>
+      <n-radio-button value="ContinuousCompound">
+        连续复利
+      </n-radio-button>
+    </n-radio-group>
+    <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && interestMethod === 'Simple'">
       当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
+    </n-alert>
+    <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && interestMethod === 'ContinuousCompound'">
+      当前为 <b style="color: rgb(191, 15, 15)">连续复利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
     </n-alert>
     <div class="button-group">
       <n-button @click="addRow()" type="success" strong secondary> 添加行 </n-button>
@@ -82,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-  import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NNumberAnimation } from 'naive-ui';
+  import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NRadioGroup, NRadioButton,  } from 'naive-ui';
   import { ref, h, computed, nextTick, reactive } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
@@ -112,12 +113,12 @@
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
 
-  const { timeUnitText, precision, isCompound, isDisplayInfo, currencySymbol, isBarrierFree } = storeToRefs(useSettingStore());
+  const { timeUnitText, precision, isDisplayInfo, currencySymbol, isBarrierFree } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 表格相关数据和方法
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 原始数据，和表格输入绑定的数据
-  const { CCFRawData: rawData, interest, isContinueCompound } = storeToRefs(useCircledCFInputStore());
+  const { CCFRawData: rawData, interest, interestMethod } = storeToRefs(useCircledCFInputStore());
   // 表格上展示的数据
   const displayData = computed(() => {
     let sumTime = 0;
@@ -318,10 +319,18 @@
       return cashFlowData.value[0];
     } else {
       let result: number;
-      if (!isCompound.value) {
-        result = Number(simpleInterestNPV(interest, cashFlowData.value).toFixed(precision.value));
-      } else {
-        result = isContinueCompound.value ? Number(continuousCompoundingNPV(interest, cashFlowData.value).toFixed(precision.value)) : Number(NPV(interest, cashFlowData.value).toFixed(precision.value)); 
+      switch (interestMethod.value) {
+        case 'Simple':
+          result = Number(simpleInterestNPV(interest, cashFlowData.value).toFixed(precision.value));
+          break;
+        case 'Compound':
+          result = Number(NPV(interest, cashFlowData.value).toFixed(precision.value)); 
+          break;
+        case 'ContinuousCompound':
+          result = Number(continuousCompoundingNPV(interest, cashFlowData.value).toFixed(precision.value))
+          break;
+        default:
+          result = NaN;
       }
       return result; 
     }
@@ -336,10 +345,18 @@
       return NaN;
     }
     let result: number;
-    if (!isCompound.value) {
-      result = Number(IRR(simpleInterestNPV, cashFlowData.value).toFixed(precision.value));
-    } else {
-      result = isContinueCompound.value ? Number(IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value)) : Number(IRR(NPV, cashFlowData.value).toFixed(precision.value)); 
+    switch (interestMethod.value) {
+      case 'Simple':
+        result = Number(IRR(simpleInterestNPV, cashFlowData.value).toFixed(precision.value));
+        break;
+      case 'Compound':
+        result = Number(IRR(NPV, cashFlowData.value).toFixed(precision.value)); 
+        break;
+      case 'ContinuousCompound':
+        result = Number(IRR(continuousCompoundingNPV, cashFlowData.value).toFixed(precision.value))
+        break;
+      default:
+        result = NaN;
     }
     return result;
   }
@@ -373,7 +390,7 @@
       name: 'circled-cashflow',
       inputData: {
         interest: interest.value,
-        isContinueCompound: isContinueCompound.value,
+        interestMethod: interestMethod.value,
         rawData: JSON.parse(JSON.stringify(rawData.value))  // 引用对象要深拷贝而不是浅拷贝
       },
       resultData: {
@@ -979,7 +996,7 @@
       let inputData = JSON.parse(route.query.inputData as string)
       let resultData = JSON.parse(route.query.resultData as string)
       interest.value = inputData.interest;
-      isContinueCompound.value = inputData.isContinueCompound;
+      interestMethod.value = inputData.interestMethod;
       rawData.value = inputData.rawData;
       npv.value = resultData.npv;
       irr.value = resultData.irr === null ? NaN : resultData.irr; // NaN会被解析成 null
@@ -1030,14 +1047,8 @@
     margin-bottom: 10px;
   }
   .judge-compound {
-    display: flex;
-    flex-direction: column;
-    justify-self: left;
-    align-items: flex-start;
-    justify-content: space-evenly;
     height: max-content;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   .info-message {
     margin-top: 10px;

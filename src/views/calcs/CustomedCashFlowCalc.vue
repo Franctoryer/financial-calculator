@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-  import { NInputNumber, NSpace, NSlider, NSwitch, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown, NTable } from 'naive-ui';
+  import { NInputNumber, NSpace, NSlider, NAlert, NButton, NIcon, NDataTable, NDatePicker, NDropdown, NTable } from 'naive-ui';
   import { useSettingStore } from "@/stores/settingStore";
   import { useCustomedCFInputStore } from "@/stores/input/CustomedCFInputStore";
   import { useCustomedCFResultStore } from "@/stores/result/CustomedCFResultStore";

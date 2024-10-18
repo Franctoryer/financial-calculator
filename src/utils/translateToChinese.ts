@@ -4,11 +4,14 @@ export const translateToChinese = (obj: any): string => {
   let maxLength = 200;
   let chineseTxT =  objectToString(obj);
   const dictionary = {
+    'order': '序号',
+    'interestMethod': '计息方式',
+    'Simple': '单利',
+    'ContinuousCompound': '连续复利',
+    'Compound': '分期复利',
     'allInterest': '总支付利息',
     'allPmt': '定期支付之和',
     '"interest"': '利率',
-    '"isContinueCompound": false': '分期复利',
-    '"isContinueCompound": true': '连续复利',
     '"rawData"': '现金流',
     '"cash":': '现金:',
     '"freq":': '频数:',

@@ -1,24 +1,8 @@
 <template>
   <div>
     <n-space :size="30" vertical class="setting-container">
-      <!-- 计息方式 -->
-      <n-space vertical :size="5">
-        <div class="option-title">计息方式：</div>
-        <n-radio-group v-model:value="interestMethod">
-          <n-radio-button value="single"> 单利 </n-radio-button>
-          <n-radio-button value="compound"> 复利 </n-radio-button>
-        </n-radio-group>
-      </n-space>
-      <!-- 时间点模式 -->
-      <n-space vertical :size="5">
-        <div class="option-title">时间点模式（BGN/END）：</div>
-        <n-radio-group v-model:value="timeMode">
-          <n-radio-button value="BGN"> 期初 </n-radio-button>
-          <n-radio-button value="END"> 期末 </n-radio-button>
-        </n-radio-group>
-      </n-space>
-      <!-- 精度 -->
-      <n-space vertical :size="5">
+       <!-- 精度 -->
+       <n-space vertical :size="5">
         <div class="option-title">精度（保留小数点个数）：</div>
         <n-slider v-model:value="precision" :step="1" :max="8">
           <template #thumb v-if="precision < 3">
@@ -38,6 +22,14 @@
           </template>
         </n-slider>
         <n-input-number v-model:value="precision" size="small" :validator="precisonValidator"/>
+      </n-space>
+      <!-- 时间点模式 -->
+      <n-space vertical :size="5">
+        <div class="option-title">时间点模式（BGN/END）：</div>
+        <n-radio-group v-model:value="timeMode">
+          <n-radio-button value="BGN"> 期初 </n-radio-button>
+          <n-radio-button value="END"> 期末 </n-radio-button>
+        </n-radio-group>
       </n-space>
       <!-- 货币类型 -->
       <n-space vertical :size="5">
@@ -91,7 +83,7 @@
   import type { SelectOption } from 'naive-ui';
 
   const settingStore = useSettingStore();
-  const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree } = storeToRefs(settingStore);
+  const { precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree } = storeToRefs(settingStore);
   const precisonValidator = (x: number) => x >= 0 && x <= 8;  // 验证精度值是否合法
   const currencyOptions = [
     {
