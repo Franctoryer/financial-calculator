@@ -228,6 +228,7 @@ watchEffect(() => {
 // 清空输入框
 const clear = () => {
   if (formula.value === '' && result.value === '') {
+    handleRedirectAC();
     return;
   }
   formula.value = '';
@@ -236,17 +237,18 @@ const clear = () => {
 // 删除最后一个字符
 const deleteLast = () => {
   if (formula.value === '') {
+    handleRedirectDel();
     return;
   } else { 
     formula.value = formula.value.slice(0, -1); 
   }
 };
-const handleRedirectDel = (): void => {
+const handleRedirectDel = debounce(() => {
   window.$message.info(NO_DELETING, MESSAGE_CONFIG)
-}
-const handleRedirectAC = (): void => {
-  window.$message.info(NO_CLEAR, MESSAGE_CONFIG)
-}
+}, 200)
+const handleRedirectAC = debounce(() => {
+  window.$message.info(NO_DELETING, MESSAGE_CONFIG)
+}, 200)
 
 // @@@@@@@@@@@@@@@@@@@@@@
 // 渲染数学公式
