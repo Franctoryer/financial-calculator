@@ -10,17 +10,20 @@
         :step="0.01"
       />
     </n-space>
-    <n-radio-group v-model:value="interestMethod" class="judge-compound">
-      <n-radio-button value="Simple">
-        单利
-      </n-radio-button>
-      <n-radio-button value="Compound">
-        分期复利
-      </n-radio-button>
-      <n-radio-button value="ContinuousCompound">
-        连续复利
-      </n-radio-button>
-    </n-radio-group>
+    <div class="judge-compound">
+      <n-radio-group v-model:value="interestMethod">
+        <n-radio-button value="Simple">
+          单利
+        </n-radio-button>
+        <n-radio-button value="Compound">
+          分期复利
+        </n-radio-button>
+        <n-radio-button value="ContinuousCompound">
+          连续复利
+        </n-radio-button>
+      </n-radio-group>
+      <n-icon :component="BookSearch24Regular" :size="20" @click="isInterestMethod = true" :depth="3"></n-icon>
+    </div>
     <n-alert type="info" class="judge-compound" v-if="isDisplayInfo && interestMethod === 'Simple'">
       当前为 <b style="color: rgb(191, 15, 15)">单利</b> 模式，净现值一般采用 <b>分期复利</b> 计算，请注意甄别
     </n-alert>
@@ -60,6 +63,18 @@
       <!-- <pre>{{ JSON.stringify(rawData, null, 2) }}</pre> -->
       <div ref="cashFlowChart" id="cashFlowChart"></div>
     </div>
+    <n-modal 
+      :show="isInterestMethod"
+      size="huge"
+      style="width: 80%;"
+      preset="card"
+      title="计息方式"
+      @update:show="handleModalShowChange"
+    >
+      <n-scrollbar style="max-height: 60vh" trigger="none">
+        <InterestMethodManual class="modal-content"/>
+      </n-scrollbar>
+    </n-modal>
     <hr>
     <n-table>
       <thead>
@@ -83,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-  import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NSwitch, NAlert, NIcon, NRadioGroup, NRadioButton,  } from 'naive-ui';
+  import { NTable, NDataTable, NInputNumber, NButton, NSpace, NSlider, NDropdown, NModal, NScrollbar, NAlert, NIcon, NRadioGroup, NRadioButton,  } from 'naive-ui';
   import { ref, h, computed, nextTick, reactive } from 'vue';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
   import type { DataTableColumns, DropdownOption } from 'naive-ui'
@@ -101,7 +116,7 @@
   import { onMounted } from 'vue';
   import { watchEffect, watch } from 'vue';
     // @ts-ignore
-  import { AddSubtractCircle24Filled } from '@vicons/fluent';
+  import { AddSubtractCircle24Filled, BookSearch24Regular } from '@vicons/fluent';
   import type { TooltipItem } from "@/types/TooltipItem";
   import { useRoute } from 'vue-router';
   import { useHistoryStore } from "@/stores/historyStore";
@@ -109,10 +124,15 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
+  import InterestMethodManual from '../manuals/InterestMethodManual.vue';
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
-
+  // 模态框
+  const isInterestMethod = ref(false);
+  const handleModalShowChange = (value) => {
+    isInterestMethod.value = value;
+  };
   const { timeUnitText, precision, isDisplayInfo, currencySymbol, isBarrierFree } = storeToRefs(useSettingStore());
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // 表格相关数据和方法
@@ -1049,6 +1069,12 @@
   .judge-compound {
     height: max-content;
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    width: max-content;
   }
   .info-message {
     margin-top: 10px;
@@ -1092,5 +1118,7 @@
     margin-left: auto;
     margin-right: auto;
   }
+
+
   
 </style>
