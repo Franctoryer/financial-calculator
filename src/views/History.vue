@@ -33,7 +33,7 @@
       <n-scrollbar style="max-height: 100vh" y-placement="left">
         <n-empty description="没有任何记录" v-if="historyDataView.length === 0" class="nothing"></n-empty>
         <div v-for="(data, index) in historyDataView" class="history-element">
-          <n-icon v-if="isDeleting" :size="20" @click="historyStore.deleteOneHistory(index)" class="delete-one">
+          <n-icon v-if="isDeleting" :size="20" @click="historyStore.deleteOneHistory(data.index)" class="delete-one">
             <DismissCircle28Regular/>
           </n-icon>
           <n-popover 
@@ -149,7 +149,7 @@
       value: 'fiveone-tax'
     }
   ]
-  // @ts-ignore
+  //@ts-ignore
   const historyDataView = computed(() => getHistoryByTag(historyData.value, tagFilter.value))
 </script>
 
