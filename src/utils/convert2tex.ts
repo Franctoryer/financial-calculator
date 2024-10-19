@@ -1,5 +1,6 @@
 export function convert2tex(formula: string): string {
   const latexMap = {
+    'log': '\\ln',
     '*': ' \\times ',
     '/': ' \\div ',
     'pi': ' \\pi ',

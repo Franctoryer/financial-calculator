@@ -40,16 +40,16 @@
       <MathButton formula="8" @click="append('8')" id="button8"/>
       <MathButton formula="9" @click="append('9')" id="button9"/>
       <MathButton formula="\div" @click="append('/')" type="tertiary" hot-key="/" id="/"/>
-      <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + BS" id="clear"/>
+      <MathButton formula="AC" @click="clear" secondary type="error" hot-key="shift + ⌫" id="clear"/>
 
       <MathButton formula="\surd{}" @click="append('sqrt(')" type="tertiary" hot-key="q" id="q"/>
-      <MathButton formula="\log" @click="append('log(')" type="tertiary" hot-key="l" id="l"/>
+      <MathButton formula="\ln" @click="append('log(')" type="tertiary" hot-key="l" id="l"/>
       <MathButton formula="1/x" @click="append('(1/')" type="tertiary" hot-key="w" id="w"/>
       <MathButton formula="4" @click="append('4')" id="button4"/>
       <MathButton formula="5" @click="append('5')" id="button5"/>
       <MathButton formula="6" @click="append('6')" id="button6"/>
       <MathButton formula="\times" @click="append('*')" type="tertiary" hot-key="*" id="shift+8"/>
-      <MathButton formula="DEL" @click="deleteLast" secondary type="warning" hot-key="BS" id="backspace"/>
+      <MathButton formula="DEL" @click="deleteLast" secondary type="warning" hot-key="⌫" id="backspace"/>
 
       <MathButton formula="\sin" @click="append('sin(')" type="tertiary" hot-key="s" id="buttonS"/>
       <MathButton formula="\cos" @click="append('cos(')" type="tertiary" hot-key="c" id="buttonC"/>
@@ -67,7 +67,7 @@
       <MathButton formula="." @click="append('.')" id="."/>
       <MathButton formula="," @click="append(',')" id=","/>
       <MathButton formula="+" @click="append('+')" type="tertiary" id="shift+="/>
-      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="Enter" id="enter"/>
+      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="↵" id="enter"/>
 
       <MathButton formula="(" @click="append('(')" type="tertiary" id="("/>
       <MathButton formula=")" @click="append(')')" type="tertiary" id=")"/>
@@ -87,7 +87,7 @@ import { ref, watch, watchEffect, computed, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/settingStore";
 import { evaluate, isComplex } from 'mathjs';
-import { NO_DELETING, INF_ERROR, NO_CLEAR, COMPLEX_ERROR, TAN_ERROR } from "@/constants/message";
+import { NO_DELETING, INF_ERROR, TAN_ANGLE_ERROR, COMPLEX_ERROR, TAN_ERROR, LOG_ERROR, ZERO_DIVISION_ERROR } from "@/constants/message";
 import { MESSAGE_CONFIG } from '@/constants/messageConfig';
 import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
@@ -177,7 +177,7 @@ const calculate = debounce(() => {
           const tolerance = 1e-10; // 容差，用于处理 π/2 等临界点
           // 检查参数是否接近 π/2 的倍数
           if (Math.abs((evaluatedArgument - 90) % 90) < tolerance) {
-            window.$message.error(TAN_ERROR, MESSAGE_CONFIG)
+            window.$message.error(TAN_ANGLE_ERROR, MESSAGE_CONFIG)
             result.value = 'Error';
             return; // 返回错误，不继续计算
           }
@@ -185,6 +185,21 @@ const calculate = debounce(() => {
         expression = addDegreeToTrigFunctions(expression);  // 如果采用角度制，sin(x)改成 sin(x deg)
       }
       
+      // 判断对数是否有效
+      let match;
+      const lnRegex = /log\(([^)]+)\)/g; // 匹配 ln() 函数的正则表达式
+
+      while ((match = lnRegex.exec(expression)) !== null) {
+        const lnArgument = match[1]; // 获取 ln 函数中的参数
+        const evaluatedArgument = evaluate(lnArgument); // 计算参数的值
+
+        // 检查参数是否小于等于 0
+        if (evaluatedArgument <= 0) {
+          window.$message.error(LOG_ERROR, MESSAGE_CONFIG);
+          result.value = 'Error';
+          return; // 返回错误，不继续计算
+        }
+      }
       // 使用 mathjs 计算表达式的结果
       const evaluatedResult = evaluate(expression);
        // 检查结果是否为无穷大或复杂数
@@ -195,7 +210,7 @@ const calculate = debounce(() => {
       }
        if (!isFinite(evaluatedResult)) {
         result.value = 'Error';
-        window.$message.error(INF_ERROR, MESSAGE_CONFIG);
+        window.$message.error(ZERO_DIVISION_ERROR, MESSAGE_CONFIG);
         return;
       }
 
