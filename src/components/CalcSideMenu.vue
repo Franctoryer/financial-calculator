@@ -12,12 +12,12 @@
 
 <script setup lang="ts">
   import type { MenuOption } from 'naive-ui';
-  import { NMenu, NIcon } from 'naive-ui';
+  import { NMenu, NIcon, useLoadingBar } from 'naive-ui';
   import { h, ref, watch } from 'vue';
   import { RouterLink } from 'vue-router';
   import type { Component } from 'vue';
   // 一些图标
-  import { useRoute } from "vue-router";
+  import { useRoute, useRouter } from "vue-router";
   import { getActiveMenu } from "@/utils/getActiveMenu";
   // @ts-ignore
   import { Calculator24Filled, ChartMultiple24Filled, BuildingGovernment24Filled } from "@vicons/fluent"
@@ -95,6 +95,15 @@
       activeMenu.value = getActiveMenu(newActiveMenu);
     }
   );
+  // 加载条
+  const router = useRouter();
+  const loadingBar = useLoadingBar();
+  router.beforeEach(() => {
+    loadingBar.start();
+  })
+  router.afterEach(() => {
+    loadingBar.finish();
+  })
 </script>
 
 <style>
