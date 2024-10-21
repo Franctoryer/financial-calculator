@@ -8,6 +8,7 @@ export const useFiveOneTaxInputStore = defineStore('FiveOneTaxInputStore', {
         MedicalInsuranceRate: 2,
         UnemploymentInsuranceRate: 0.5,
         AccumulationFundRate: 7,
+        RegionName:'请选择地区',
     }),
     persist: {
       storage: sessionStorage,

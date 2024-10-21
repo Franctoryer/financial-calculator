@@ -12,11 +12,15 @@ import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
 import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
 import { sum } from 'mathjs';
+import {getTopSocialInsuranceBase,getButtomSocialInsuranceBase,getTopAccumulationFundBase,getButtomAccumulationFundBase} from "@/utils/getInsuranceBase";
+import { City } from '@vicons/fa';
 const settingStore = useSettingStore();
-const { interestMethod, precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
+const { precision, currencyType, timeUnit, isDisplayInfo, timeMode } = storeToRefs(settingStore);
 const { income } = storeToRefs(usePersonalTaxInputStore());
-const { SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate } = storeToRefs(useFiveOneTaxInputStore());
+const { SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate,RegionName } = storeToRefs(useFiveOneTaxInputStore());
 const { fiveonetax, OldAgeInsurance, MedicalInsurance, UnemploymentInsurance, AccumulationFund} = storeToRefs(useFiveOneTaxResultStore());
+
+
 
 
 export const computeFiveOneTax = () => {
@@ -28,10 +32,14 @@ export const computeFiveOneTax = () => {
 
 
 export const computeSocialInsuranceBase = () => {
-    SocialInsuranceBase.value = Math.min(Math.max(income.value,4927),28017)
+  const TopSocialInsuranceBase = getTopSocialInsuranceBase(RegionName.value);
+  const ButtomSocialInsuranceBase = getButtomSocialInsuranceBase(RegionName.value);
+    SocialInsuranceBase.value = Math.min(Math.max(income.value,ButtomSocialInsuranceBase),TopSocialInsuranceBase)
   }
 export const computeAccumulationFundBase = () => {
-    AccumulationFundBase.value = Math.min(Math.max(income.value,2480),28017)
+  const TopAccumulationFundBase = getTopAccumulationFundBase(RegionName.value);
+  const ButtomAccumulationFundBase = getButtomAccumulationFundBase(RegionName.value);
+    AccumulationFundBase.value = Math.min(Math.max(income.value,ButtomAccumulationFundBase),TopAccumulationFundBase)
   }
 
   const computeInsurance = () => {
