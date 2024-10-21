@@ -2,6 +2,10 @@
   <div class="personal-tax-calc-container">
     <!-- 月份 -->
     <n-space vertical class="month-input">
+      <div>选择地区：
+           <n-select v-if="RegionOptions.length" v-model:value="RegionName" size="medium" :options="RegionOptions"
+            class="select" />
+        </div>
       <div>月份：</div>
       <n-slider v-model:value="months" :step="1" :min="1" :max="12">
         <template #thumb v-if="months < 5">
@@ -162,7 +166,7 @@
 </template>
 
 <script setup lang="ts">
-import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable } from 'naive-ui';
+import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable, NSelect } from 'naive-ui';
 import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
 import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
 import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
@@ -174,15 +178,39 @@ import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/
 import { MESSAGE_CONFIG } from "@/constants/messageConfig";
 import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
+import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
 import { useFiveOneTaxResultStore } from "@/stores/result/FiveOneTaxResultStore";
 import { computeFiveOneTax, computeSocialInsuranceBase, computeAccumulationFundBase } from "@/utils/computeFiveOneTax";
 import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
 
-
+const RegionOptions = [
+  { label: '请选择地区'	, value: '请选择地区'	},
+  { label: '北京'	, value: '北京'	 },
+  { label: '上海', value: '上海' },
+  { label: '天津'	, value: '天津'	 },
+  { label: '河北', value:   '河北' },
+  { label:  '山西', value:  '山西' },
+  { label: '内蒙古', value: '内蒙古' },
+  { label: '辽宁', value: '辽宁' },
+  { label: '吉林', value: '吉林' },
+  { label:  '黑龙江', value:  '黑龙江' },
+  { label:  '福建', value:  '福建' },
+  { label:  '江西', value:  '江西' },
+  { label:  '山东', value:  '山东' },
+  { label:  '湖南', value:  '湖南' },
+  { label:  '广西', value:  '广西'},
+  { label:  '重庆', value:  '重庆' },
+  { label:  '四川', value:  '四川' },
+  { label:  '云南', value:  '云南' },
+  { label:  '贵州', value:  '贵州' },
+  { label:  '西藏', value:  '西藏' },
+  { label:  '陕西', value:  '陕西'},
+];
 const settingStore = useSettingStore();
 const { precision, currencySymbol } = storeToRefs(settingStore);
+const { RegionName } = storeToRefs(useFiveOneTaxInputStore());
 const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
 const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
 const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_threshold,
@@ -195,12 +223,8 @@ const fiveonetaxValidator = (x: number) => x >= 0;
 const sidecostsValidator = (x: number) => x >= 0;
 const othercostsValidator = (x: number) => x >= 0;
 
-
 const deleteAll = () => {
-  /*   if (rawData.value.length === 0) {
-       window.$message.warning(NO_DELETING, MESSAGE_CONFIG)
-       return;
-     }*/
+  RegionName.value = '请选择地区';
   months.value = 1;
   fiveonetax.value = 0; sidecosts.value = 0; othercosts.value = 0;
   income.value = 3000; tax_threshold.value = 5000;

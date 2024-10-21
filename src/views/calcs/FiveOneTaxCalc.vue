@@ -3,9 +3,13 @@
     <n-space :size="5" vertical align =center class="PersonalTaxCalc-container">
     <div>
       <n-space vertical>
-      <!-- 单月税前工资 -->
+     
       <div>
         <n-space vertical :wrap="false">
+          <div>选择地区：
+           <n-select v-if="RegionOptions.length" v-model:value="RegionName" size="medium" :options="RegionOptions"
+            class="select" />
+        </div>
         <div>单月税前工资：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false">
             <template #suffix>
@@ -151,10 +155,35 @@
   const settingStore = useSettingStore();
   const { currencySymbol } = storeToRefs(settingStore);
   const { income } = storeToRefs(usePersonalTaxInputStore());
-  const {SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate } = storeToRefs(useFiveOneTaxInputStore());
+  const { SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate, RegionName } = storeToRefs(useFiveOneTaxInputStore());
   const { fiveonetax, OldAgeInsurance, MedicalInsurance, UnemploymentInsurance, AccumulationFund} = storeToRefs(useFiveOneTaxResultStore());
+  const RegionOptions = [
+  { label: '请选择地区'	, value: '请选择地区'	},
+  { label: '北京'	, value: '北京'	 },
+  { label: '上海', value: '上海' },
+  { label: '天津'	, value: '天津'	 },
+  { label: '河北', value:   '河北' },
+  { label:  '山西', value:  '山西' },
+  { label: '内蒙古', value: '内蒙古' },
+  { label: '辽宁', value: '辽宁' },
+  { label: '吉林', value: '吉林' },
+  { label:  '黑龙江', value:  '黑龙江' },
+  { label:  '福建', value:  '福建' },
+  { label:  '江西', value:  '江西' },
+  { label:  '山东', value:  '山东' },
+  { label:  '湖南', value:  '湖南' },
+  { label:  '广西', value:  '广西'},
+  { label:  '重庆', value:  '重庆' },
+  { label:  '四川', value:  '四川' },
+  { label:  '云南', value:  '云南' },
+  { label:  '贵州', value:  '贵州' },
+  { label:  '西藏', value:  '西藏' },
+  { label:  '陕西', value:  '陕西'},
+];
+
 
   const deleteAll = () => {
+    RegionName.value = '请选择地区';
     income.value = 3000;
     SocialInsuranceBase.value = 3000;
     AccumulationFundBase.value = 3000;
@@ -170,6 +199,10 @@
   }
 
   watch(() => income.value, () => {
+    computeSocialInsuranceBase();
+    computeAccumulationFundBase();
+  });
+  watch(() => RegionName.value, () => {
     computeSocialInsuranceBase();
     computeAccumulationFundBase();
   });
