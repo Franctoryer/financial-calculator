@@ -3,7 +3,28 @@
 
     <!-- 存款种类 -->
     <n-space vertical>
-      <label>存款种类：</label>
+      <div class="label-and-icon">
+        <label>存款种类：</label>
+        <n-icon 
+          :component="BookSearch24Regular" 
+          :size="20" @click="isDeposit = true" 
+          :depth="3"
+          v-if="isQkDocLkup"
+          class="doc-icon"
+        >
+        </n-icon>
+      </div>
+      <n-modal 
+        :show="isDeposit"
+        size="huge"
+        style="width: 80%;"
+        preset="card"
+        @update:show="handleModalShowChange"
+      >
+        <n-scrollbar style="max-height: 60vh" trigger="none">
+          <DepositCalcManual class="modal-content"/>
+        </n-scrollbar>
+      </n-modal>
       <n-select v-model:value="depositCategory" size="medium" :options="depositOptions" placeholder="选择存款种类"
         class="select" />
     </n-space>
@@ -80,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable } from 'naive-ui';
+import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable, NIcon, NModal, NScrollbar } from 'naive-ui';
 import { ref, watch, computed, onMounted, reactive } from "vue";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
@@ -91,8 +112,11 @@ import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
 import gsap from "gsap";
+// @ts-ignore
+import {  BookSearch24Regular } from '@vicons/fluent';
+import DepositCalcManual from '../manuals/DepositCalcManual.vue';
 
-const { precision, currencySymbol } = storeToRefs(useSettingStore());
+const { precision, currencySymbol, isQkDocLkup } = storeToRefs(useSettingStore());
 const { initialDeposit, depositCategory, termType, year, month, day, } = storeToRefs(useDepositInputStore());
 const { interestRate, interest, termMonths, finalDeposit, } = storeToRefs(useDepositResultStore());
 const monthlyInterest = ref(0);
@@ -283,6 +307,12 @@ const historyStore = useHistoryStore();
 
   // 调节表格间距
   const tableClass = computed(() => isFetchInterest.value ? 'four-col' : 'three-col');
+
+  // 添加文档速查
+  const isDeposit = ref(false);
+  const handleModalShowChange = (value: any) => {
+    isDeposit.value = value;
+  };
 </script>
 
 <style scoped>
@@ -332,4 +362,14 @@ th {
   font-weight: bold;
 }
 
+.doc-icon {
+  cursor: pointer;
+}
+
+.label-and-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
 </style>

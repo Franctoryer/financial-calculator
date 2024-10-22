@@ -1,9 +1,11 @@
 .light-theme {
   --background-color: white;
+  --hr-background-color: #cdcdcd;
 }
 
 .dark-theme {
   --background-color: #101014;
+  --hr-background-color: #535353;
 }
 
 html, body {
@@ -31,7 +33,7 @@ html, body {
 
 hr {
   height: 1px; /* 粗细 */
-  background-color: #cdcdcd; /* 颜色 */
+  background-color: var(--hr-background-color); /* 颜色 */
   border: none;
 }
 

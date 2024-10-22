@@ -45,7 +45,7 @@
       <!-- 五险一金 -->
       <div class="option-row">
           <div class="option">
-            五险一金：
+            <router-link to="/calc/fiveone-tax" class="fiveone-tax">五险一金↵：</router-link>
             <n-input-number class="input-container" v-model:value="fiveonetax"
                 size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator">
                 <template #suffix>
@@ -65,7 +65,29 @@
       </div>
       <!-- 专项附加扣除 -->
       <div class="option-row">
-          <div class="option">专项附加扣除：
+          <div class="option">
+            <div class="option-and-icon">
+              <div>专项附加扣除：</div>
+              <n-icon 
+                :component="BookSearch24Regular" 
+                :size="20" @click="isPersonalTax = true" 
+                :depth="3"
+                v-if="isQkDocLkup"
+                class="doc-icon"
+              >
+              </n-icon>
+            </div>
+            <n-modal 
+              :show="isPersonalTax"
+              size="huge"
+              style="width: 80%;"
+              preset="card"
+              @update:show="handleModalShowChange"
+            >
+              <n-scrollbar style="max-height: 60vh" trigger="none">
+                <PersonalTaxCalcManual  class="modal-content"/>
+              </n-scrollbar>
+            </n-modal>
             <n-input-number class="input-container" v-model:value="sidecosts"
                 size="small" :step="1000" :show-button="false" :validator="sidecostsValidator">
                 <template #suffix>
@@ -160,7 +182,7 @@
 </template>
 
 <script setup lang="ts">
-import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable, NSelect } from 'naive-ui';
+import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable, NSelect, NModal, NScrollbar } from 'naive-ui';
 import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
 import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
 import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
@@ -179,6 +201,9 @@ import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
 import gsap from "gsap";
 import { reactive } from 'vue';
+// @ts-ignore
+import {  BookSearch24Regular } from '@vicons/fluent';
+import PersonalTaxCalcManual from '../manuals/PersonalTaxCalcManual.vue';
 
 const RegionOptions = [
   { label: '请选择地区'	, value: '请选择地区'	},
@@ -204,7 +229,7 @@ const RegionOptions = [
   { label:  '陕西', value:  '陕西'},
 ];
 const settingStore = useSettingStore();
-const { precision, currencySymbol } = storeToRefs(settingStore);
+const { precision, currencySymbol, isQkDocLkup } = storeToRefs(settingStore);
 const { RegionName } = storeToRefs(useFiveOneTaxInputStore());
 const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
 const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
@@ -456,6 +481,11 @@ watch(taxed_income, (newVal) => {
   });
 })
 
+// 文档速查
+const isPersonalTax = ref(false);
+const handleModalShowChange = (value: any) => {
+  isPersonalTax.value = value;
+};
 </script>
 
 <style scoped>
@@ -513,5 +543,20 @@ th {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.fiveone-tax {
+  text-decoration: none;
+  color: #e5a84b;
+}
+
+.doc-icon {
+  cursor: pointer;
+}
+.option-and-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 }
 </style>
