@@ -146,6 +146,14 @@ const router = createRouter({
 						activeMenu: 'depositCalcManual'
 					}
 				},
+				{
+          name: 'four-to-one',
+					path: 'four-to-one' ,
+					component: () => import('@/views/manuals/FourToOneManual.vue'),
+					meta: {
+						activeMenu: 'four-to-one'
+					}
+				},
 			]
 		}
 	]

@@ -521,11 +521,9 @@ const handleHistoryRoute = () => {
 }
 .calculator {
   width: 95%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
   padding-bottom: 5px;
-  border-bottom: var(--calculator-border);
-  border-radius: 1cap;
 }
 
 .formula-display {
@@ -543,11 +541,11 @@ const handleHistoryRoute = () => {
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  padding: 10px;
   border-radius: 0.5cap;
   height: 80px;
-  justify-self: center;
   margin-bottom: 10px;
+  width: 97%;
+  padding: 10px; 
 }
 .buttons {
   display: grid;

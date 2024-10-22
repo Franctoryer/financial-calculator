@@ -1,138 +1,154 @@
 <template>
   <div class="personal-tax-calc-container">
-    <!-- 月份 -->
-    <n-space vertical class="month-input">
-      <div>选择地区：
-           <n-select v-if="RegionOptions.length" v-model:value="RegionName" size="medium" :options="RegionOptions"
-            class="select" />
-        </div>
-      <div>月份：</div>
-      <n-slider v-model:value="months" :step="1" :min="1" :max="12">
-        <template #thumb v-if="months < 5">
-          <n-icon-wrapper :size="20" :border-radius="10">
-            <n-icon :size="20" :component="AnimalTurtle24Regular" />
-          </n-icon-wrapper>
-        </template>
-        <template #thumb v-else-if="months >= 5 && months <= 8">
-          <n-icon-wrapper :size="20" :border-radius="10">
-            <n-icon :size="20" :component="AnimalCat24Regular" />
-          </n-icon-wrapper>
-        </template>
-        <template #thumb v-else>
-          <n-icon-wrapper :size="20" :border-radius="10">
-            <n-icon :size="20" :component="AnimalRabbit24Regular" />
-          </n-icon-wrapper>
-        </template>
-      </n-slider>
-      <n-input-number v-model:value="months" size="small" :validator="monthsValidator" />
-    </n-space>
-    <!-- 单月税前工资 -->
-    <div class="option-row">
+    <div class="all-row">
+      <div class="option-row">
         <div class="option">
-          单月税前工资：
-            <n-input-number v-model:value="income" size="small" :step="1000" :show-button="false"
-              :validator="incomeValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
+          选择地区：
+          <n-select 
+            v-if="RegionOptions.length" 
+            v-model:value="RegionName" 
+            size="small" 
+            :options="RegionOptions" 
+            class="select"
+          >
+            <template #arrow>
+              <MapMarkerAlt/>
+            </template>
+          </n-select>
+        </div>
+        <div class="option">
+          月份：
+          <n-input-number v-model:value="months" size="small" :validator="monthsValidator" />
+        </div>
+      </div>
+       <!-- 单月税前工资 -->
+      <div class="option-row">
+          <div class="option">
+            单月税前工资：
+              <n-input-number v-model:value="income" size="small" :step="1000" :show-button="false"
+                :validator="incomeValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+          <div class="option">
+            累计税前工资：
+              <n-input-number v-model:value="all_income"
+                size="small" :step="1000" :show-button="false" :validator="incomeValidator" class="input-number">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+      </div>
+      <!-- 五险一金 -->
+      <div class="option-row">
+          <div class="option">
+            <router-link to="/calc/fiveone-tax" class="fiveone-tax">五险一金↵：</router-link>
+            <n-input-number class="input-container" v-model:value="fiveonetax"
+                size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
             </n-input-number>
-        </div>
-        <div class="option">
-          累计税前工资：
-            <n-input-number v-model:value="all_income"
-              size="small" :step="1000" :show-button="false" :validator="incomeValidator" class="input-number">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-    </div>
-    <!-- 五险一金 -->
-    <div class="option-row">
-        <div class="option">
-          五险一金：
-          <n-input-number class="input-container" v-model:value="fiveonetax"
-              size="small" :step="1000" :show-button="false" :validator="fiveonetaxValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-          </n-input-number>
-        </div>
-        <div class="option">累计五险一金：
+          </div>
+          <div class="option">累计五险一金：
+              <n-input-number class="input-container"
+                v-model:value="all_fiveonetax" size="small" :step="1000" :show-button="false"
+                :validator="fiveonetaxValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+      </div>
+      <!-- 专项附加扣除 -->
+      <div class="option-row">
+          <div class="option">
+            <div class="option-and-icon">
+              <div>专项附加扣除：</div>
+              <n-icon 
+                :component="BookSearch24Regular" 
+                :size="20" @click="isPersonalTax = true" 
+                :depth="3"
+                v-if="isQkDocLkup"
+                class="doc-icon"
+              >
+              </n-icon>
+            </div>
+            <n-modal 
+              :show="isPersonalTax"
+              size="huge"
+              style="width: 80%;"
+              preset="card"
+              @update:show="handleModalShowChange"
+            >
+              <n-scrollbar style="max-height: 60vh" trigger="none">
+                <PersonalTaxCalcManual  class="modal-content"/>
+              </n-scrollbar>
+            </n-modal>
+            <n-input-number class="input-container" v-model:value="sidecosts"
+                size="small" :step="1000" :show-button="false" :validator="sidecostsValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+          <div class="option">
+            累计专项附加扣除：
             <n-input-number class="input-container"
-              v-model:value="all_fiveonetax" size="small" :step="1000" :show-button="false"
-              :validator="fiveonetaxValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
+                v-model:value="all_sidecosts" size="small" :step="1000" :show-button="false"
+                :validator="sidecostsValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+      </div>
+      <!-- 其他扣除 -->
+      <div class="option-row">
+          <div class="option">
+            其他扣除：
+            <n-input-number class="input-container" v-model:value="othercosts"
+                size="small" :step="1000" :show-button="false" :validator="othercostsValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+          <div class="option"> 
+            累计其他扣除：
+            <n-input-number class="input-container"
+                v-model:value="all_othercosts" size="small" :step="1000" :show-button="false"
+                :validator="othercostsValidator">
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+      </div>
+      <!-- 固定扣除 -->
+      <div class="option-row">
+          <div class="option">
+            个税起征点：
+            <n-input-number class="result-display1"
+                v-model:value="tax_threshold" size="small" :show-button="false" readonly>
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+          <div class="option">累计减除:
+            <n-input-number class="result-display1"
+                v-model:value="all_tax_threshold" size="small" :show-button="false" readonly>
+                <template #suffix>
+                  {{ currencySymbol }}
+                </template>
+              </n-input-number>
+          </div>
+      </div>
     </div>
-
-    <!-- 专项附加扣除 -->
-    <div class="option-row">
-        <div class="option">专项附加扣除：
-          <n-input-number class="input-container" v-model:value="sidecosts"
-              size="small" :step="1000" :show-button="false" :validator="sidecostsValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-        <div class="option">
-          累计专项附加扣除：
-          <n-input-number class="input-container"
-              v-model:value="all_sidecosts" size="small" :step="1000" :show-button="false"
-              :validator="sidecostsValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-    </div>
-
-    <!-- 其他扣除 -->
-    <div class="option-row">
-        <div class="option">
-          其他扣除：
-          <n-input-number class="input-container" v-model:value="othercosts"
-              size="small" :step="1000" :show-button="false" :validator="othercostsValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-        <div class="option"> 
-          累计其他扣除：
-          <n-input-number class="input-container"
-              v-model:value="all_othercosts" size="small" :step="1000" :show-button="false"
-              :validator="othercostsValidator">
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-    </div>
-     <!-- 固定扣除 -->
-     <div class="option-row">
-        <div class="option">
-          个税起征点：
-          <n-input-number class="result-display1"
-              v-model:value="tax_threshold" size="small" :show-button="false" readonly>
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-        <div class="option">累计减除:
-          <n-input-number class="result-display1"
-              v-model:value="all_tax_threshold" size="small" :show-button="false" readonly>
-              <template #suffix>
-                {{ currencySymbol }}
-              </template>
-            </n-input-number>
-        </div>
-     </div>
     <div class="button-group">
       <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
       <n-button @click="computeAllInput" strong secondary type="warning">按月份更新输入</n-button>
@@ -151,11 +167,11 @@
     </thead>
     <tbody>
       <tr>
-        <td>{{ taxable_income }} {{ currencySymbol }}</td>
-        <td>{{ tax }} {{ currencySymbol }}</td>
-        <td>{{ display_taxRate }} %</td>
-        <td>{{ current_tax }} {{ currencySymbol }}</td>
-        <td>{{ taxed_income }} {{ currencySymbol }}</td>
+        <td>{{ taxable_income_view.number }} {{ currencySymbol }}</td>
+        <td>{{ tax_view.number }} {{ currencySymbol }}</td>
+        <td>{{ display_taxRate_view.number }} %</td>
+        <td>{{ current_tax_view.number }} {{ currencySymbol }}</td>
+        <td>{{ taxed_income_view.number }} {{ currencySymbol }}</td>
       </tr>
     </tbody>
   </n-table>
@@ -166,16 +182,15 @@
 </template>
 
 <script setup lang="ts">
-import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable, NSelect } from 'naive-ui';
+import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, NTable, NSelect, NModal, NScrollbar } from 'naive-ui';
 import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
 import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
 import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
+import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
 import { useSettingStore } from '@/stores/settingStore';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted } from 'vue';
 import { watchEffect, watch } from 'vue';
-import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
-import { MESSAGE_CONFIG } from "@/constants/messageConfig";
 import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
 import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
@@ -184,10 +199,15 @@ import { computeFiveOneTax, computeSocialInsuranceBase, computeAccumulationFundB
 import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
+import gsap from "gsap";
+import { reactive } from 'vue';
+// @ts-ignore
+import {  BookSearch24Regular } from '@vicons/fluent';
+import PersonalTaxCalcManual from '../manuals/PersonalTaxCalcManual.vue';
 
 const RegionOptions = [
   { label: '请选择地区'	, value: '请选择地区'	},
-  { label: '北京'	, value: '北京'	 },
+  { label: '北京'	, value: '北京'	 }, 
   { label: '上海', value: '上海' },
   { label: '天津'	, value: '天津'	 },
   { label: '河北', value:   '河北' },
@@ -209,7 +229,7 @@ const RegionOptions = [
   { label:  '陕西', value:  '陕西'},
 ];
 const settingStore = useSettingStore();
-const { precision, currencySymbol } = storeToRefs(settingStore);
+const { precision, currencySymbol, isQkDocLkup } = storeToRefs(settingStore);
 const { RegionName } = storeToRefs(useFiveOneTaxInputStore());
 const { fiveonetax } = storeToRefs(useFiveOneTaxResultStore());
 const { months, income, sidecosts, othercosts, tax_threshold } = storeToRefs(usePersonalTaxInputStore());
@@ -217,7 +237,7 @@ const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_thres
   taxable_income, taxRate, display_taxRate, quickDeduction, lastweek_taxable_income,
   lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
   current_tax, taxed_income } = storeToRefs(usePersonalTaxResultStore());
-const monthsValidator = (x: number) => x >= 0 && x <= 12;
+const monthsValidator = (x: number) => x >= 1 && x <= 12;
 const incomeValidator = (x: number) => x >= 0;
 const fiveonetaxValidator = (x: number) => x >= 0;
 const sidecostsValidator = (x: number) => x >= 0;
@@ -325,69 +345,144 @@ watch(() => months.value, () => {
   computeAllInput();
 });
 
-  const historyStore = useHistoryStore();
-  // @@@@@@@@@@@@@@@@@@@@@@@@
-  // 添加历史记录
-  // @@@@@@@@@@@@@@@@@@@@@@@@
-  const addHistory = () => {
-    let history: HistoryData = {
-      saveTime: Date.now(),
-      name: 'personal-tax',
-      inputData: {
-        months: months.value,
-        income: income.value,
-        fiveonetax: fiveonetax.value,
-        sidecosts: sidecosts.value,
-        othercosts: othercosts.value,
-        tax_threshold: tax_threshold.value
-      },
-      resultData: {
-        all_income: all_income.value,
-        all_fiveonetax: all_fiveonetax.value,
-        all_sidecosts: all_sidecosts.value,
-        all_othercosts: all_othercosts.value,
-        all_tax_threshold: all_tax_threshold.value,
-        taxable_income: taxable_income.value,
-        tax: tax.value,
-        display_taxRate: display_taxRate.value,
-        current_tax: current_tax.value,
-        taxed_income: taxed_income.value   
-      }
-    } 
-    historyStore.addHistory(history);
-  }
-  const route = useRoute();
-  onMounted(() => {
-    handleHistoryRoute();
-  });
-  // 在当前页面回滚历史数据
-  watch(route, () => {
-    handleHistoryRoute();
-  })
-  // 回滚历史数据
-  const handleHistoryRoute = () => {
-    if (route.query.inputData && route.query.resultData) {
-      let inputData = JSON.parse(route.query.inputData as string)
-      let resultData = JSON.parse(route.query.resultData as string)
-      months.value = inputData.months;
-      income.value = inputData.income;
-      fiveonetax.value = inputData.fiveonetax;
-      sidecosts.value = inputData.sidecosts;
-      othercosts.value = inputData.othercosts;
-      tax_threshold.value = inputData.tax_threshold;
-      all_income.value = resultData.all_income;
-      all_fiveonetax.value = resultData.all_fiveonetax;
-      all_sidecosts.value = resultData.all_sidecosts;
-      all_othercosts.value = resultData.all_othercosts;
-      all_tax_threshold.value = resultData.all_tax_threshold;
-      taxable_income.value = resultData.taxable_income;
-      tax.value = resultData.tax;
-      display_taxRate.value = resultData.display_taxRate;
-      current_tax.value = resultData.current_tax;
-      taxed_income.value = resultData.taxed_income;
+const historyStore = useHistoryStore();
+// @@@@@@@@@@@@@@@@@@@@@@@@
+// 添加历史记录
+// @@@@@@@@@@@@@@@@@@@@@@@@
+const addHistory = () => {
+  let history: HistoryData = {
+    saveTime: Date.now(),
+    name: 'personal-tax',
+    inputData: {
+      RegionName: RegionName.value,
+      months: months.value,
+      income: income.value,
+      fiveonetax: fiveonetax.value,
+      sidecosts: sidecosts.value,
+      othercosts: othercosts.value,
+      tax_threshold: tax_threshold.value
+    },
+    resultData: {
+      all_income: all_income.value,
+      all_fiveonetax: all_fiveonetax.value,
+      all_sidecosts: all_sidecosts.value,
+      all_othercosts: all_othercosts.value,
+      all_tax_threshold: all_tax_threshold.value,
+      taxable_income: taxable_income.value,
+      tax: tax.value,
+      display_taxRate: display_taxRate.value,
+      current_tax: current_tax.value,
+      taxed_income: taxed_income.value   
     }
+  } 
+  historyStore.addHistory(history);
+}
+const route = useRoute();
+onMounted(() => {
+  handleHistoryRoute();
+});
+// 在当前页面回滚历史数据
+watch(route, () => {
+  handleHistoryRoute();
+})
+// 回滚历史数据
+const handleHistoryRoute = () => {
+  if (route.query.inputData && route.query.resultData) {
+    let inputData = JSON.parse(route.query.inputData as string)
+    let resultData = JSON.parse(route.query.resultData as string)
+    RegionName.value = inputData.RegionName
+    months.value = inputData.months;
+    income.value = inputData.income;
+    fiveonetax.value = inputData.fiveonetax;
+    sidecosts.value = inputData.sidecosts;
+    othercosts.value = inputData.othercosts;
+    tax_threshold.value = inputData.tax_threshold;
+    all_income.value = resultData.all_income;
+    all_fiveonetax.value = resultData.all_fiveonetax;
+    all_sidecosts.value = resultData.all_sidecosts;
+    all_othercosts.value = resultData.all_othercosts;
+    all_tax_threshold.value = resultData.all_tax_threshold;
+    taxable_income.value = resultData.taxable_income;
+    tax.value = resultData.tax;
+    display_taxRate.value = resultData.display_taxRate;
+    current_tax.value = resultData.current_tax;
+    taxed_income.value = resultData.taxed_income;
   }
+}
 
+// 添加数字变化特效
+const taxable_income_view = reactive({
+  number: taxed_income.value
+})
+const tax_view = reactive({
+  number: tax.value
+})
+const display_taxRate_view = reactive({
+  number: display_taxRate.value
+})
+const current_tax_view = reactive({
+  number: current_tax.value
+})
+const taxed_income_view = reactive({
+  number: taxed_income.value
+})
+
+watch(taxable_income, (newVal) => {
+  gsap.to(taxable_income_view, { 
+    duration: 0.5, 
+    number: newVal,
+    onUpdate: () => {
+      // 在动画过程中格式化数字
+      taxable_income_view.number = Number(taxable_income_view.number.toFixed(precision.value));
+    }
+  });
+})
+watch(tax, (newVal) => {
+  gsap.to(tax_view, { 
+    duration: 0.5, 
+    number: newVal,
+    onUpdate: () => {
+      // 在动画过程中格式化数字
+      tax_view.number = Number(tax_view.number.toFixed(precision.value));
+    }
+  });
+})
+watch(display_taxRate, (newVal) => {
+  gsap.to(display_taxRate_view, { 
+    duration: 0.5, 
+    number: newVal,
+    onUpdate: () => {
+      // 在动画过程中格式化数字
+      display_taxRate_view.number = Number(display_taxRate_view.number.toFixed(precision.value));
+    }
+  });
+})
+watch(current_tax, (newVal) => {
+  gsap.to(current_tax_view, { 
+    duration: 0.5, 
+    number: newVal,
+    onUpdate: () => {
+      // 在动画过程中格式化数字
+      current_tax_view.number = Number(current_tax_view.number.toFixed(precision.value));
+    }
+  });
+})
+watch(taxed_income, (newVal) => {
+  gsap.to(taxed_income_view, { 
+    duration: 0.5, 
+    number: newVal,
+    onUpdate: () => {
+      // 在动画过程中格式化数字
+      taxed_income_view.number = Number(taxed_income_view.number.toFixed(precision.value));
+    }
+  });
+})
+
+// 文档速查
+const isPersonalTax = ref(false);
+const handleModalShowChange = (value: any) => {
+  isPersonalTax.value = value;
+};
 </script>
 
 <style scoped>
@@ -433,10 +528,32 @@ watch(() => months.value, () => {
 
 td {
   text-align: center;
+  width: 20%;
 }
 
 th {
   text-align: center;
   font-weight: bold;
+}
+
+.all-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fiveone-tax {
+  text-decoration: none;
+  color: #e5a84b;
+}
+
+.doc-icon {
+  cursor: pointer;
+}
+.option-and-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 }
 </style>

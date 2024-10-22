@@ -72,13 +72,13 @@
       key: 'Tax',
       children: [
         {
+          label: () => h(RouterLink, { to: { name: 'fiveone-tax'}}, { default: () => '五险一金'}),
+          key: 'fiveone-tax'
+        },
+        {
           label: () => h(RouterLink, { to: { name: 'personal-tax'}}, { default: () => '个人所得税'}),
           key: 'personal-tax'
         },
-        {
-          label: () => h(RouterLink, { to: { name: 'fiveone-tax'}}, { default: () => '五险一金'}),
-          key: 'fiveone-tax'
-        }
       ],
       icon: renderIcon(BuildingGovernment24Filled)
     }

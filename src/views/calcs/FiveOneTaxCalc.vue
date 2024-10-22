@@ -7,9 +7,14 @@
       <div>
         <n-space vertical :wrap="false">
           <div>选择地区：
-           <n-select v-if="RegionOptions.length" v-model:value="RegionName" size="medium" :options="RegionOptions"
-            class="select" />
-        </div>
+            <n-select v-model:value="RegionName" size="small" :options="RegionOptions"
+            class="select" 
+            >
+            <template #arrow>
+              <MapMarkerAlt/>
+            </template>
+            </n-select>
+          </div>
         <div>单月税前工资：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false">
             <template #suffix>
@@ -125,7 +130,7 @@
 
   <!-- 总计： -->
   <div>总计：
-          <n-space :wrap="false" class="custom-n-space"><n-input-number readonly class="result-display4" v-model:value="fiveonetax"  size="large" :step="1000" :show-button="false">
+          <n-space :wrap="false" class="custom-n-space"><n-input-number readonly class="result-display4" v-model:value="fiveonetaxView.number"  size="large" :step="1000" :show-button="false">
             <template #suffix>
             {{ currencySymbol }}
           </template>
@@ -137,10 +142,10 @@
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NSwitch, NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NSelect, NButton } from 'naive-ui';
+  import { NSpace, NInputNumber,NSelect, NButton } from 'naive-ui';
   import { useSettingStore } from '@/stores/settingStore';
   import { storeToRefs } from 'pinia';
-  import { onMounted } from 'vue';
+  import { onMounted, reactive } from 'vue';
   import { watchEffect, watch } from 'vue';
   import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
@@ -151,12 +156,17 @@
   import type { HistoryData } from "@/types/HistoryData";
   import { useHistoryStore } from "@/stores/historyStore";
   import { useRoute } from "vue-router"
+  import gsap from "gsap"
+  import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
 
   const settingStore = useSettingStore();
-  const { currencySymbol } = storeToRefs(settingStore);
+  const { currencySymbol, precision } = storeToRefs(settingStore);
   const { income } = storeToRefs(usePersonalTaxInputStore());
   const { SocialInsuranceBase, AccumulationFundBase, OldAgeInsuranceRate, MedicalInsuranceRate, UnemploymentInsuranceRate, AccumulationFundRate, RegionName } = storeToRefs(useFiveOneTaxInputStore());
   const { fiveonetax, OldAgeInsurance, MedicalInsurance, UnemploymentInsurance, AccumulationFund} = storeToRefs(useFiveOneTaxResultStore());
+  const fiveonetaxView = reactive({
+    number: fiveonetax.value
+  })
   const RegionOptions = [
   { label: '请选择地区'	, value: '请选择地区'	},
   { label: '北京'	, value: '北京'	 },
@@ -216,6 +226,7 @@
       saveTime: Date.now(),
       name: 'fiveone-tax',
       inputData: {
+        RegionName: RegionName.value,
         income: income.value,
         SocialInsuranceBase: SocialInsuranceBase.value,
         AccumulationFundBase: AccumulationFund.value,
@@ -247,6 +258,7 @@
     if (route.query.inputData && route.query.resultData) {
       let inputData = JSON.parse(route.query.inputData as string)
       let resultData = JSON.parse(route.query.resultData as string)
+      RegionName.value = inputData.RegionName
       income.value = inputData.income
       SocialInsuranceBase.value = inputData.SocialInsuranceBase;
       AccumulationFundBase.value = inputData.AccumulationFundBase;
@@ -261,6 +273,18 @@
       AccumulationFund.value = resultData.AccumulationFund
     }
   }
+
+  // 添加数字变化特效
+  watch(fiveonetax, (newVal) => {
+    gsap.to(fiveonetaxView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        fiveonetaxView.number = Number(fiveonetaxView.number.toFixed(precision.value));
+      }
+    });
+  })
 </script>
 
 <style scoped>

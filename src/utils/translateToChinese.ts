@@ -4,6 +4,7 @@ export const translateToChinese = (obj: any): string => {
   let maxLength = 200;
   let chineseTxT =  objectToString(obj);
   const dictionary = {
+    'RegionName': '所在地区',
     'order': '序号',
     'interestMethod': '计息方式',
     'Simple': '单利',

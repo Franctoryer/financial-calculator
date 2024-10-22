@@ -3,7 +3,28 @@
 
     <!-- 存款种类 -->
     <n-space vertical>
-      <label>存款种类：</label>
+      <div class="label-and-icon">
+        <label>存款种类：</label>
+        <n-icon 
+          :component="BookSearch24Regular" 
+          :size="20" @click="isDeposit = true" 
+          :depth="3"
+          v-if="isQkDocLkup"
+          class="doc-icon"
+        >
+        </n-icon>
+      </div>
+      <n-modal 
+        :show="isDeposit"
+        size="huge"
+        style="width: 80%;"
+        preset="card"
+        @update:show="handleModalShowChange"
+      >
+        <n-scrollbar style="max-height: 60vh" trigger="none">
+          <DepositCalcManual class="modal-content"/>
+        </n-scrollbar>
+      </n-modal>
       <n-select v-model:value="depositCategory" size="medium" :options="depositOptions" placeholder="选择存款种类"
         class="select" />
     </n-space>
@@ -69,10 +90,10 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ interestRate }} %  </td>
-          <td v-if="isFetchInterest">{{ monthlyInterest }} {{ currencySymbol }}</td>
-          <td>{{ interest }} {{ currencySymbol }}</td>
-          <td>{{ finalDeposit }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ interestRateView.number }} %  </td>
+          <td v-if="isFetchInterest" :class="tableClass">{{ monthlyInterestView.number }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ interestView.number }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ finalDepositView.number }} {{ currencySymbol }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -80,8 +101,8 @@
 </template>
 
 <script setup lang="ts">
-import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable } from 'naive-ui';
-import { ref, watch, computed, onMounted } from "vue";
+import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable, NIcon, NModal, NScrollbar } from 'naive-ui';
+import { ref, watch, computed, onMounted, reactive } from "vue";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
 import { useDepositResultStore } from "@/stores/result/DepositResultStore"
@@ -90,8 +111,12 @@ import { useSettingStore } from '@/stores/settingStore';
 import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
+import gsap from "gsap";
+// @ts-ignore
+import {  BookSearch24Regular } from '@vicons/fluent';
+import DepositCalcManual from '../manuals/DepositCalcManual.vue';
 
-const { precision, currencySymbol } = storeToRefs(useSettingStore());
+const { precision, currencySymbol, isQkDocLkup } = storeToRefs(useSettingStore());
 const { initialDeposit, depositCategory, termType, year, month, day, } = storeToRefs(useDepositInputStore());
 const { interestRate, interest, termMonths, finalDeposit, } = storeToRefs(useDepositResultStore());
 const monthlyInterest = ref(0);
@@ -204,6 +229,90 @@ const historyStore = useHistoryStore();
       finalDeposit.value = resultData.finalDeposit;
     }
   }
+
+  // 添加数字变化特效
+  const interestRateView = reactive({
+    number: interestRate.value
+  })
+  const interestView = reactive({
+    number: interest.value
+  })
+  const monthlyInterestView = reactive({
+    number: monthlyInterest.value
+  })
+  const finalDepositView = reactive({
+    number: finalDeposit.value
+  })
+
+  watch(interest, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      interestView.number = newVal;
+      return;
+    }
+    gsap.to(interestView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        interestView.number = Number(interestView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(interestRate, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      interestRateView.number = newVal;
+      return;
+    }
+    gsap.to(interestRateView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        interestRateView.number = Number(interestRateView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(monthlyInterest, (newVal, oldVal) => {
+     // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      monthlyInterestView.number = newVal;
+      return;
+    }
+    gsap.to(monthlyInterestView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        monthlyInterestView.number = Number(monthlyInterestView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(finalDeposit, (newVal, oldVal) => {
+     // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      finalDepositView.number = newVal;
+      return;
+    }
+    gsap.to(finalDepositView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        finalDepositView.number = Number(finalDepositView.number.toFixed(precision.value));
+      }
+    });
+  })
+
+  // 调节表格间距
+  const tableClass = computed(() => isFetchInterest.value ? 'four-col' : 'three-col');
+
+  // 添加文档速查
+  const isDeposit = ref(false);
+  const handleModalShowChange = (value: any) => {
+    isDeposit.value = value;
+  };
 </script>
 
 <style scoped>
@@ -237,11 +346,30 @@ const historyStore = useHistoryStore();
   margin-top: 5px;
 }
 
+
+.three-col {
+  --width: 33.33%;
+}
+.four-col {
+  --width: 25%;
+}
 td {
   text-align: center;
+  width: var(--width);
 }
 th {
   text-align: center;
   font-weight: bold;
+}
+
+.doc-icon {
+  cursor: pointer;
+}
+
+.label-and-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 }
 </style>

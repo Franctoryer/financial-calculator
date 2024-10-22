@@ -46,6 +46,10 @@
       key: 'interest-method',
     },
     {
+      label: () => h(RouterLink, { to: { name: 'four-to-one'}}, { default: () => '知四求一介绍'}),
+      key: 'four-to-one',
+    },
+    {
       label: () => h(RouterLink, { to: { name: 'setting-manual'}}, { default: () => '全局设置'}),
       key: 'setting-manual',
     }
