@@ -214,7 +214,7 @@
   justify-content: space-between;
   align-items: center;
   white-space: nowrap; /* 保持文本在一行内 */
-  padding-right: 15px;
+  padding-right: 10px;
 }
 
 .sum {

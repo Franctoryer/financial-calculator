@@ -37,7 +37,13 @@
         <n-select 
           v-model:value="currencyType" 
           :options="currencyOptions" 
-        />
+          filterable 
+          :filter="filterCurrency"
+        >
+          <template #arrow>
+            <BookCoins20Filled/>
+          </template>
+        </n-select>
       </n-space>
       <!-- 时间单位 -->
       <n-space vertical :size="5">
@@ -85,6 +91,8 @@
   import { h } from 'vue';
   import type { VNode } from 'vue';
   import type { SelectOption } from 'naive-ui';
+  // @ts-ignore
+  import { BookCoins20Filled } from '@vicons/fluent';
 
   const settingStore = useSettingStore();
   const { precision, currencyType, timeUnit, isDisplayInfo, timeMode, isBarrierFree, isQkDocLkup } = storeToRefs(settingStore);
@@ -195,7 +203,13 @@
     { label: '斯里兰卡卢比', value: 'LKR' },
     { label: '马尔代夫拉菲亚', value: 'MVR' }
   ];
-  
+  const filterCurrency = (input: any, option: any) => {
+    const searchTerm = input.toLowerCase();
+    return (
+      option.label.toLowerCase().includes(searchTerm) || 
+      option.value.toLowerCase().includes(searchTerm)
+    );
+  }
 </script>
 
 <style scoped>

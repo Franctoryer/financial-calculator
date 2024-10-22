@@ -3,7 +3,7 @@
     <div class="all-row">
       <div class="option-row">
         <div class="option">
-          选择地区
+          选择地区：
           <n-select 
             v-if="RegionOptions.length" 
             v-model:value="RegionName" 
@@ -17,7 +17,7 @@
           </n-select>
         </div>
         <div class="option">
-          月份
+          月份：
           <n-input-number v-model:value="months" size="small" :validator="monthsValidator" />
         </div>
       </div>
