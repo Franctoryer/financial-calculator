@@ -69,10 +69,10 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ interestRateView.number }} %  </td>
-          <td v-if="isFetchInterest">{{ monthlyInterestView.number }} {{ currencySymbol }}</td>
-          <td>{{ interestView.number }} {{ currencySymbol }}</td>
-          <td>{{ finalDepositView.number }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ interestRateView.number }} %  </td>
+          <td v-if="isFetchInterest" :class="tableClass">{{ monthlyInterestView.number }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ interestView.number }} {{ currencySymbol }}</td>
+          <td :class="tableClass">{{ finalDepositView.number }} {{ currencySymbol }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -280,6 +280,9 @@ const historyStore = useHistoryStore();
       }
     });
   })
+
+  // 调节表格间距
+  const tableClass = computed(() => isFetchInterest.value ? 'four-col' : 'three-col');
 </script>
 
 <style scoped>
@@ -313,11 +316,20 @@ const historyStore = useHistoryStore();
   margin-top: 5px;
 }
 
+
+.three-col {
+  --width: 33.33%;
+}
+.four-col {
+  --width: 25%;
+}
 td {
   text-align: center;
+  width: var(--width);
 }
 th {
   text-align: center;
   font-weight: bold;
 }
+
 </style>
