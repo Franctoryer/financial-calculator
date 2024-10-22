@@ -201,7 +201,7 @@ const { all_income, all_fiveonetax, all_sidecosts, all_othercosts, all_tax_thres
   taxable_income, taxRate, display_taxRate, quickDeduction, lastweek_taxable_income,
   lastweek_taxRate, lastweek_quickDeduction, tax, lastweek_tax,
   current_tax, taxed_income } = storeToRefs(usePersonalTaxResultStore());
-const monthsValidator = (x: number) => x >= 0 && x <= 12;
+const monthsValidator = (x: number) => x >= 1 && x <= 12;
 const incomeValidator = (x: number) => x >= 0;
 const fiveonetaxValidator = (x: number) => x >= 0;
 const sidecostsValidator = (x: number) => x >= 0;
