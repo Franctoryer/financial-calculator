@@ -66,7 +66,10 @@ export const translateToChinese = (obj: any): string => {
     'termType': '存款期限',
     'interestRate': '年利率',
     'monthlyInterest': '月利息',
-    'finalDeposit': '最终储蓄金额'
+    'finalDeposit': '最终储蓄金额',
+    'year': '年',
+    'month': '月',
+    'day': '日'
   }
 
   for (const item in dictionary) {
