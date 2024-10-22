@@ -69,10 +69,10 @@
       </thead>
       <tbody>
         <tr>
-          <td>{{ interestRate }} %  </td>
-          <td v-if="isFetchInterest">{{ monthlyInterest }} {{ currencySymbol }}</td>
-          <td>{{ interest }} {{ currencySymbol }}</td>
-          <td>{{ finalDeposit }} {{ currencySymbol }}</td>
+          <td>{{ interestRateView.number }} %  </td>
+          <td v-if="isFetchInterest">{{ monthlyInterestView.number }} {{ currencySymbol }}</td>
+          <td>{{ interestView.number }} {{ currencySymbol }}</td>
+          <td>{{ finalDepositView.number }} {{ currencySymbol }}</td>
         </tr>
       </tbody>
     </n-table>
@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable } from 'naive-ui';
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted, reactive } from "vue";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
 import { useDepositResultStore } from "@/stores/result/DepositResultStore"
@@ -90,6 +90,7 @@ import { useSettingStore } from '@/stores/settingStore';
 import type { HistoryData } from "@/types/HistoryData";
 import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router"
+import gsap from "gsap";
 
 const { precision, currencySymbol } = storeToRefs(useSettingStore());
 const { initialDeposit, depositCategory, termType, year, month, day, } = storeToRefs(useDepositInputStore());
@@ -204,6 +205,81 @@ const historyStore = useHistoryStore();
       finalDeposit.value = resultData.finalDeposit;
     }
   }
+
+  // 添加数字变化特效
+  const interestRateView = reactive({
+    number: interestRate.value
+  })
+  const interestView = reactive({
+    number: interest.value
+  })
+  const monthlyInterestView = reactive({
+    number: monthlyInterest.value
+  })
+  const finalDepositView = reactive({
+    number: finalDeposit.value
+  })
+
+  watch(interest, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      interestView.number = newVal;
+      return;
+    }
+    gsap.to(interestView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        interestView.number = Number(interestView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(interestRate, (newVal, oldVal) => {
+    // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      interestRateView.number = newVal;
+      return;
+    }
+    gsap.to(interestRateView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        interestRateView.number = Number(interestRateView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(monthlyInterest, (newVal, oldVal) => {
+     // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      monthlyInterestView.number = newVal;
+      return;
+    }
+    gsap.to(monthlyInterestView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        monthlyInterestView.number = Number(monthlyInterestView.number.toFixed(precision.value));
+      }
+    });
+  })
+  watch(finalDeposit, (newVal, oldVal) => {
+     // 如果旧值或者新值是NAN，没有动画
+    if (Number.isNaN(newVal) || Number.isNaN(oldVal)) {
+      finalDepositView.number = newVal;
+      return;
+    }
+    gsap.to(finalDepositView, { 
+      duration: 0.5, 
+      number: newVal,
+      onUpdate: () => {
+        // 在动画过程中格式化数字
+        finalDepositView.number = Number(finalDepositView.number.toFixed(precision.value));
+      }
+    });
+  })
 </script>
 
 <style scoped>
