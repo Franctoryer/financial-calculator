@@ -3,7 +3,8 @@
       <div class="head">
         <div class="head-option">
           计算目标：
-          <n-radio-group v-model:value="objective">
+          <div class="radio-and-icon">
+            <n-radio-group v-model:value="objective">
             <n-radio-button value="PV">
               PV
             </n-radio-button>
@@ -20,7 +21,29 @@
               N
             </n-radio-button>
           </n-radio-group>
+          <n-icon 
+            :component="BookSearch24Regular" 
+            :size="20" 
+            :depth="3"
+            v-if="isQkDocLkup"
+            class="doc-icon"
+            @click="isFourToOne = !isFourToOne"
+          >
+          </n-icon>
+          </div>
+          <n-modal 
+            :show="isFourToOne"
+            size="huge"
+            style="width: 80%;"
+            preset="card"
+            @update:show="handleModalShowChange"
+          >
+            <n-scrollbar style="max-height: 60vh" trigger="none">
+              <FourToOneManual class="modal-content"/>
+            </n-scrollbar>
+          </n-modal>
         </div>
+      
         <div class="btns">
           <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
           <n-button @click="calculate" type="info" strong secondary>计算</n-button>
@@ -180,7 +203,7 @@
 </template>
 
 <script setup lang="ts">
-  import { NRadioGroup, NRadioButton, NInputNumber, NButton, NTable, NDivider } from "naive-ui";
+  import { NRadioGroup, NRadioButton, NInputNumber, NButton, NTable, NDivider, NIcon, NModal, NScrollbar } from "naive-ui";
   import { onMounted, watch, computed, ref, watchEffect, nextTick } from "vue";
   import { storeToRefs } from "pinia";
   import { useSettingStore } from "@/stores/settingStore";
@@ -197,12 +220,15 @@
   import 'echarts/theme/dark'
   import { reactive } from "vue";
   import gsap from "gsap";
+  // @ts-ignore
+  import { BookSearch24Regular } from '@vicons/fluent';
+  import FourToOneManual from "@/views/manuals/FourToOneManual.vue"
 
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
 
   // 获取全局设置信息
-  const { timeUnitText, precision, currencySymbol, timeMode } = storeToRefs(useSettingStore());
+  const { timeUnitText, precision, currencySymbol, timeMode, isQkDocLkup } = storeToRefs(useSettingStore());
   // 输入数据
   const { objective, PV, FV, PMT, I_Y, N, objectiveText } = storeToRefs(useInvestInputStore());
   // 结果数据
@@ -767,6 +793,14 @@
       }
     });
   });
+
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  // 文档速查
+  // @@@@@@@@@@@@@@@@@@@@@@@@
+  let isFourToOne = ref(false);
+  const handleModalShowChange = (value: any) => {
+    isFourToOne.value = value;
+  };
 </script>
 
 <style scoped>
@@ -871,5 +905,16 @@ th {
   margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.radio-and-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.doc-icon {
+  cursor: pointer;
 }
 </style>
