@@ -9,7 +9,11 @@
           <div>选择地区：
             <n-select v-model:value="RegionName" size="small" :options="RegionOptions"
             class="select" 
-            />
+            >
+            <template #arrow>
+              <MapMarkerAlt/>
+            </template>
+            </n-select>
           </div>
         <div>单月税前工资：
           <n-space :wrap="false" class="custom-n-space"><n-input-number class="input-container" v-model:value="income" size="small" :step="1000" :show-button="false">
@@ -153,6 +157,7 @@
   import { useHistoryStore } from "@/stores/historyStore";
   import { useRoute } from "vue-router"
   import gsap from "gsap"
+  import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
 
   const settingStore = useSettingStore();
   const { currencySymbol, precision } = storeToRefs(settingStore);

@@ -4,7 +4,17 @@
       <div class="option-row">
         <div class="option">
           选择地区
-          <n-select v-if="RegionOptions.length" v-model:value="RegionName" size="small" :options="RegionOptions" class="select" />
+          <n-select 
+            v-if="RegionOptions.length" 
+            v-model:value="RegionName" 
+            size="small" 
+            :options="RegionOptions" 
+            class="select"
+          >
+            <template #arrow>
+              <MapMarkerAlt/>
+            </template>
+          </n-select>
         </div>
         <div class="option">
           月份
@@ -154,6 +164,7 @@ import { NSpace, NSlider, NInputNumber, NIcon, NIconWrapper, NButton, NDivider, 
 import AnimalCat24Regular from '@vicons/fluent/AnimalCat24Regular'
 import AnimalTurtle24Regular from '@vicons/fluent/AnimalTurtle24Regular';
 import AnimalRabbit24Regular from '@vicons/fluent/AnimalRabbit24Regular';
+import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
 import { useSettingStore } from '@/stores/settingStore';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted } from 'vue';
