@@ -44,7 +44,7 @@
 
       <div class="button-group">
         <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
-        <n-button @click="computeFiveOneTax(); addHistory()" strong secondary type="info">计算结果</n-button>
+        <n-button @click="onClickCalculate()" strong secondary type="info">计算结果</n-button>
       </div>
       </n-space>
     </div>
@@ -147,7 +147,7 @@
   import { storeToRefs } from 'pinia';
   import { onMounted, reactive } from 'vue';
   import { watchEffect, watch } from 'vue';
-  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, NO_MORE_CLICK } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
   import { useFiveOneTaxInputStore } from "@/stores/input/FiveOneTaxInputStore";
@@ -158,7 +158,10 @@
   import { useRoute } from "vue-router"
   import gsap from "gsap"
   import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
+  import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
   const settingStore = useSettingStore();
   const { currencySymbol, precision } = storeToRefs(settingStore);
   const { income } = storeToRefs(usePersonalTaxInputStore());
@@ -190,7 +193,28 @@
   { label:  '西藏', value:  '西藏' },
   { label:  '陕西', value:  '陕西'},
 ];
+      //节流处理 
+const throttledCalculate = throttle(() => {
+computeFiveOneTax();
+addHistory();
+ resetThrottlingState();
+},
+1000,{trailing: false});
 
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
 
   const deleteAll = () => {
     RegionName.value = '请选择地区';

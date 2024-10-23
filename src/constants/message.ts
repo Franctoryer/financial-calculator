@@ -13,4 +13,4 @@ export const COMPLEX_ERROR: string = '计算结果是复数，不能处理';
 export const TAN_ERROR: string = 'tan 函数在 π/2 的倍数处未定义';
 export const TAN_ANGLE_ERROR: string = 'tan 函数在 90° 的倍数处未定义';
 export const LOG_ERROR: string = '不能对非正数求对数！';
-
+export const NO_MORE_CLICK: string = '不要重复计算哦'

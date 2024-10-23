@@ -39,7 +39,7 @@
           </template>
         </n-select>
       </div>
-      <n-button type="info" @click="calculateResult" strong secondary :disabled="isButtonDisabled">转化</n-button>
+      <n-button type="info" @click="onClickCalculate" strong secondary :disabled="isButtonDisabled">转化</n-button>
       <n-button type="error" @click="deleteALL" strong secondary :disabled="isButtonDisabled">重置</n-button>
     </div>
     <n-divider/>
@@ -69,6 +69,7 @@
   import { useCurrencyResultStore } from "@/stores/result/CurrencyResultStore"
   import { useSettingStore } from "@/stores/settingStore";
   import { BAD_REQUEST } from "@/constants/message";
+    import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, NO_MORE_CLICK } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import type { HistoryData } from "@/types/HistoryData";
   import { useHistoryStore } from "@/stores/historyStore";
@@ -78,6 +79,10 @@
   import { useLoadingBar } from 'naive-ui'
   // @ts-ignore
   import { BookCoins20Filled } from '@vicons/fluent';
+  import { debounce, throttle } from 'lodash';
+
+  //节流状态变量
+let isThrottling = false;
 
   const currencyOptions = [
     { label: '美元', value: 'USD' },
@@ -218,6 +223,28 @@
       isButtonDisabled.value = false;  // 启用按钮
     }
   }
+
+    //节流处理 
+const throttledCalculate = throttle(() => {
+  calculateResult();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
 
 
   const deleteALL = () =>{

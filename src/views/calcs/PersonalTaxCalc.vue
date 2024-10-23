@@ -152,7 +152,7 @@
     <div class="button-group">
       <n-button @click="deleteAll" strong secondary type="error">全部清除</n-button>
       <n-button @click="computeAllInput" strong secondary type="warning">按月份更新输入</n-button>
-      <n-button @click="computeResult(); addHistory();" strong secondary type="info">计算结果</n-button>
+      <n-button @click="onClickCalculate()" strong secondary type="info">计算结果</n-button>
     </div>
     <n-divider/>
   <n-table>
@@ -190,6 +190,8 @@ import MapMarkerAlt from '@vicons/fa/MapMarkerAlt'
 import { useSettingStore } from '@/stores/settingStore';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted } from 'vue';
+import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, NO_MORE_CLICK } from "@/constants/message";
+import { MESSAGE_CONFIG } from "@/constants/messageConfig";
 import { watchEffect, watch } from 'vue';
 import { usePersonalTaxInputStore } from "@/stores/input/PersonalTaxInputStore";
 import { usePersonalTaxResultStore } from "@/stores/result/PersonalTaxResultStore";
@@ -204,6 +206,10 @@ import { reactive } from 'vue';
 // @ts-ignore
 import {  BookSearch24Regular } from '@vicons/fluent';
 import PersonalTaxCalcManual from '../manuals/PersonalTaxCalcManual.vue';
+import { debounce, throttle } from 'lodash';
+
+//节流状态变量
+let isThrottling = false;
 
 const RegionOptions = [
   { label: '请选择地区'	, value: '请选择地区'	},
@@ -262,6 +268,29 @@ const computeResult = () => {
   computeTaxedIncome();
   toPresicion();
   display_taxRate.value = 100 * taxRate.value;
+}
+
+//节流处理 
+const throttledCalculate = throttle(() => {
+computeResult();
+addHistory();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
 }
 
 const computeAllInput = () => {

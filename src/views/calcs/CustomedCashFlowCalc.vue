@@ -14,7 +14,7 @@
       <n-button @click="addRow()" type="success" strong secondary> 添加行 </n-button>
       <n-button @click="deleteRow()" type="warning" strong secondary>删除最后一行</n-button>
       <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-      <n-button type="info" @click="computeResult" strong secondary>计算</n-button>
+      <n-button type="info" @click="onClickCalculate" strong secondary>计算</n-button>
     </div>
     <div class="data-and-chart">
       <n-data-table
@@ -75,7 +75,7 @@
     // @ts-ignore
   import { AddSubtractCircle24Filled } from '@vicons/fluent';
   import { parseCurrency, formatCurrency } from "@/constants/InputNumber";
-  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, IRR_CONVERGENCE_ERROR } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, IRR_CONVERGENCE_ERROR, NO_MORE_CLICK } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
   import type { TooltipItem } from "@/types/TooltipItem";
@@ -88,7 +88,10 @@
   import gsap from 'gsap';
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
+  import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
 
@@ -265,6 +268,29 @@
     pi.value = computePI();
     addHistory();
   }
+
+      //节流处理 
+const throttledCalculate = throttle(() => {
+  computeResult();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
+
   // 计算NPV
   const computeNPV = (interest: number) => {
     if (cashFlowData.value.length === 0) {

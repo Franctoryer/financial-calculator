@@ -40,7 +40,7 @@
       <n-button @click="addRow()" type="success" strong secondary> 添加行 </n-button>
       <n-button @click="deleteRow()" type="warning" strong secondary>删除最后一行</n-button>
       <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-      <n-button type="info" @click="computeResult" strong secondary>计算</n-button>
+      <n-button type="info" @click="onClickCalculate" strong secondary>计算</n-button>
     </div>
     <hr>
     <div class="data-and-chart">
@@ -115,7 +115,7 @@
   import { storeToRefs } from "pinia";
   import { NPV, continuousCompoundingNPV, simpleInterestNPV } from "@/utils/NPV";
   import { IRR } from "@/utils/IRR";
-  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR } from "@/constants/message";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, NO_MORE_CLICK } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import * as echarts from "echarts";
   import { onMounted } from 'vue';
@@ -130,7 +130,10 @@
   import { useThemeStore } from "@/stores/themeStore";
   import 'echarts/theme/dark'
   import InterestMethodManual from '../manuals/InterestMethodManual.vue';
+  import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
   // 模态框
@@ -336,6 +339,28 @@
     pi.value = computePI();
     addHistory();
   }
+
+  //节流处理 
+const throttledCalculate = throttle(() => {
+ computeResult();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
   // 计算净现值
   const computeNPV = (interest: number) => {
     if (cashFlowData.value.length === 0) {

@@ -73,7 +73,7 @@
       <!-- 计算按钮 -->
       <div class="btns">
         <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-        <n-button @click="calculateSavings(); addHistory();" type="info" strong secondary>计算</n-button>
+        <n-button @click="onClickCalculate" type="info" strong secondary>计算</n-button>
       </div>
 
     </div>
@@ -103,6 +103,8 @@
 <script setup lang="ts">
 import { NSelect, NInputNumber, NSpace, NButton, NDivider, NTable, NIcon, NModal, NScrollbar } from 'naive-ui';
 import { ref, watch, computed, onMounted, reactive } from "vue";
+import { NO_MORE_CLICK } from "@/constants/message";
+import { MESSAGE_CONFIG } from "@/constants/messageConfig";
 import { storeToRefs } from 'pinia';
 import { useDepositInputStore } from "@/stores/input/DepositInputStore"
 import { useDepositResultStore } from "@/stores/result/DepositResultStore"
@@ -115,7 +117,10 @@ import gsap from "gsap";
 // @ts-ignore
 import {  BookSearch24Regular } from '@vicons/fluent';
 import DepositCalcManual from '../manuals/DepositCalcManual.vue';
+import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
 const { precision, currencySymbol, isQkDocLkup } = storeToRefs(useSettingStore());
 const { initialDeposit, depositCategory, termType, year, month, day, } = storeToRefs(useDepositInputStore());
 const { interestRate, interest, termMonths, finalDeposit, } = storeToRefs(useDepositResultStore());
@@ -171,7 +176,30 @@ const calculateSavings = () => {
   interest.value = Number(interest.value.toFixed(precision.value));
   monthlyInterest.value = Number(monthlyInterest.value.toFixed(precision.value));
   finalDeposit.value = Number(finalDeposit.value.toFixed(precision.value));
+  addHistory()
 };
+
+      //节流处理 
+const throttledCalculate = throttle(() => {
+calculateSavings();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
 
 const deleteAll = () => {
   depositCategory.value = '选择存款方式'; initialDeposit.value = 0; termType.value = '选择存款期限',

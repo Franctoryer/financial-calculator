@@ -46,7 +46,7 @@
       
         <div class="btns">
           <n-button @click="deleteAll" type="error" strong secondary>全部清除</n-button>
-          <n-button @click="calculate" type="info" strong secondary>计算</n-button>
+          <n-button @click="onClickCalculate()" type="info" strong secondary>计算</n-button>
         </div>
       </div>
     <div :class="`options ${themeClass}`">
@@ -210,6 +210,7 @@
   import { useInvestInputStore } from "@/stores/input/InvestInputStore"
   import { useInvestResultStore } from "@/stores/result/InvestResultStore"
   import { calculatePV, calculateFV, calculatePMT, calculateN, calculateIY } from "@/utils/TVM";
+  import { UNKNOWN_OPTION, NO_DELETING, IRR_REQUIREMENT_ERROR, NO_MORE_CLICK } from "@/constants/message";
   import { MESSAGE_CONFIG } from "@/constants/messageConfig";
   import type { HistoryData } from "@/types/HistoryData";
   import { useHistoryStore } from "@/stores/historyStore";
@@ -223,7 +224,10 @@
   // @ts-ignore
   import { BookSearch24Regular } from '@vicons/fluent';
   import FourToOneManual from "@/views/manuals/FourToOneManual.vue"
+  import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
   // 主题颜色
   const { themeClass, isDark } = storeToRefs(useThemeStore());
 
@@ -258,6 +262,27 @@
     calculateAllInterest();
     addHistory();
   }
+        //节流处理 
+const throttledCalculate = throttle(() => {
+calculate();
+ resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
   // 计算结果
   const calculateResult = (PV: number | null, FV: number | null, PMT: number | null, N: number | null, I_Y: number | null): number => {
     if (FV === null && objective.value !== "FV") {

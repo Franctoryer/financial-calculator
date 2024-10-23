@@ -67,7 +67,7 @@
       <MathButton formula="." @click="append('.')" id="."/>
       <MathButton formula="," @click="append(',')" id=","/>
       <MathButton formula="+" @click="append('+')" type="tertiary" id="shift+="/>
-      <MathButton formula="=" @click="calculate" secondary type="info" hot-key="↵" id="enter"/>
+      <MathButton formula="=" @click="onClickCalculate" secondary type="info" hot-key="↵" id="enter"/>
 
       <MathButton formula="(" @click="append('(')" type="tertiary" id="("/>
       <MathButton formula=")" @click="append(')')" type="tertiary" id=")"/>
@@ -87,7 +87,7 @@ import { ref, watch, watchEffect, computed, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from "pinia";
 import { useSettingStore } from "@/stores/settingStore";
 import { evaluate, isComplex } from 'mathjs';
-import { NO_DELETING, INF_ERROR, TAN_ANGLE_ERROR, COMPLEX_ERROR, TAN_ERROR, LOG_ERROR, ZERO_DIVISION_ERROR } from "@/constants/message";
+import { NO_DELETING, INF_ERROR, TAN_ANGLE_ERROR, COMPLEX_ERROR, TAN_ERROR, LOG_ERROR, ZERO_DIVISION_ERROR, NO_MORE_CLICK } from "@/constants/message";
 import { MESSAGE_CONFIG } from '@/constants/messageConfig';
 import MathButton from '@/components/MathButton.vue';
 import { convert2tex } from "@/utils/convert2tex";
@@ -103,8 +103,10 @@ import { useHistoryStore } from "@/stores/historyStore";
 import { useRoute } from "vue-router";
 import { canConvertToFraction, convertToFraction } from "@/utils/fraction";
 import { useThemeStore } from "@/stores/themeStore";
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 
+//节流状态变量
+let isThrottling = false;
 // 主题颜色
 const { themeClass } = storeToRefs(useThemeStore());
 
@@ -142,7 +144,7 @@ const append = (char: string) => {
   formula.value += char;
   result.value = '';  // 每次输入时清空显示结果，重新输入公式
 };
-const calculate = debounce(() => {
+const calculate = () => {
   if (formula.value === '') {
     result.value = '0';
   } else {
@@ -228,9 +230,31 @@ const calculate = debounce(() => {
       result.value = 'Error';
     }
   }
-}, 100)
+}
 
-// 如果检测到不能转成分数，则立马把 isFractional 置为fasle
+//节流处理 
+const throttledCalculate = throttle(() => {
+calculate();
+resetThrottlingState();
+},
+1000,{trailing: false});
+
+const resetThrottlingState = () => {
+    setTimeout(() => {
+        isThrottling = false;
+    }, 1000);
+};
+
+const onClickCalculate = () => {
+  if(isThrottling){
+    window.$message.error(NO_MORE_CLICK,MESSAGE_CONFIG);
+  }else{
+    isThrottling = true;
+    throttledCalculate();
+  }
+}
+
+// 如果检测到不能转成分数，则立马把 isFractional 置为false
 watchEffect(() => {
   if (!canBeFractional.value) {
     isFranctional.value = false;
@@ -264,6 +288,8 @@ const handleRedirectDel = debounce(() => {
 const handleRedirectAC = debounce(() => {
   window.$message.info(NO_DELETING, MESSAGE_CONFIG)
 }, 200)
+
+
 
 // @@@@@@@@@@@@@@@@@@@@@@
 // 渲染数学公式
