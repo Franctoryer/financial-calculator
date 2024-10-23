@@ -1,4 +1,7 @@
-export function getCurrencySymbol(currency: string): string {
+export function getCurrencySymbol(currency: string | null): string {
+  if (!currency) {
+    return '¤';
+  }
   const symbolMap: { [key: string]: string } = {
       USD: '$',
       EUR: '€',
