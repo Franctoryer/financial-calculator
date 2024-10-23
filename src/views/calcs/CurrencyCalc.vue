@@ -40,6 +40,7 @@
         </n-select>
       </div>
       <n-button type="info" @click="calculateResult" strong secondary :disabled="isButtonDisabled">转化</n-button>
+      <n-button type="error" @click="deleteALL" strong secondary :disabled="isButtonDisabled">重置</n-button>
     </div>
     <n-divider/>
     <n-table>
@@ -216,6 +217,13 @@
     } finally {
       isButtonDisabled.value = false;  // 启用按钮
     }
+  }
+
+
+  const deleteALL = () =>{
+    money.value = 1 ;
+    resultMoney.value = 0 ;
+    exchangeRate.value = 0;
   }
 
   // @@@@@@@@@@@@@@@@@@@@@@@@
