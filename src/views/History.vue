@@ -206,15 +206,13 @@
 }
 
 .total-num {
-  margin-left: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   white-space: nowrap; /* 保持文本在一行内 */
-  padding-right: 10px;
 }
 
 .sum {
