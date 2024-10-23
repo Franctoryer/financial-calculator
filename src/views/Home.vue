@@ -3,7 +3,7 @@
     <img ref="image" src="@/assets/pictures/logo3.png" alt="Growth Image" class="growth-image" @load="onImageLoad"/>
     <div ref="slogan">
       <n-space  vertical><div class="slogan-text">一键计算，财富增长</div>
-        <div class="slogan-sidetext">一款人性化的（非）智能计算器</div>
+        <div class="slogan-sidetext">金融计算器——Financial Calculator</div>
       </n-space>
     </div>
   </div>
