@@ -222,6 +222,8 @@
 
   const deleteALL = () =>{
     money.value = 1 ;
+    fromCurrency.value = null;
+    toCurrency.value = null;
     resultMoney.value = 0 ;
     exchangeRate.value = 0;
   }

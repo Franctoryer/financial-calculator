@@ -123,7 +123,7 @@
         <tr>
           <th class="result-column">{{ objectiveText }}</th>
           <th>总利息</th>
-          <th>所有定期支付的总和</th>
+          <th>所有定期付款/收益的总和</th>
         </tr>
       </thead>
       <tbody>
