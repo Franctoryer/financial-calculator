@@ -106,5 +106,5 @@ export function getCurrencySymbol(currency: string): string {
       MVR: 'Rf'
   };
 
-  return symbolMap[currency] || '?';
+  return symbolMap[currency] || '¤';
 }

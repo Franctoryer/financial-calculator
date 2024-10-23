@@ -7,7 +7,7 @@ export const useSettingStore = defineStore('settingStore', {
   state: () => ({
     timeMode: 'END',
     precision: 2,
-    currencyType: 'CNY',
+    currencyType: 'CNY' as string | null,
     timeUnit: 'year',
     isDisplayInfo: true,
     isQkDocLkup: true,  // 快速文档查找
